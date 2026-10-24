@@ -1,95 +1,120 @@
 /**
  * ──────────────────────────────────────────────────────────────────────────
- *  SITE COPY
+ *  METHODOLOGY, ABOUT AND PRIVACY COPY
  * ──────────────────────────────────────────────────────────────────────────
- *  The engineering approach, the about section and the privacy principles.
- *  Edit the wording here rather than in the components.
+ *  The consulting methodology, the three capabilities it demonstrates, the
+ *  about section and the privacy principles.
  * ──────────────────────────────────────────────────────────────────────────
  */
 
-export type Principle = {
+export type MethodStep = {
   n: string
   title: string
   body: string
 }
 
-/** Working principles, not claims of production experience. */
-export const engineeringPrinciples: Principle[] = [
+/**
+ * The five-step consulting methodology. This is the spine of the site's
+ * positioning: it shows that automation work starts with understanding the
+ * business, not with connecting tools.
+ */
+export const methodology: MethodStep[] = [
   {
     n: '01',
-    title: 'Understand the process before automating it',
-    body: 'I map how the work is done today, including the parts nobody documents. Automating a process I do not understand produces a faster version of a bad process.',
+    title: 'Understand the operation',
+    body: 'Map the current process, the people involved, the information that moves through it and the constraints already in place. The map comes from observation, not from memory.',
   },
   {
     n: '02',
-    title: 'Define clear inputs, outputs and decision rules',
-    body: 'Every workflow has a contract at each boundary. The trigger has a shape, the branch has a condition, the output has a format. Each one can be tested on its own.',
+    title: 'Diagnose the problem',
+    body: 'Identify bottlenecks, repetitive work, manual handoffs and failure points, and state the cost or business impact worth investigating. A problem worth automating is a problem with a measurable cost.',
   },
   {
     n: '03',
-    title: 'Validate data before acting on it',
-    body: 'A wrong calculation is cheaper to catch before it runs than a wrong message sent to a customer. Validation happens before the decision, not after.',
+    title: 'Evaluate the intervention',
+    body: 'Decide whether automation is the right answer at all. Define what success looks like, name the risks and exceptions, and identify where a person should stay in the loop.',
   },
   {
     n: '04',
-    title: 'Handle edge cases and unexpected inputs',
-    body: 'A workflow is only as good as what it does with a null field, a duplicate submission and a customer who gives two contradictory instructions.',
+    title: 'Design and implement',
+    body: 'Translate the findings into a workflow with defined inputs, explicit decision rules, validation and escalation paths. The rules are written down so they can be reviewed and changed.',
   },
   {
     n: '05',
-    title: 'Use human escalation where automation should not decide',
-    body: 'Some decisions belong to a person: unusual refunds, complaints, disputed payments, anything requiring qualified judgement. The workflow hands over rather than guessing.',
-  },
-  {
-    n: '06',
-    title: 'Test with realistic scenarios',
-    body: 'Tests use the messy shapes real data has, not the clean ones the happy path assumes. Each scenario has an expected outcome so the result can be checked.',
-  },
-  {
-    n: '07',
-    title: 'Document limitations and areas for improvement',
-    body: 'Every project has a known-limitations section. What is not built yet is written down as clearly as what is, so the next step is obvious.',
+    title: 'Validate the outcome',
+    body: 'Test normal and failure scenarios against the defined criteria, then report honestly what was verified, what was not, and what remains to be done.',
   },
 ]
+
+/**
+ * The three capabilities the portfolio demonstrates. Presented as what the
+ * work requires, not as credentials.
+ */
+export const capabilities = [
+  {
+    title: 'Operational analysis',
+    body: 'Understanding how work is currently done, identifying where it breaks down and evaluating whether an intervention would produce a real benefit.',
+  },
+  {
+    title: 'Solution design',
+    body: 'Defining requirements, business rules, exception paths and human oversight before any automation is built.',
+  },
+  {
+    title: 'Technical implementation',
+    body: 'Building and testing workflows that connect systems, process information and support reliable business operations.',
+  },
+]
+
+/** Scope of the work: deliberately broad, and explicitly not single-industry. */
+export const scope = {
+  lead:
+    'Automation work is not limited to one department or industry. The same discipline applies wherever a process is repetitive, decision-shaped and currently run by hand.',
+  areas: [
+    'Sales and lead management',
+    'Customer service and enquiry handling',
+    'Order operations and logistics',
+    'Finance, invoicing and reconciliation',
+    'Internal administration',
+    'Data processing and document handling',
+  ],
+}
 
 export const about = {
   eyebrow: 'About',
   lead:
-    'I am Fareedah Sanusi Adedayo. I build workflow automations for operational problems: order handling, lead intake, returns and document processing. The work I am drawn to sits where a process is repetitive, decision-shaped and currently run by hand.',
+    'I am Fareedah Sanusi Adedayo. I work as an automation consultant and systems builder: I examine how business processes actually work, find where manual work and process gaps create friction, and build automation systems around the problems worth solving.',
   paragraphs: [
-    'I am interested in the engineering decisions behind a workflow, not just the wiring. Which rule decides the outcome, what happens when the input is wrong, and what happens when the system does not know are questions that decide whether an automation is useful or merely busy.',
-    'I am documenting this work as I build it. The case studies on this site describe what is actually implemented, what has been tested and what is still only designed, with the limitations stated alongside the results.',
-    'I am looking for remote internships, junior automation roles and implementation projects where this kind of careful, documented work is useful.',
+    'My work sits at the intersection of operational analysis and technical implementation. The parts I am most interested in are the ones that decide whether an automation is useful rather than merely busy: which rule produces the outcome, what happens when the input is wrong, what happens when the system does not know, and what happens when a person should decide instead.',
+    'I approach each engagement the same way, whatever the function. The process is mapped first, the problem is diagnosed against real data, and automation is only proposed where the benefit justifies it. Nothing is built before the rules and the exceptions are written down.',
+    'I document the work as I go. Every case study on this site states what was implemented, what was tested, and what is still only designed, with the limitations written alongside the results.',
+    'I am open to consulting engagements, implementation projects and corporate roles in automation, business operations and process improvement.',
   ],
-  /**
-   * Editable placeholders. Nothing below is a claim about your background.
-   * Replace or delete any line you do not want to display.
-   */
   placeholders: [
     {
       label: 'Background',
-      text: 'Open placeholder. Replace this with a line about how you came to automation engineering, or delete the block entirely. Nothing here is assumed.',
+      text: 'Open placeholder. Replace with a line about your background and how you came to automation work, or delete this block.',
     },
     {
       label: 'Current focus',
-      text: 'Open placeholder. Replace this with what you are working on right now, or delete the block.',
+      text: 'Open placeholder. Replace with what you are working on right now, or delete this block.',
     },
   ],
   facts: [
-    { label: 'Focus', value: 'Workflow automation and operational process engineering' },
-    { label: 'Approach', value: 'Documented builds with stated limitations' },
-    { label: 'Interested in', value: 'Remote internships, junior roles, implementation projects' },
+    { label: 'Role', value: 'AI Automation Consultant and Systems Builder' },
+    { label: 'Approach', value: 'Diagnose first, then design, then build and validate' },
+    { label: 'Engagements', value: 'Consulting, implementation projects, corporate roles' },
     { label: 'Location', value: 'Abuja, Nigeria' },
-  ],}
+  ],
+}
 
 /**
- * "What I won't automate": a trust-building section. Written as principles
- * the work follows, not as legal guarantees.
+ * "What I will not automate": judgement, presented as working principles.
+ * Kept deliberately short: it is one section, not a repeated disclaimer.
  */
 export const privacyPrinciples = [
   {
     title: 'Do not automate a process before understanding it',
-    body: 'A workflow built on an assumed process produces confident wrong answers at scale. Map it first.',
+    body: 'A workflow built on an assumed process produces confident wrong answers at scale. The process is mapped first, from observation.',
   },
   {
     title: 'Do not automate a broken process',
@@ -97,41 +122,32 @@ export const privacyPrinciples = [
   },
   {
     title: 'Do not let an AI system invent information',
-    body: 'Product facts, policy terms, payment details and customer records must come from a source the system can cite. An answer built on a guess is not an answer.',
+    body: 'Product facts, policy terms, payment details and customer records come from a source the system can cite. An answer built on a guess is not an answer.',
   },
   {
     title: 'Do not give an automation more access than it needs',
-    body: 'A workflow that reads the whole database to check one field is a liability. Permissions are narrowed to the exact records it needs.',
-  },
-  {
-    title: 'Do not expose keys, customer records or tokens',
-    body: 'API keys live in the platform secret store, never in the workflow body, the data layer or the repository.',
+    body: 'Permissions are narrowed to the exact records a workflow requires. API keys live in the platform secret store, never in the workflow body or the repository.',
   },
   {
     title: 'Do not let AI alone make sensitive decisions',
-    body: 'Refunds, complaints, disputes and anything requiring qualified judgement stop at a human. The system hands over with the reason attached.',
+    body: 'Refunds, complaints, disputes and anything requiring qualified judgement stop at a person, with the reason attached.',
   },
   {
     title: 'Do not silently discard uncertain cases',
-    body: 'A case the system cannot decide is recorded and escalated. Silently dropping it is the failure mode that looks like success.',
-  },
-  {
-    title: 'Do not use customer data beyond the agreed purpose',
-    body: 'Data is used for the task it was collected for, retained for as long as needed, and deleted when it is not. Retention is a decision made per implementation.',
+    body: 'A case the system cannot decide is recorded and escalated. Dropping it quietly is the failure mode that looks like success.',
   },
 ]
 
 export const privacyFooter =
-  'Privacy and security are engineering responsibilities that have to be assessed for each implementation. Nothing on this site is a legal compliance guarantee, and no system should be assumed compliant without that assessment.'
+  'These are working principles, applied to each implementation. They are engineering responsibilities to be assessed per project, not legal guarantees.'
 
 export const noAutomateHighlight = {
-  title: 'Examples of decisions that stay with a person',
+  title: 'Decisions that stay with a person',
   items: [
     'Unusual refunds outside standard policy',
     'Serious or escalated complaints',
-    'Medical, safety or suitability questions about a product',
+    'Medical, safety or suitability questions',
     'Disputed payments and chargebacks',
     'Any case where the system lacks reliable information',
-    'Any request to change permissions, credentials or access',
   ],
 }

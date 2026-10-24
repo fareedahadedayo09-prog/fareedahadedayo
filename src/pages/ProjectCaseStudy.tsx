@@ -5,16 +5,15 @@ import {
   getProject,
 } from '../data/projects'
 import type { CaseStudySection, Project } from '../data/projects'
-import { DemoEmbed } from '../components/DemoEmbed'
-import { MediaPlaceholder } from '../components/MediaPlaceholder'
 import { StatusBadge } from '../components/StatusBadge'
-import { ArrowRight, DownloadIcon, ImageIcon, AlertIcon } from '../components/Icons'
+import { ArrowRight } from '../components/Icons'
 
 function Note({ section }: { section: CaseStudySection }) {
   if (!section.note) return null
-  const tone = section.note.tone === 'warn' ? 'notice--warn' : section.note.tone === 'grey' ? 'notice notice--grey' : 'notice'
+  const tone =
+    section.note.tone === 'warn' ? 'notice notice--warn' : section.note.tone === 'grey' ? 'notice notice--grey' : 'notice'
   return (
-    <div className={tone} style={{ marginTop: '1rem' }}>
+    <div className={tone} style={{ marginTop: '1.1rem' }}>
       {section.note.text}
     </div>
   )
@@ -24,11 +23,11 @@ function Table({ section }: { section: CaseStudySection }) {
   if (!section.table) return null
   const { keys, values } = section.table
   return (
-    <div className="table-wrap" style={{ marginTop: '1rem' }}>
+    <div className="table-wrap" style={{ marginTop: '1.1rem' }}>
       <table className="data">
         <thead>
           <tr>
-            <th scope="col">Area</th>
+            <th scope="col">Step</th>
             <th scope="col">Detail</th>
           </tr>
         </thead>
@@ -45,83 +44,39 @@ function Table({ section }: { section: CaseStudySection }) {
   )
 }
 
-function DemoSection({ project }: { project: Project }) {
-  const hasVideo = project.demo.loomUrl.length > 0
+function Screenshots({ project }: { project: Project }) {
+  if (project.screenshots.length === 0) return null
   return (
-    <>
-      <DemoEmbed
-        loomUrl={project.demo.loomUrl}
-        title={`${project.name} walkthrough`}
-        note={
-          hasVideo
-            ? 'The recording is embedded above.'
-            : 'A Loom walkthrough is planned. It will cover the implemented paths and the validation failures before it is recorded.'
-        }
-      />
-
-      <div className="cluster" style={{ gap: '0.6rem', marginTop: '1.2rem' }}>
-        <span className="mono" style={{ fontSize: '0.66rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--text-faint)' }}>
-          Test scenarios to be demonstrated
-        </span>
-        {project.demo.scenarios.length > 0 ? (
-          <div className="scenario-list">
-            {project.demo.scenarios.map((s) => (
-              <span className="scenario" key={s}>{s}</span>
-            ))}
-          </div>
-        ) : (
-          <p className="faint" style={{ fontSize: '0.82rem' }}>
-            None recorded yet. The list above will be filled in with the scenarios actually covered by the video.
-          </p>
-        )}
+    <div style={{ marginTop: '1.6rem' }}>
+      <h3 style={{ fontSize: '0.82rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-faint)', fontFamily: 'var(--font-mono)', fontWeight: 500 }}>
+        Recorded evidence
+      </h3>
+      <div className="grid-2" style={{ gap: '1.3rem', marginTop: '1rem' }}>
+        {project.screenshots.map((shot) => (
+          <figure key={shot.id} style={{ margin: 0 }}>
+            <div style={{ overflow: 'hidden', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--bg-raised)' }}>
+              <img
+                src={shot.image}
+                alt={shot.caption}
+                loading="lazy"
+                decoding="async"
+                style={{ width: '100%', height: 'auto', display: 'block' }}
+              />
+            </div>
+            <figcaption style={{ marginTop: '0.7rem' }}>
+              <div style={{ fontWeight: 600, fontSize: '0.86rem' }}>{shot.title}</div>
+              <div className="muted" style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>{shot.caption}</div>
+            </figcaption>
+          </figure>
+        ))}
       </div>
-    </>
-  )
-}
-
-function VisualsSection({ project }: { project: Project }) {
-  return (
-    <div className="grid-2" style={{ gap: '1.2rem' }}>
-      {project.screenshots.map((shot) => (
-        <MediaPlaceholder
-          key={shot.id}
-          title={shot.title}
-          note={shot.caption}
-          image={shot.image}
-          alt={shot.caption}
-          ratio={shot.ratio ?? 'wide'}
-        />
-      ))}
-    </div>
-  )
-}
-
-function DocsSection({ project }: { project: Project }) {
-  const links = project.links.filter((l) => l.href.length > 0)
-  if (links.length === 0) {
-    return (
-      <div className="notice notice--grey">
-        No documentation or code has been published for this project yet. Entries appear here once a
-        document, repository or snippet exists to point at.
-      </div>
-    )
-  }
-  return (
-    <div className="stack-sm">
-      {links.map((link) => (
-        <a key={link.label} className="btn btn--secondary btn--block" href={link.href} target="_blank" rel="noreferrer">
-          <DownloadIcon width={15} height={15} />
-          {link.label}
-        </a>
-      ))}
     </div>
   )
 }
 
 function Section({ section, project, index }: { section: CaseStudySection; project: Project; index: number }) {
-  const isVisuals = section.id === 'visuals'
-  const isDemo = section.id === 'demo'
-  const isDocs = section.id === 'docs'
+  const isEvidence = section.id === 'evidence'
+  const bullets = section.bullets ?? []
 
   return (
     <section className="cs-section" id={section.id} aria-labelledby={`${section.id}-title`}>
@@ -141,31 +96,18 @@ function Section({ section, project, index }: { section: CaseStudySection; proje
         <p key={i}>{paragraph}</p>
       ))}
 
-      {section.bullets && section.bullets.length > 0 ? (
+      {bullets.length > 0 ? (
         <ul className="bullets" style={{ marginTop: section.paragraphs.length ? '1rem' : 0 }}>
-          {section.bullets.map((bullet, i) => (
+          {bullets.map((bullet, i) => (
             <li key={i}>{bullet}</li>
           ))}
         </ul>
       ) : null}
 
-      {!isVisuals && !isDemo && <Table section={section} />}
-      {!isVisuals && !isDemo && <Note section={section} />}
+      {!isEvidence && <Table section={section} />}
+      {!isEvidence && <Note section={section} />}
 
-      {isDemo ? <DemoSection project={project} /> : null}
-      {isVisuals ? (
-        <>
-          <VisualsSection project={project} />
-          <div className="notice notice--grey" style={{ marginTop: '1.2rem' }}>
-            <strong className="muted">Adding screenshots.</strong> Put image files in{' '}
-            <span className="mono">/public/screenshots</span>, then set <span className="mono">image</span> on
-            the matching entry in <span className="mono">screenshots</span> inside the project object in{' '}
-            <span className="mono">src/data/projects.ts</span>. The caption is the <span className="mono">caption</span>{' '}
-            field and becomes the image alternative text.
-          </div>
-        </>
-      ) : null}
-      {isDocs ? <DocsSection project={project} /> : null}
+      {isEvidence ? <Screenshots project={project} /> : null}
     </section>
   )
 }
@@ -194,7 +136,6 @@ export function ProjectCaseStudy() {
 
   return (
     <article>
-      {/* ── Header ──────────────────────────────────────────────────── */}
       <section className="cs-hero">
         <div className="shell">
           <div className="cs-hero__top">
@@ -213,12 +154,13 @@ export function ProjectCaseStudy() {
             <div className="cs-hero__meta">
               <span>{project.timeline}</span>
               <span>Tools: {project.tools.join(' · ')}</span>
-              <span>Status: {project.statusLabel}</span>
             </div>
 
-            <div className="notice notice--warn" style={{ marginTop: '0.4rem' }}>
-              <strong>Read the status labels.</strong> {project.statusDetail}
-            </div>
+            {project.statusDetail ? (
+              <div className="notice notice--warn" style={{ marginTop: '0.4rem' }}>
+                <strong>Read the status labels.</strong> {project.statusDetail}
+              </div>
+            ) : null}
           </div>
 
           <nav className="cs-nav" aria-label="Case study sections">
@@ -231,7 +173,6 @@ export function ProjectCaseStudy() {
         </div>
       </section>
 
-      {/* ── Body ───────────────────────────────────────────────────── */}
       <section style={{ paddingBottom: 'clamp(4rem, 3rem + 4vw, 7rem)' }}>
         <div className="shell">
           <div className="cs-body">
@@ -255,16 +196,6 @@ export function ProjectCaseStudy() {
               {project.sections.map((section, i) => (
                 <Section key={section.id} section={section} project={project} index={i} />
               ))}
-
-              <hr className="divider" style={{ marginTop: '2rem' }} />
-
-              <div className="cluster cluster--between" style={{ flexWrap: 'wrap', gap: '1rem' }}>
-                <p className="faint" style={{ fontSize: '0.8rem' }}>
-                  <ImageIcon width={14} height={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '0.4rem' }} />
-                  Case study template · {project.sections.length} sections
-                </p>
-                <AlertIcon width={14} height={14} style={{ color: 'var(--text-faint)' }} />
-              </div>
             </div>
           </div>
         </div>

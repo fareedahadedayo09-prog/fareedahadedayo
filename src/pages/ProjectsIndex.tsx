@@ -3,6 +3,9 @@ import { ProjectCard } from '../components/ProjectCard'
 import { ArrowRight } from '../components/Icons'
 import { projects } from '../data/projects'
 
+const completed = projects.filter((p) => p.status === 'done').length
+const planned = projects.filter((p) => p.status === 'planned').length
+
 export function ProjectsIndex() {
   return (
     <>
@@ -16,14 +19,14 @@ export function ProjectsIndex() {
             <span className="eyebrow">Selected Projects</span>
             <h1 className="cs-hero__title">Every project, in the state it is actually in</h1>
             <p className="lede" style={{ marginTop: '0.4rem' }}>
-              Four workflows at four different points of progress. Each card links to a case study with the
-              same fourteen sections, so the comparison is consistent. Status is stated on every card and
-              every section, because a project that is only partly built should not read as finished.
+              {completed} completed systems and {planned} planned build. Each card links to a case study with the
+              same six sections, so the comparison stays consistent. Status is stated on every card and every
+              section, because a partly built behaviour should not read as finished.
             </p>
 
             <div className="cs-hero__meta">
               <span>{projects.length} projects</span>
-              <span>1 completed scenario · 1 prototype · 1 in progress · 1 planned</span>
+              <span>Problem · How it works · Decision logic · Exceptions · Evidence · Limitations</span>
             </div>
           </div>
         </div>
@@ -38,10 +41,9 @@ export function ProjectsIndex() {
           </div>
 
           <div className="notice" style={{ marginTop: '1.8rem' }}>
-            <strong>Status conventions used across this site.</strong> Completed means the described scenario
-            was built and checked against a realistic test set. Completed as a prototype means it is a
-            learning build, not a deployed system. In progress means parts are implemented and parts are
-            designed. Planned means nothing is built yet.
+            <strong>Status conventions used across this site.</strong> Completed means the project is complete
+            as built. A section marked partial or designed is labelled that way on the case study itself, so
+            nothing is presented as tested when it has not been.
           </div>
         </div>
       </section>

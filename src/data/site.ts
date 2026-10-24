@@ -2,18 +2,9 @@
  * ──────────────────────────────────────────────────────────────────────────
  *  SITE CONFIG
  * ──────────────────────────────────────────────────────────────────────────
- *  This is the single place for personal details: name, photo, contact
- *  links and CTA destinations. Everything else on the site is content you
- *  would normally only change when your work changes.
- *
- *  HOW TO UPDATE:
- *   1. Replace a value below with your real information.
- *   2. Delete the "comingSoon: true" flag (or set it to false) so the link
- *      becomes active.
- *   3. Nothing else in the codebase needs to change.
- *
- *  Empty strings and `comingSoon: true` render as a clearly labelled
- *  "Coming soon" control instead of a broken button.
+ *  Personal details and the destinations for every call to action.
+ *  Everything else on the site is project or methodology content and lives in
+ *  the other files under src/data/.
  * ──────────────────────────────────────────────────────────────────────────
  */
 
@@ -27,7 +18,7 @@ export type ContactLink = {
 
 export type Cta = {
   label: string
-  /** Leave empty to render a "Coming soon" control. */
+  /** Leave empty to omit the button entirely rather than show a dead one. */
   href: string
   detail?: string
 }
@@ -37,28 +28,22 @@ export const site = {
   name: 'Fareedah Sanusi Adedayo',
   wordmark: 'Fareedah Sanusi Adedayo',
   wordmarkShort: 'FA',
-  roleLabel: 'AI Automation Engineer',
+  roleLabel: 'AI Automation Consultant and Systems Builder',
   location: 'Abuja, Nigeria',
-  availability: [
-    'Open to remote internships',
-    'Junior automation roles',
-    'Implementation projects',
-  ],
+  availability: ['Open to consulting engagements', 'Automation implementation projects', 'Corporate automation roles'],
 
-  /** ── Hero headline (edit freely) ────────────────────────────────── */
+  /** ── Hero ──────────────────────────────────────────────────────── */
   headline: 'Automation systems built around real operational problems.',
   heroLead:
-    'I design and build workflow automations for order operations, lead qualification and business processes. My work focuses on clear decision logic, reliable data and handling exceptions properly.',
+    'I analyze business processes, identify opportunities to improve how work gets done, and build automation systems around defined requirements, decision logic and measurable outcomes.',
 
   /**
-   * ── Professional portrait ────────────────────────────────────────────
+   * ── Professional portrait ──────────────────────────────────────────────
    * Drop your photo into /public and point `src` at it.
+   *   recommended: public/portrait.jpg  (4:5 or 1:1, ~400–800 KB)
    *
-   *   recommended file: public/portrait.jpg  (4:5 or 1:1, ~400–800 KB)
-   *   example:          public/portrait.jpg
-   *
-   * The component falls back to a clean labelled placeholder if the file
-   * is missing, so the site never shows a broken image.
+   * Falls back to a clean labelled placeholder if the file is missing, so the
+   * site never shows a broken image.
    */
   portrait: {
     src: '/portrait.svg',
@@ -69,7 +54,7 @@ export const site = {
   /** ── Navigation ─────────────────────────────────────────────────── */
   nav: [
     { label: 'Projects', href: '/projects' },
-    { label: 'Engineering Approach', href: '/#approach' },
+    { label: 'Approach', href: '/#approach' },
     { label: 'Tools', href: '/#tools' },
     { label: 'Operations Audit', href: '/audit' },
     { label: 'About', href: '/#about' },
@@ -79,7 +64,6 @@ export const site = {
   /** ── Resume / CV ────────────────────────────────────────────────── */
   resume: {
     label: 'Resume',
-    /** Put the file in /public (e.g. /resume.pdf) and fill in href. */
     href: '',
     detail: 'PDF',
   },
@@ -96,14 +80,17 @@ export const site = {
       href: 'https://www.linkedin.com/in/fareedah-adedayo-8b7b1729a',
       detail: 'linkedin.com/in/fareedah-adedayo-8b7b1729a',
     } as ContactLink,
-    github: { label: 'GitHub', href: '', detail: 'github.com/your-handle' } as ContactLink,
+    github: { label: 'GitHub', href: '', detail: 'Not linked yet' } as ContactLink,
   },
 
-  /** ── Calls to action ────────────────────────────────────────────── */
+  /**
+   * ── Calls to action ──────────────────────────────────────────────────
+   * Leave `href` empty and the button is omitted rather than shown as a
+   * nonfunctional control. Nothing on this site is ever a dead button.
+   */
   ctas: {
     primary: {
       label: 'Request an AI Operations Audit',
-      /** Booking link (Cal.com / Calendly) or mailto: once configured. */
       href: '',
       detail: '30 min · remote',
     } as Cta,
@@ -116,32 +103,12 @@ export const site = {
 
   /** ── Build in public ────────────────────────────────────────────── */
   social: {
-    linkedin: '',
+    linkedin: 'https://www.linkedin.com/in/fareedah-adedayo-8b7b1729a',
     x: '',
     posts: [] as string[],
   },
 
-  /** ── Sample consulting documents ───────────────────────────────── */
-  documents: {
-    auditReport: {
-      label: 'Sample AI Operations Audit Report',
-      /** e.g. "/audit-report.pdf": leave empty until the PDF is verified. */
-      href: '',
-      format: 'PDF',
-    },
-    implementationProposal: {
-      label: 'One-page Automation Implementation Proposal',
-      href: '',
-      format: 'PDF',
-    },
-  },
-
-  /**
-   * ── Social sharing metadata ──────────────────────────────────────────
-   * index.html is authoritative for Open Graph and Twitter tags because they
-   * need to be in the server-rendered HTML. Keep these in sync when you edit
-   * the ones there.
-   */
+  /** ── Social sharing metadata ────────────────────────────────────── */
   og: {
     title: 'Fareedah Sanusi Adedayo: AI Automation Engineering',
     description:

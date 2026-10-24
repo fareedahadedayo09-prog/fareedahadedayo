@@ -4,93 +4,19 @@ import { Portrait } from '../components/Portrait'
 import { ProjectCard } from '../components/ProjectCard'
 import { ROICalculator } from '../components/ROICalculator'
 import { ToolsSection } from '../components/ToolsSection'
-import { CtaButton } from '../components/CtaButton'
-import { ArrowRight, CheckIcon, BoltIcon } from '../components/Icons'
+import { ArrowRight, CheckIcon } from '../components/Icons'
 import { site } from '../data/site'
 import { projects } from '../data/projects'
-import { engineeringPrinciples, about, privacyPrinciples, privacyFooter, noAutomateHighlight } from '../data/content'
-import { dashboardState } from '../data/demos'
+import {
+  about,
+  capabilities,
+  methodology,
+  noAutomateHighlight,
+  privacyFooter,
+  privacyPrinciples,
+  scope,
+} from '../data/content'
 import { velara } from '../data/audit'
-
-function DemoSlots() {
-  return (
-    <div className="demo-grid">
-      {projects.map((project) => (
-        <div className="demo-card" key={project.slug}>
-          <div className="cluster cluster--between" style={{ gap: '0.5rem' }}>
-            <span className="mono" style={{ fontSize: '0.66rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--text-faint)' }}>
-              {project.timeline}
-            </span>
-            <span className="badge badge--dot badge--planned">
-              {project.status === 'done' ? 'Demo pending' : project.statusLabel}
-            </span>
-          </div>
-
-          <h3 className="demo-card__title">
-            <Link to={`/projects/${project.slug}`}>{project.name}</Link>
-          </h3>
-          <p className="demo-card__desc">{project.summary}</p>
-
-          <div className="media-ph" style={{ aspectRatio: '16 / 9', padding: '0.9rem 1rem' }}>
-            <div className="media-ph__row">
-              <svg className="media-ph__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="2.5" y="6" width="13" height="12" rx="2" />
-                <path d="M15.5 10.5l6-3.5v10l-6-3.5" />
-              </svg>
-              <span className="media-ph__label">Demonstration coming soon</span>
-            </div>
-            <span className="media-ph__note">
-              A Loom walkthrough will be linked here once recorded. The case-study page holds the same placeholder.
-            </span>
-          </div>
-
-          {project.demo.scenarios.length > 0 ? (
-            <div className="scenario-list">
-              {project.demo.scenarios.map((s) => (
-                <span className="scenario" key={s}>{s}</span>
-              ))}
-            </div>
-          ) : (
-            <p className="faint mono" style={{ fontSize: '0.72rem' }}>
-              Demonstrated test scenarios: none recorded yet.
-            </p>
-          )}
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function DashboardPreview() {
-  return (
-    <>
-      <div className="notice notice--warn" style={{ marginBottom: '1.6rem' }}>
-        <strong>Illustrative sample data.</strong> The figures below are placeholders chosen to show how
-        dashboard evidence would be presented. They are not real business performance and are not connected
-        to any live system. The section stays labelled until real recorded data replaces them.
-      </div>
-
-      <div className="stat-grid">
-        {dashboardState.sampleData.map((metric) => (
-          <div className="stat" key={metric.label}>
-            <span className="stat__value">{metric.value}</span>
-            <span className="stat__label">
-              {metric.label}
-              <br />
-              <span className="faint mono" style={{ fontSize: '0.68em' }}>{metric.note}</span>
-            </span>
-          </div>
-        ))}
-      </div>
-
-      <p className="faint" style={{ fontSize: '0.82rem', marginTop: '1.2rem' }}>
-        Potential metrics, once implemented and supported by recorded data: enquiries handled, response
-        time, leads classified or qualified, orders confirmed or cancelled, exception and escalation counts,
-        and workflow failures.
-      </p>
-    </>
-  )
-}
 
 export function Home() {
   return (
@@ -135,10 +61,11 @@ export function Home() {
           <div className="section-head section-head--row">
             <div className="section-head" style={{ marginBottom: 0, flex: '1 1 340px' }}>
               <span className="eyebrow">Selected Projects</span>
-              <h2>Four workflows, four different states of completion</h2>
+              <h2>Completed systems and one planned build</h2>
               <p className="lede">
-                Each one is documented the same way: what was built, what was tested, what is still only
-                designed. Status is shown on the card and carried through to the case study.
+                Each case study follows the same structure: the operational problem, how the workflow works, the
+                decision logic, the exceptions, the evidence and the limitations. Status is labelled on every
+                section, so a partly built behaviour is never presented as finished.
               </p>
             </div>
             <Link to="/projects" className="btn btn--secondary">
@@ -155,26 +82,44 @@ export function Home() {
         </div>
       </section>
 
-      {/* ────────────────────── Engineering approach ───────────────── */}
+      {/* ─────────────────────────── Approach ───────────────────────── */}
       <section className="section" id="approach">
         <div className="shell">
           <div className="section-head">
-            <span className="eyebrow">Engineering Approach</span>
-            <h2>How I approach building a workflow</h2>
+            <span className="eyebrow">Approach</span>
+            <h2>Consulting first, then implementation</h2>
             <p className="lede">
-              These are the working principles behind every project on this site, not a claim of
-              production experience. They are the order in which I would work through a problem.
+              Automation work starts with understanding the business, not with connecting tools. The same
+              five steps apply whether the process is in sales, customer service, finance or administration.
             </p>
           </div>
 
           <div className="principles">
-            {engineeringPrinciples.map((principle) => (
-              <div className="principle" key={principle.n}>
-                <span className="principle__num">{principle.n}</span>
-                <h3>{principle.title}</h3>
-                <p>{principle.body}</p>
+            {methodology.map((step) => (
+              <div className="principle" key={step.n}>
+                <span className="principle__num">{step.n}</span>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
               </div>
             ))}
+          </div>
+
+          <div className="grid-3" style={{ marginTop: '1.8rem' }}>
+            {capabilities.map((capability) => (
+              <div className="card" key={capability.title}>
+                <h3 style={{ fontSize: '1rem' }}>{capability.title}</h3>
+                <p className="muted" style={{ fontSize: '0.87rem', marginTop: '0.6rem' }}>{capability.body}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="card" style={{ marginTop: '1.6rem' }}>
+            <p className="lede" style={{ marginBottom: '1.1rem' }}>{scope.lead}</p>
+            <div className="scenario-list" style={{ marginTop: 0 }}>
+              {scope.areas.map((area) => (
+                <span className="scenario" key={area}>{area}</span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -183,12 +128,11 @@ export function Home() {
       <section className="section" id="tools">
         <div className="shell">
           <div className="section-head">
-            <span className="eyebrow">Tools and Technologies</span>
-            <h2>The stack, and how well I know each part of it</h2>
+            <span className="eyebrow">Tools</span>
+            <h2>The stack behind the projects</h2>
             <p className="lede">
-              Tools are separated into three tiers so the primary implementation stack stays visible and
-              nothing is implied that has not been used. Every entry states its purpose and its current
-              experience level.
+              Four categories, and every tool listed is one used in a project on this site. No proficiency
+              levels, no percentages, and nothing included that has not been used.
             </p>
           </div>
 
@@ -209,62 +153,6 @@ export function Home() {
           </div>
 
           <ROICalculator />
-
-          <div className="grid-2" style={{ marginTop: '1.6rem' }}>
-            <div className="card">
-              <h3 style={{ fontSize: '1rem' }}>What it separates</h3>
-              <p className="muted" style={{ fontSize: '0.87rem', marginTop: '0.6rem' }}>
-                Cost reduction, revenue impact and risk reduction are kept apart so they are not added
-                together or counted twice. Risk reduction is described, never priced.
-              </p>
-            </div>
-            <div className="card">
-              <h3 style={{ fontSize: '1rem' }}>What it does not do</h3>
-              <p className="muted" style={{ fontSize: '0.87rem', marginTop: '0.6rem' }}>
-                It does not forecast, it does not call an API and it does not assume your numbers are
-                right. The result is only as good as the assumptions typed into it.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ───────────────────────── Demonstrations ──────────────────── */}
-      <section className="section" id="demos">
-        <div className="shell">
-          <div className="section-head">
-            <span className="eyebrow">Demonstrations</span>
-            <h2>Where the walkthroughs will live</h2>
-            <p className="lede">
-              One slot per project, each holding a Loom recording, selected screenshots and the list of test
-              scenarios demonstrated. Nothing is embedded yet because nothing has been recorded.
-            </p>
-          </div>
-
-          <DemoSlots />
-
-          <div className="notice" style={{ marginTop: '1.6rem' }}>
-            <strong>A live chat demo is planned, not built.</strong> If a WhatsApp or Instagram demonstration
-            is added later it would run on a test account with safe test data, restricted access, clear
-            boundaries and no exposure of private customer information or credentials.
-          </div>
-        </div>
-      </section>
-
-      {/* ────────────────────── Dashboard evidence ─────────────────── */}
-      <section className="section" id="evidence">
-        <div className="shell">
-          <div className="section-head">
-            <span className="eyebrow">Metrics &amp; Dashboard Evidence</span>
-            <h2>Operational metrics, once there is real data</h2>
-            <p className="lede">
-              A place to show recorded results from the projects: volumes, response times, classifications,
-              outcomes, exceptions and failures. Until real data exists, the preview below is labelled as
-              illustrative.
-            </p>
-          </div>
-
-          <DashboardPreview />
         </div>
       </section>
 
@@ -272,19 +160,19 @@ export function Home() {
       <section className="section" id="privacy">
         <div className="shell">
           <div className="section-head">
-            <span className="eyebrow">Data Privacy &amp; Judgment</span>
+            <span className="eyebrow">Judgment</span>
             <h2>What I will not automate</h2>
             <p className="lede">
-              Automation should not be implemented blindly. Some decisions require a person, some inputs
-              require permissions I should not grant, and some failures should never be allowed to look like
-              success.
+              Some decisions require a person, some inputs require permissions that should not be granted, and
+              some failures should never be allowed to look like success. These are the principles applied to
+              every engagement.
             </p>
           </div>
 
           <div className="principles">
             {privacyPrinciples.map((principle) => (
               <div className="principle" key={principle.title}>
-                <span className="principle__num">-</span>
+                <span className="principle__num">•</span>
                 <h3>{principle.title}</h3>
                 <p>{principle.body}</p>
               </div>
@@ -301,9 +189,7 @@ export function Home() {
                 <span className="scenario" key={item}>{item}</span>
               ))}
             </div>
-            <p className="faint" style={{ fontSize: '0.82rem', marginTop: '1.2rem' }}>
-              {privacyFooter}
-            </p>
+            <p className="faint" style={{ fontSize: '0.82rem', marginTop: '1.2rem' }}>{privacyFooter}</p>
           </div>
         </div>
       </section>
@@ -315,16 +201,14 @@ export function Home() {
             <div className="stack" style={{ gap: '1.3rem' }}>
               <div>
                 <span className="eyebrow">{about.eyebrow}</span>
-                <h2 style={{ marginTop: '0.8rem' }}>A builder who works the operational problems</h2>
+                <h2 style={{ marginTop: '0.8rem' }}>Understanding the problem before building the system</h2>
               </div>
 
               {about.paragraphs.map((paragraph) => (
-                <p className="lede" key={paragraph}>
-                  {paragraph}
-                </p>
+                <p className="lede" key={paragraph}>{paragraph}</p>
               ))}
 
-              <dl className="stack" style={{ gap: '0', margin: 0, borderTop: '1px solid var(--border)' }}>
+              <dl className="stack" style={{ gap: 0, margin: 0, borderTop: '1px solid var(--border)' }}>
                 {about.facts.map((fact) => (
                   <div
                     key={fact.label}
@@ -348,8 +232,8 @@ export function Home() {
             <div className="stack" style={{ gap: '1rem' }}>
               <div className="card">
                 <div className="cluster" style={{ gap: '0.6rem', marginBottom: '0.8rem' }}>
-                  <BoltIcon width={18} height={18} style={{ color: 'var(--accent)' }} />
-                  <h3 style={{ margin: 0, fontSize: '1rem' }}>Editable placeholders</h3>
+                  <CheckIcon width={18} height={18} style={{ color: 'var(--accent)' }} />
+                  <h3 style={{ margin: 0, fontSize: '1rem' }}>Open placeholders</h3>
                 </div>
                 <div className="stack-sm">
                   {about.placeholders.map((placeholder) => (
@@ -357,9 +241,7 @@ export function Home() {
                       <span className="mono" style={{ fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-faint)' }}>
                         {placeholder.label}
                       </span>
-                      <p className="muted" style={{ fontSize: '0.84rem', marginTop: '0.35rem' }}>
-                        {placeholder.text}
-                      </p>
+                      <p className="muted" style={{ fontSize: '0.84rem', marginTop: '0.35rem' }}>{placeholder.text}</p>
                     </div>
                   ))}
                 </div>
@@ -371,8 +253,8 @@ export function Home() {
                   {[
                     'What is built, stated as built.',
                     'What has been tested, stated with the test scenario.',
-                    'What is only designed, labelled as planned.',
-                    'Known limitations written down next to the results.',
+                    'What is only designed, labelled as designed.',
+                    'Known limitations written next to the results.',
                   ].map((item) => (
                     <li key={item} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
                       <CheckIcon width={15} height={15} style={{ flex: 'none', marginTop: '0.28rem', color: 'var(--accent)' }} />
@@ -397,53 +279,32 @@ export function Home() {
                   Relevant professional opportunities
                 </h2>
                 <p className="lede">
-                  Remote internships, junior automation roles and implementation projects where workflow
-                  engineering is the actual work. If you have a process that should be automated, start with
+                  Consulting engagements, implementation projects and corporate roles in automation, business
+                  operations and process improvement. If you have a process that should be automated, start with
                   an audit rather than a build.
                 </p>
               </div>
 
-              <div className="stack" style={{ gap: '0.8rem' }}>
-                <CtaButton cta={site.ctas.primary} />
-                <CtaButton cta={site.ctas.secondary} variant="secondary" />
-
-                <div className="cluster" style={{ gap: '0.5rem', marginTop: '0.4rem', flexWrap: 'wrap' }}>
-                  {site.contact.email.href ? (
-                    <a className="btn btn--ghost btn--small" href={site.contact.email.href}>
-                      Email
-                    </a>
-                  ) : (
-                    <span className="btn btn--pending btn--small" aria-disabled="true">
-                      Email · {site.contact.email.detail}
-                    </span>
-                  )}
-                  {site.contact.linkedin.href ? (
-                    <a className="btn btn--ghost btn--small" href={site.contact.linkedin.href} target="_blank" rel="noreferrer">
-                      LinkedIn
-                    </a>
-                  ) : (
-                    <span className="btn btn--pending btn--small" aria-disabled="true">
-                      LinkedIn · {site.contact.linkedin.detail}
-                    </span>
-                  )}
-                  {site.contact.github.href ? (
-                    <a className="btn btn--ghost btn--small" href={site.contact.github.href} target="_blank" rel="noreferrer">
-                      GitHub
-                    </a>
-                  ) : (
-                    <span className="btn btn--pending btn--small" aria-disabled="true">
-                      GitHub · {site.contact.github.detail}
-                    </span>
-                  )}
-                </div>
+              <div className="cluster" style={{ gap: '0.6rem', flexWrap: 'wrap' }}>
+                {site.contact.email.href ? (
+                  <a className="btn btn--primary" href={site.contact.email.href}>
+                    Email
+                    <ArrowRight width={14} height={14} />
+                  </a>
+                ) : null}
+                {site.contact.linkedin.href ? (
+                  <a className="btn btn--secondary" href={site.contact.linkedin.href} target="_blank" rel="noreferrer">
+                    LinkedIn
+                  </a>
+                ) : null}
               </div>
             </div>
 
             <hr className="divider" style={{ margin: '2rem 0' }} />
 
-            <p className="faint" style={{ fontSize: '0.8rem' }}>
-              Until a booking link and contact details are supplied, the buttons above show as coming soon
-              rather than linking anywhere. No booking URL or form is invented.
+            <p className="faint" style={{ fontSize: '0.82rem' }}>
+              Booking links for an operations audit and a discovery call are not configured yet, so they are
+              not shown. Nothing on this page is a button that does not work.
             </p>
           </div>
         </div>
@@ -459,8 +320,8 @@ export function Home() {
                 Before any automation is proposed, the process is audited
               </h3>
               <p className="muted" style={{ fontSize: '0.88rem' }}>
-                A seven-step review that maps the process, establishes a baseline, tests whether automation
-                is even appropriate, and states every assumption behind a financial estimate.
+                A review that maps the process, establishes a baseline, tests whether automation is even
+                appropriate, and states every assumption behind a financial estimate.
               </p>
             </div>
             <div className="cluster" style={{ gap: '0.5rem' }}>
