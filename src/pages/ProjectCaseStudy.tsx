@@ -4,7 +4,7 @@ import {
   CASE_STUDY_STATUS_LABEL,
   getProject,
 } from '../data/projects'
-import type { CaseStudySection, Project } from '../data/projects'
+import type { CaseStudyBlock, CaseStudySection, Project } from '../data/projects'
 import { StatusBadge } from '../components/StatusBadge'
 import { ArrowRight } from '../components/Icons'
 
@@ -40,6 +40,74 @@ function Table({ section }: { section: CaseStudySection }) {
           ))}
         </tbody>
       </table>
+    </div>
+  )
+}
+
+function RichText({ text }: { text: string }) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g)
+  return (
+    <>
+      {parts.map((part, index) =>
+        part.startsWith('**') && part.endsWith('**') ? (
+          <strong key={index}>{part.slice(2, -2)}</strong>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  )
+}
+
+function ContentBlocks({ blocks }: { blocks: CaseStudyBlock[] }) {
+  return (
+    <div>
+      {blocks.map((block, index) => {
+        if (block.type === 'heading') {
+          return (
+            <h3 key={index} style={{ marginTop: '1.5rem', marginBottom: '0.65rem', fontSize: '1.04rem' }}>
+              {block.text}
+            </h3>
+          )
+        }
+
+        if (block.type === 'paragraph') {
+          return <p key={index}><RichText text={block.text} /></p>
+        }
+
+        if (block.type === 'list') {
+          return (
+            <ul key={index} className="bullets" style={{ marginTop: '0.8rem' }}>
+              {block.items.map((item) => <li key={item}><RichText text={item} /></li>)}
+            </ul>
+          )
+        }
+
+        if (block.type === 'table') {
+          return (
+            <div key={index} className="table-wrap" style={{ marginTop: '1rem' }}>
+              <table className="data">
+                <thead>
+                  <tr>{block.headers.map((header) => <th key={header} scope="col">{header}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {block.rows.map(([step, detail]) => (
+                    <tr key={step}><td>{step}</td><td>{detail}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        }
+
+        return (
+          <p key={index} style={{ marginTop: '0.75rem' }}>
+            <a className="link-arrow" href={block.href} target="_blank" rel="noreferrer">
+              {block.label}
+            </a>
+          </p>
+        )
+      })}
     </div>
   )
 }
@@ -124,20 +192,26 @@ function Section({ section, project, index }: { section: CaseStudySection; proje
         </h2>
       </div>
 
-      {section.paragraphs.map((paragraph, i) => (
-        <p key={i}>{paragraph}</p>
-      ))}
-
-      {bullets.length > 0 ? (
-        <ul className="bullets" style={{ marginTop: section.paragraphs.length ? '1rem' : 0 }}>
-          {bullets.map((bullet, i) => (
-            <li key={i}>{bullet}</li>
+      {section.blocks ? (
+        <ContentBlocks blocks={section.blocks} />
+      ) : (
+        <>
+          {section.paragraphs.map((paragraph, i) => (
+            <p key={i}>{paragraph}</p>
           ))}
-        </ul>
-      ) : null}
 
-      {!isEvidence && <Table section={section} />}
-      {!isEvidence && <Note section={section} />}
+          {bullets.length > 0 ? (
+            <ul className="bullets" style={{ marginTop: section.paragraphs.length ? '1rem' : 0 }}>
+              {bullets.map((bullet, i) => (
+                <li key={i}>{bullet}</li>
+              ))}
+            </ul>
+          ) : null}
+
+          {!isEvidence && <Table section={section} />}
+          {!isEvidence && <Note section={section} />}
+        </>
+      )}
 
       {isEvidence ? <LoomVideo project={project} /> : null}
       {isEvidence ? <Screenshots project={project} /> : null}

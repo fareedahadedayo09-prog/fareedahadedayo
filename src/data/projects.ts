@@ -27,6 +27,13 @@ export type SectionStatus = 'verified' | 'partial' | 'planned' | 'not-started'
 
 export type StatusKey = 'done' | 'progress' | 'planned'
 
+export type CaseStudyBlock =
+  | { type: 'heading'; text: string }
+  | { type: 'paragraph'; text: string }
+  | { type: 'list'; items: string[] }
+  | { type: 'table'; headers: [string, string]; rows: [string, string][] }
+  | { type: 'link'; label: string; href: string }
+
 export type CaseStudySection = {
   id: string
   label: string
@@ -35,6 +42,7 @@ export type CaseStudySection = {
   bullets?: string[]
   note?: { tone: 'info' | 'warn' | 'grey'; text: string }
   table?: { keys: string[]; values: string[] }
+  blocks?: CaseStudyBlock[]
 }
 
 export type ScreenshotSlot = {
@@ -370,117 +378,188 @@ export const projects: Project[] = [
   // ──────────────────────────────────────────────────────────────────────
   {
     slug: 'returns-refunds-handler',
-    name: 'Autonomous AI Return & E-Commerce Support Automation Engine',
+    name: 'AI-Assisted Returns & Refunds Handler',
     summary:
-      'An end-to-end automated customer support engine built using n8n, Google Gemini LLM, Airtable, and Gmail. The system automatically processes inbound return requests, cross-references database purchase history, enforces business policy rules, performs sentiment analysis, drafts context-aware responses, and either auto-resolves standard cases or escalates complex edge cases to human support reps.',
+      "An n8n workflow that processes e-commerce return requests, looks up order records in Airtable, applies business-policy rules, and uses Google Gemini to analyze tone and draft context-aware customer responses. Standard cases follow an automated response path, while requests requiring human judgement are escalated with diagnostic context.",
     status: 'done',
-    statusLabel: 'Completed build',
-    statusDetail:
-      'A completed standalone workflow. Evidence includes a six-record Airtable Returns Desk, an automated final-sale response for BL-1003, a human-escalation notice for the damaged-item/email-mismatch case BL-1006, and the n8n workflow canvas. This is a project build, not a claim of production deployment or measured business impact.',
-    tools: ['n8n', 'Google Gemini LLM', 'Airtable', 'Gmail'],
-    timeline: 'Completed build',
+    statusLabel: 'Completed standalone workflow build',
+    statusDetail: '',
+    tools: ['n8n', 'Google Gemini 2.5 Pro', 'Airtable', 'Gmail'],
+    timeline: 'Completed standalone workflow build',
     overview:
-      'This n8n support engine checks new return requests, looks up the related order in Airtable, applies business policy, records tone and decision details, and uses Google Gemini to draft structured, context-aware replies. Standard cases are auto-handled; cases that need judgement are routed to a human support rep with diagnostic context.',
+      "An n8n workflow that processes e-commerce return requests, looks up order records in Airtable, applies business-policy rules, and uses Google Gemini to analyze tone and draft context-aware customer responses. Standard cases follow an automated response path, while requests requiring human judgement are escalated with diagnostic context. This project demonstrates policy-based routing, structured AI output, operational recordkeeping, exception handling, and customer-support automation. Evidence includes a six-record Airtable Returns Desk, an automated final-sale response for BL-1003, a human-escalation notice for BL-1006, and the n8n workflow canvas. This is a portfolio build, not a claim of production deployment or measured business impact.",
     sections: [
       {
         id: 'problem',
         label: 'The problem',
         status: 'verified',
-        paragraphs: [
-          'Return decisions are often handled conversationally, one message at a time. The same request can receive different answers depending on who sees it, what order history they can access, and how clearly the policy applies. Exceptions also need a traceable reason and a safe route to a person.',
-        ],
-        bullets: [
-          'The same return request can receive different answers on different days.',
-          'Policy exceptions need a consistent, reviewable reason.',
-          'Some damaged-item or mismatched-order cases need human judgement.',
-          'A record of the decision, tone and customer response helps the team follow the case.',
+        paragraphs: [],
+        blocks: [
+          { type: 'paragraph', text: "Return requests can require multiple steps: identifying the correct order, checking the applicable policy, understanding the customer's issue, composing an appropriate response, and deciding whether a support representative needs to intervene." },
+          { type: 'paragraph', text: 'When these steps are handled manually and inconsistently, similar cases can receive different responses. Requests involving damaged items, mismatched order details, or other exceptions also need a traceable reason for escalation.' },
+          { type: 'paragraph', text: 'This project explores how a workflow can standardize routine return handling while keeping exceptions visible and reviewable.' },
+          { type: 'heading', text: 'The workflow addresses four operational challenges:' },
+          { type: 'list', items: [
+            '**Consistency:** Apply business-policy rules to return requests rather than relying entirely on conversational judgement.',
+            '**Order verification:** Retrieve the relevant order record before processing a request.',
+            '**Context-aware communication:** Generate customer responses that reflect the request and its recorded outcome.',
+            '**Exception handling:** Record why a case needs human review and provide the support team with diagnostic context.',
+          ] },
+          { type: 'paragraph', text: 'The goal is not to automate every support decision. It is to automate appropriate routine steps while preserving a route to human judgement.' },
         ],
       },
       {
         id: 'workflow',
         label: 'How it works',
         status: 'verified',
-        paragraphs: [
-          'The scheduled n8n workflow finds new, unhandled return requests and processes them one at a time. It normalizes each request, looks up its order in Airtable, applies return-policy rules, and uses Google Gemini to produce a structured decision and context-aware reply. The result is saved to the Returns Desk, then sent to the customer or escalated to a support representative.',
+        paragraphs: [],
+        blocks: [
+          { type: 'heading', text: 'Workflow overview' },
+          { type: 'paragraph', text: 'The scheduled n8n workflow checks for new, unhandled return requests and processes them one at a time. It normalizes request details, looks up the associated order in Airtable, evaluates the request against business-policy rules, and uses Google Gemini to support tone analysis and customer-response generation.' },
+          { type: 'paragraph', text: 'The outcome is recorded in Airtable. Requests eligible for automated handling follow the customer-response path, while cases requiring human judgement trigger an internal Gmail alert. An error-trigger branch is configured to notify the team when a workflow execution fails.' },
+          { type: 'heading', text: 'Workflow stages' },
+          { type: 'table', headers: ['Step', 'Implementation'], rows: [
+            ['1. Scheduled intake', 'Checks for new, unhandled return requests and processes them one at a time.'],
+            ['2. Request normalization', 'Normalizes request details and prepares them for order lookup and evaluation.'],
+            ['3. Order lookup', 'Searches Airtable for the purchase record associated with the request.'],
+            ['4. Policy evaluation', 'Applies business rules and records the reason for the resulting outcome.'],
+            ['5. Tone analysis and response generation', 'Uses Google Gemini to support tone analysis and generate structured, context-aware response content.'],
+            ['6. Routing and recordkeeping', 'Saves the outcome and related details in Airtable, then follows the automated-response or human-review route.'],
+            ['7. Customer or internal email', 'Uses Gmail to send the customer response or notify the support team.'],
+            ['8. Error notification', 'Includes an error-trigger branch configured to send a Gmail alert when workflow execution fails.'],
+          ] },
+          { type: 'heading', text: 'Architecture principle' },
+          { type: 'paragraph', text: '**Business rules determine the outcome. AI supports communication.**' },
+          { type: 'paragraph', text: 'The workflow uses policy logic to control how a request is handled. Gemini contributes tone analysis and structured response content; it is not intended to independently override store policy.' },
+          { type: 'paragraph', text: 'This separation makes the intended decision process easier to inspect and helps limit the authority given to the language model.' },
         ],
-        table: {
-          keys: ['Scheduled intake', 'Order lookup', 'Policy and tone', 'Decision and response', 'Routing and record', 'Error handling'],
-          values: [
-            'Checks for new, unhandled returns and loops through requests one at a time.',
-            'Normalizes request details and finds the associated purchase record.',
-            'Applies store policy and records a tone or sentiment label.',
-            'Gemini returns structured decision details and a context-aware reply draft.',
-            'Saves the outcome in Airtable; auto-handled requests receive a reply, while cases needing a person trigger a team alert.',
-            'The workflow canvas shows an error trigger connected to a Gmail alert.',
-          ],
-        },
-        note: {
-          tone: 'grey',
-          text: 'The gallery shows one auto-handled final-sale case and one human-escalated case. The workflow canvas documents the route design; it is not evidence that every edge case has been tested.',
-        },
       },
       {
         id: 'decisions',
         label: 'Decision logic',
         status: 'verified',
-        paragraphs: [
-          'Policy rules determine the outcome, while Gemini structures the decision and drafts the response. The saved record includes a decision reason, tone, reply text and handling status for review.',
+        paragraphs: [],
+        blocks: [
+          { type: 'heading', text: 'How decisions are handled' },
+          { type: 'paragraph', text: 'The workflow combines order information, business-policy rules, tone information, and structured AI-generated response content to process return requests.' },
+          { type: 'paragraph', text: 'The outcome and handling status are recorded in Airtable so that a case can be reviewed after processing.' },
+          { type: 'paragraph', text: 'Two representative outcomes are documented in the supplied evidence.' },
+          { type: 'heading', text: 'Case 1: BL-1003 — Final-sale item' },
+          { type: 'paragraph', text: '**Outcome: Auto-handled**' },
+          { type: 'paragraph', text: "A return request involving a final-sale clearance item is declined under the store's policy. The workflow records the outcome and sends an automated customer email explaining the decline." },
+          { type: 'paragraph', text: 'The evidence demonstrates a policy-based decline and the corresponding customer response.' },
+          { type: 'heading', text: 'Case 2: BL-1006 — Damaged item and email mismatch' },
+          { type: 'paragraph', text: '**Outcome: Needs human review**' },
+          { type: 'paragraph', text: "A damaged-item claim contains a mismatch between the requester's email and the email associated with the order record. Rather than treating the request as an ordinary automated case, the workflow routes it to human support." },
+          { type: 'paragraph', text: 'The internal Gmail alert includes diagnostic context and indicates that a temporary holding reply has been sent.' },
+          { type: 'paragraph', text: 'This allows a support representative to investigate the discrepancy and take over the case.' },
+          { type: 'heading', text: 'What is recorded' },
+          { type: 'paragraph', text: 'The Airtable Returns Desk provides a centralized record of the requests and their processing outcomes, including:' },
+          { type: 'list', items: [
+            'Order references and return-request details.',
+            'Policy decision reasons.',
+            'Tone or sentiment labels.',
+            'Generated-reply fields.',
+            'Handling status, including Auto-handled and Needs human.',
+          ] },
+          { type: 'paragraph', text: 'These records provide a basis for reviewing individual cases and identifying scenarios that need further testing.' },
+          { type: 'paragraph', text: 'The two examples above are representative outcomes, not proof that every policy branch has been tested.' },
         ],
-        bullets: [
-          'BL-1003: a final-sale clearance item is declined under store policy and marked Auto-handled.',
-          'BL-1006: a damaged-item claim with an email/order mismatch is routed for human review.',
-          'The Airtable Returns Desk records tone alongside the policy reason and status.',
-          'The n8n canvas shows Gemini connected to a structured output parser before the decision is finalized.',
-        ],
-        note: {
-          tone: 'info',
-          text: 'These are the representative outcomes shown in the supplied screenshots; they do not imply that every policy branch is covered by the gallery.',
-        },
       },
       {
         id: 'safeguards',
         label: 'Exceptions and safeguards',
         status: 'partial',
-        paragraphs: [
-          'Requests that should not be auto-resolved can be escalated with diagnostic context. For the damaged item and mismatched email case, the internal alert says a holding reply has already been sent so a support representative can take over with context.',
+        paragraphs: [],
+        blocks: [
+          { type: 'heading', text: 'Human escalation' },
+          { type: 'paragraph', text: 'Not every return request should be resolved automatically. Requests that require additional judgement or verification need a clear path to a support representative.' },
+          { type: 'paragraph', text: 'The workflow includes the following safeguards:' },
+          { type: 'list', items: [
+            '**Already-handled check:** Checks whether a request has already been processed before continuing.',
+            '**Order-detail mismatch:** Records the email/order mismatch as part of the reason for escalating BL-1006.',
+            '**Human-review route:** Sends an internal Gmail alert containing diagnostic context for the support team.',
+            '**Holding-response indication:** The BL-1006 alert indicates that a temporary customer holding reply has been sent.',
+            '**Execution-error notification:** Includes an error-trigger branch configured to notify the team through Gmail.',
+          ] },
+          { type: 'heading', text: 'Current evidence' },
+          { type: 'paragraph', text: 'The supplied screenshots demonstrate the final-sale decline and the email-mismatch escalation.' },
+          { type: 'paragraph', text: 'The error-alert branch is visible on the workflow canvas, but the supplied evidence does not include a failed execution with a confirmed notification. Likewise, the current gallery does not establish successful handling of every possible exception.' },
+          { type: 'paragraph', text: 'The following scenarios still need dedicated test evidence:' },
+          { type: 'list', items: [
+            'Missing or ambiguous order matches.',
+            'Duplicate or conflicting order records.',
+            'Contradictory instructions in customer messages.',
+            'Malformed or incomplete AI output.',
+            'Gmail delivery failures and other execution errors.',
+          ] },
+          { type: 'paragraph', text: 'These remain testing and reliability improvements rather than verified capabilities.' },
         ],
-        bullets: [
-          'An already-handled check appears before the workflow processes a return.',
-          'A mismatch between the requester email and order record is included in the BL-1006 escalation reason.',
-          'The human-review branch sends an internal Gmail alert; the Airtable record remains available for follow-up.',
-          'An error-trigger and Gmail alert are visible on the workflow canvas.',
-        ],
-        note: {
-          tone: 'warn',
-          text: 'The screenshots demonstrate the email-mismatch escalation. Missing-order, conflicting-instruction and delivery-failure cases still need their own test evidence.',
-        },
       },
       {
         id: 'evidence',
         label: 'Evidence and testing',
         status: 'verified',
-        paragraphs: ['The gallery contains a workflow view and representative Airtable and Gmail outputs.'],
-        bullets: [
-          'Airtable Returns Desk shows six return records with reasons, tone labels, generated-reply fields and Auto-handled or Needs human statuses.',
-          'The BL-1003 email shows an automated decline for a final-sale item.',
-          'The BL-1006 internal email shows a damaged-item claim, email mismatch, diagnostic context and holding-reply notice.',
-          'The n8n canvas shows scheduled intake, order lookup, Gemini structured output, reply/escalation routing and an error-alert branch.',
+        paragraphs: [],
+        blocks: [
+          { type: 'heading', text: 'Recorded evidence' },
+          { type: 'paragraph', text: 'The evidence gallery contains the workflow canvas and representative Airtable and Gmail outputs. Together, these show the implemented structure and two specific processing outcomes.' },
+          { type: 'heading', text: '1. Airtable Returns Desk' },
+          { type: 'paragraph', text: '**Evidence:** Six return records with order references, decision reasons, tone labels, generated-reply fields, and handling statuses.' },
+          { type: 'link', label: 'View Airtable Returns Desk screenshot', href: 'https://fareedahadedayo-8yfzsom0c-fareedahadedayo09-prog.vercel.app/screenshots/returns-airtable-grid.webp' },
+          { type: 'paragraph', text: 'The dashboard demonstrates how return requests and their outcomes are organized in a centralized record. Customer names and generated reply text are redacted; order references and outcome statuses remain visible.' },
+          { type: 'heading', text: '2. Automated customer response — BL-1003' },
+          { type: 'paragraph', text: '**Evidence:** Gmail message declining a return for a final-sale clearance item under store policy.' },
+          { type: 'link', label: 'View automated return reply screenshot', href: 'https://fareedahadedayo-8yfzsom0c-fareedahadedayo09-prog.vercel.app/screenshots/returns-auto-reply.webp' },
+          { type: 'paragraph', text: 'The message demonstrates the customer-facing response for the documented final-sale case. The customer name is redacted in the greeting.' },
+          { type: 'heading', text: '3. Human-support alert — BL-1006' },
+          { type: 'paragraph', text: '**Evidence:** Internal Gmail alert for a damaged-item claim with an email/order mismatch.' },
+          { type: 'link', label: 'View human-support alert screenshot', href: 'https://fareedahadedayo-8yfzsom0c-fareedahadedayo09-prog.vercel.app/screenshots/returns-human-alert.webp' },
+          { type: 'paragraph', text: 'The alert provides diagnostic context for the support team and indicates that a temporary holding reply has been sent. The customer name and email address are redacted.' },
+          { type: 'heading', text: '4. n8n workflow canvas' },
+          { type: 'paragraph', text: '**Evidence:** Visual workflow showing scheduled intake, order lookup, policy processing, Gemini structured output, response routing, and an error-alert branch.' },
+          { type: 'link', label: 'View n8n workflow canvas screenshot', href: 'https://fareedahadedayo-8yfzsom0c-fareedahadedayo09-prog.vercel.app/screenshots/returns-n8n-workflow.webp' },
+          { type: 'paragraph', text: 'The canvas documents the orchestration design and how the workflow components connect. It is evidence of the workflow structure, not proof that every possible execution path has been tested.' },
+          { type: 'heading', text: 'What the evidence establishes' },
+          { type: 'paragraph', text: 'The supplied artefacts document:' },
+          { type: 'list', items: [
+            'A six-record Airtable Returns Desk.',
+            'An automated decline for the documented final-sale case.',
+            'A human-escalation alert for the documented email-mismatch case.',
+            'A workflow canvas containing the main processing route and an error-alert branch.',
+          ] },
+          { type: 'paragraph', text: 'They do not establish production reliability, comprehensive edge-case coverage, or a quantified improvement in support performance.' },
         ],
-        note: {
-          tone: 'grey',
-          text: 'Customer names, email addresses and reply text are redacted in the public screenshots. No performance metrics are claimed.',
-        },
       },
       {
         id: 'limitations',
         label: 'Limitations and next improvements',
         status: 'partial',
-        paragraphs: ['The screenshots document representative cases, not a complete execution log or production service.'],
-        bullets: [
-          'Add explicit test evidence for missing or duplicate order matches, contradictory instructions and malformed AI output.',
-          'The workflow canvas includes an error-alert branch, but no failed-run notification is shown in the evidence.',
-          'Only one auto-handled and one human-escalated email outcome are captioned in this gallery.',
-          'No production deployment or quantified business impact is claimed.',
+        paragraphs: [],
+        blocks: [
+          { type: 'heading', text: 'Current limitations' },
+          { type: 'paragraph', text: 'This project is a standalone workflow build. The available screenshots document representative outputs, not a complete execution log or production service.' },
+          { type: 'paragraph', text: 'The main limitations are:' },
+          { type: 'list', items: [
+            'Missing-order, duplicate-match, contradictory-instruction, and malformed-output scenarios still need dedicated test evidence.',
+            'The error-alert branch is configured, but a successful end-to-end failure-notification test is not included in the supplied evidence.',
+            'The gallery contains one captioned automated customer response and one captioned human-escalation alert.',
+            'Production deployment, sustained reliability, and quantified business impact have not been established.',
+          ] },
+          { type: 'heading', text: 'Next improvements' },
+          { type: 'heading', text: '1. Expand test coverage' },
+          { type: 'paragraph', text: 'Create repeatable test cases for missing orders, duplicate matches, conflicting instructions, malformed model output, and email-delivery failures. Record the expected result and actual workflow outcome for each case.' },
+          { type: 'heading', text: '2. Strengthen output validation' },
+          { type: 'paragraph', text: "Validate AI-generated structured output before using it downstream. Define a safe fallback when required fields are missing, the output cannot be parsed, or the generated response does not meet the workflow's requirements." },
+          { type: 'heading', text: '3. Verify failure notifications' },
+          { type: 'paragraph', text: 'Intentionally trigger a controlled workflow failure, confirm that the error branch runs, and capture the resulting internal notification.' },
+          { type: 'heading', text: '4. Improve auditability' },
+          { type: 'paragraph', text: 'Ensure each processed request has a traceable outcome, decision reason, handling status, and relevant execution context. Review how retries and repeated scheduled runs affect already-handled requests.' },
+          { type: 'heading', text: '5. Evaluate operational performance' },
+          { type: 'paragraph', text: 'After sufficient controlled testing and, if appropriate, a monitored pilot, measure processing success rate, escalation frequency, handling time, and response-delivery failures. No performance improvements are claimed until supported by measured results.' },
+          { type: 'heading', text: 'Project takeaway' },
+          { type: 'paragraph', text: 'This project demonstrates how n8n, Airtable, Gmail, and Google Gemini can be combined into a structured customer-support workflow with policy-based handling, AI-assisted communication, centralized records, and a human-escalation path.' },
+          { type: 'paragraph', text: 'The central design decision is to keep business-policy handling distinct from AI-generated communication, while making exceptions visible for human review.' },
         ],
       },
     ],

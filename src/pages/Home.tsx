@@ -234,15 +234,9 @@ export function Home() {
           <div className="surface" style={{ padding: 'clamp(2rem, 1.2rem + 3vw, 3.4rem)' }}>
             <div className="grid-2" style={{ alignItems: 'center' }}>
               <div className="stack" style={{ gap: '1rem' }}>
-                <span className="eyebrow">Contact</span>
                 <h2 style={{ fontSize: 'clamp(1.5rem, 1.1rem + 1.8vw, 2.1rem)' }}>
-                  Relevant professional opportunities
+                  Contact
                 </h2>
-                <p className="lede">
-                  I am seeking remote internships and junior roles focused on AI workflow automation, process
-                  improvement and business operations. I am especially interested in work involving n8n, APIs,
-                  structured data and carefully scoped AI integrations.
-                </p>
               </div>
 
               <div className="cluster" style={{ gap: '0.6rem', flexWrap: 'wrap' }}>
