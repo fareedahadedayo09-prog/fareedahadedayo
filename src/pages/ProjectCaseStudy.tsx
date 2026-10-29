@@ -44,6 +44,35 @@ function Table({ section }: { section: CaseStudySection }) {
   )
 }
 
+function LoomVideo({ project }: { project: Project }) {
+  if (!project.loomUrl) return null
+
+  const shareId = project.loomUrl.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/)?.[1]
+
+  return (
+    <div style={{ marginTop: '1.6rem' }}>
+      <h3 style={{ fontSize: '0.82rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-faint)', fontFamily: 'var(--font-mono)', fontWeight: 500 }}>
+        Video walkthrough
+      </h3>
+      {shareId ? (
+        <div style={{ overflow: 'hidden', borderRadius: 'var(--radius)', border: '1px solid var(--border)', marginTop: '1rem', aspectRatio: '16 / 9', background: 'var(--bg-raised)' }}>
+          <iframe
+            src={`https://www.loom.com/embed/${shareId}`}
+            title={`${project.name} Loom walkthrough`}
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+            style={{ width: '100%', height: '100%', border: 0, display: 'block' }}
+          />
+        </div>
+      ) : (
+        <a className="link-arrow" href={project.loomUrl} target="_blank" rel="noreferrer">
+          Open the Loom walkthrough
+        </a>
+      )}
+    </div>
+  )
+}
+
 function Screenshots({ project }: { project: Project }) {
   if (project.screenshots.length === 0) return null
   return (
@@ -85,7 +114,9 @@ function Section({ section, project, index }: { section: CaseStudySection; proje
           <span className="cs-section__num">
             {String(index + 1).padStart(2, '0')} / {String(project.sections.length).padStart(2, '0')}
           </span>
-          <span className="badge badge--illustrative">{CASE_STUDY_STATUS_LABEL[section.status]}</span>
+          {!['order-confirmation-risk-check', 'lead-qualification'].includes(project.slug) ? (
+            <span className="badge badge--illustrative">{CASE_STUDY_STATUS_LABEL[section.status]}</span>
+          ) : null}
         </div>
         <h2 id={`${section.id}-title`} style={{ fontSize: 'clamp(1.35rem, 1.05rem + 1.4vw, 1.85rem)' }}>
           {section.label}
@@ -107,6 +138,7 @@ function Section({ section, project, index }: { section: CaseStudySection; proje
       {!isEvidence && <Table section={section} />}
       {!isEvidence && <Note section={section} />}
 
+      {isEvidence ? <LoomVideo project={project} /> : null}
       {isEvidence ? <Screenshots project={project} /> : null}
     </section>
   )

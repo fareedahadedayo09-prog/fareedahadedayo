@@ -61,11 +61,10 @@ export function Home() {
           <div className="section-head section-head--row">
             <div className="section-head" style={{ marginBottom: 0, flex: '1 1 340px' }}>
               <span className="eyebrow">Selected Projects</span>
-              <h2>Completed systems and one planned build</h2>
+              <h2>Automation projects and workflow prototypes</h2>
               <p className="lede">
-                Each case study follows the same structure: the operational problem, how the workflow works, the
-                decision logic, the exceptions, the evidence and the limitations. Status is labelled on every
-                section, so a partly built behaviour is never presented as finished.
+                Each case study covers the operational problem, how the workflow works, its decision logic,
+                exceptions, evidence and limitations, with the current scope described plainly.
               </p>
             </div>
             <Link to="/projects" className="btn btn--secondary">
