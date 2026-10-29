@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { HashLink } from '../components/HashLink'
 import { Portrait } from '../components/Portrait'
 import { ProjectCard } from '../components/ProjectCard'
-import { ROICalculator } from '../components/ROICalculator'
 import { ToolsSection } from '../components/ToolsSection'
 import { ArrowRight, CheckIcon } from '../components/Icons'
 import { site } from '../data/site'
@@ -136,22 +135,6 @@ export function Home() {
           </div>
 
           <ToolsSection />
-        </div>
-      </section>
-
-      {/* ────────────────────────── ROI calculator ──────────────────── */}
-      <section className="section" id="roi">
-        <div className="shell">
-          <div className="section-head">
-            <span className="eyebrow">Estimating Impact</span>
-            <h2>Interactive ROI calculator for enquiry automation</h2>
-            <p className="lede">
-              A working model that runs entirely in your browser. Change any assumption and the estimate
-              updates immediately. It is a planning tool, not a forecast.
-            </p>
-          </div>
-
-          <ROICalculator />
         </div>
       </section>
 

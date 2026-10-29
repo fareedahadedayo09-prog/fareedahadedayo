@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { CtaButton } from '../components/CtaButton'
-import { ROICalculator } from '../components/ROICalculator'
 import { ArrowRight } from '../components/Icons'
 import { site } from '../data/site'
 import { auditProcess, auditSupportingTools, velara } from '../data/audit'
@@ -68,22 +67,6 @@ export function OperationsAudit() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ── ROI calculator ────────────────────────────────────────────── */}
-      <section className="section section--tight" style={{ paddingTop: 0 }}>
-        <div className="shell">
-          <div className="section-head">
-            <span className="eyebrow">Step 4 · Evaluate the intervention</span>
-            <h2>The calculator used in the review</h2>
-            <p className="lede">
-              Step four estimates impact using explicit assumptions rather than a headline number. The
-              calculator below is the same model, exposed so the assumptions can be challenged.
-            </p>
-          </div>
-
-          <ROICalculator />
         </div>
       </section>
 

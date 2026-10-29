@@ -5,7 +5,7 @@ Static, no backend, no paid services, deployable on Vercel's free tier.
 
 Built with React 18, React Router 6, TypeScript and Vite. The production bundle is one JS file
 (~87 kB gzipped) and one CSS file (~5 kB gzipped). No third-party scripts are loaded for icons,
-logos or the calculator.
+logos.
 
 ---
 
@@ -31,10 +31,10 @@ npm run typecheck  # type-check only
 
 | Route | Page |
 | --- | --- |
-| `/` | Hero with portrait, selected projects, engineering approach, full tool stack, interactive ROI calculator, demonstrations, dashboard evidence, privacy section, about, contact, practice-audit teaser |
-| `/projects` | Projects index with status conventions |
+| `/` | Hero with portrait, selected projects, engineering approach, full tool stack, demonstrations, dashboard evidence, privacy section, about, contact, practice-audit teaser |
+| `/projects` | Projects index |
 | `/projects/:slug` | One case study per project, 14 fixed sections |
-| `/audit` | Operations audit method (7 steps), supporting tools, sample documents, ROI calculator, CTA |
+| `/audit` | Operations audit method (7 steps), supporting tools, sample documents, CTA |
 | `/audit/velara-skin-co` | Fictional practice audit demonstrating the method |
 | `*` | 404 page |
 
@@ -64,10 +64,9 @@ portfolio/
    │  ├─ projects.ts       The four projects, full case studies, statuses
    │  ├─ tools.ts          Tool stack in three tiers with experience levels
    │  ├─ audit.ts          Audit method + the fictional Velara practice audit
-   │  ├─ calculator.ts     ROI calculator fields and formulas
    │  ├─ content.ts        Engineering principles, about, privacy principles
    │  └─ demos.ts          Demonstration slots and dashboard evidence
-   ├─ components/          Reusable UI (layout, portrait, placeholders, calculator, map)
+   ├─ components/          Reusable UI (layout, portrait, placeholders, map)
    ├─ pages/               One component per route
    └─ styles/globals.css   Design tokens and all styling
 ```
@@ -223,12 +222,7 @@ download button.
 To add a tool, add an object to `coreTools` (featured, with a description), `supportingTools`
 (compact chip list) or `opsTools` (infrastructure tier). It appears with no other change.
 
-### 4.11 Update the ROI calculator defaults
-
-`src/data/calculator.ts` - `DEFAULT_INPUTS`. The fields, formulas and the disclaimer are also in that
-file. The calculator runs entirely in the browser and makes no network call.
-
-### 4.12 Update social links
+### 4.11 Update social links
 
 ```ts
 social: {
@@ -407,5 +401,3 @@ These are baked into the content and should be preserved when you edit:
 - Dashboard figures are **sample data** and labelled as such.
 - Monitoring, alerting and human handoff in the infrastructure tier are described as **design
   capabilities and implementation options**, not as running production systems.
-- The ROI calculator carries its own disclaimer and separates cost reduction, revenue impact and risk
-  reduction so nothing is double-counted.

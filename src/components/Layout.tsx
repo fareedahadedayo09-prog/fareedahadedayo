@@ -184,11 +184,6 @@ function Footer() {
           </div>
 
           <hr className="divider" />
-
-          <p className="faint mono" style={{ fontSize: '0.72rem', paddingTop: '1.6rem', paddingBottom: '0.5rem' }}>
-            {site.roleLabel} · {site.location} · Built with n8n, React and Vercel.
-            No client data, no fabricated metrics.
-          </p>
         </div>
       </div>
     </footer>

@@ -39,12 +39,6 @@ export function ProjectsIndex() {
               <ProjectCard key={project.slug} project={project} />
             ))}
           </div>
-
-          <div className="notice" style={{ marginTop: '1.8rem' }}>
-            <strong>Status conventions used across this site.</strong> Completed means the project is complete
-            as built. A section marked partial or designed is labelled that way on the case study itself, so
-            nothing is presented as tested when it has not been.
-          </div>
         </div>
       </section>
     </>
