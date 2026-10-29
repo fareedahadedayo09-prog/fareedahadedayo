@@ -95,6 +95,7 @@ function Screenshots({ project }: { project: Project }) {
             <figcaption style={{ marginTop: '0.7rem' }}>
               <div style={{ fontWeight: 600, fontSize: '0.86rem' }}>{shot.title}</div>
               <div className="muted" style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>{shot.caption}</div>
+              {shot.note ? <div className="muted" style={{ fontSize: '0.8rem', marginTop: '0.55rem' }}>{shot.note}</div> : null}
             </figcaption>
           </figure>
         ))}

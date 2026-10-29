@@ -45,6 +45,8 @@ export type ScreenshotSlot = {
   title: string
   /** Caption below the image. Also used as the alternative text. */
   caption: string
+  /** Optional note displayed beneath the caption. */
+  note?: string
 }
 
 export type Project = {
@@ -177,6 +179,12 @@ export const projects: Project[] = [
     ],
     screenshots: [
       {
+        id: 'cod-workflow-canvas',
+        image: '/screenshots/cod-workflow-diagram.png',
+        title: 'COD order-processing workflow',
+        caption: 'Workflow canvas',
+      },
+      {
         id: 'cod-risk-alert',
         image: '/screenshots/cod-high-risk-alert.png',
         title: 'High-risk alert',
@@ -307,8 +315,45 @@ export const projects: Project[] = [
       {
         id: 'lead-qualification-workflow',
         image: '/screenshots/lead-qualification-workflow.png',
-        title: 'Workflow canvas',
-        caption: 'BrightSun Solar lead qualification workflow, showing intake, duplicate checks, scoring, routing, lead replies and team alerts.',
+        title: 'Lead qualification workflow diagram',
+        caption: 'BrightSun Solar lead qualification workflow, from enquiry to personalised reply and staff alert.',
+        note: 'Hot and needs-review routes are built into the workflow. This case study demonstrates the warm path, and the morning follow-up digest is not yet enabled.',
+      },
+      {
+        id: 'lead-n8n-canvas',
+        image: '/screenshots/lead-n8n-canvas.png',
+        title: 'n8n workflow canvas',
+        caption: 'The BrightSun Solar lead system in n8n. A new Airtable lead is checked for duplicates, scored by an AI model, saved, and routed by score. This walkthrough follows one warm lead.',
+      },
+      {
+        id: 'lead-airtable-intake',
+        image: '/screenshots/lead-airtable-intake.png',
+        title: 'Airtable, intake',
+        caption: 'The enquiry lands in Airtable with the answers the lead gave: property type, location, decision-maker status, monthly energy spend, budget and main problem.',
+      },
+      {
+        id: 'lead-acknowledgement-header',
+        image: '/screenshots/lead-acknowledgement-header.png',
+        title: 'Acknowledgement email, header',
+        caption: 'The lead gets a branded reply within minutes of submitting the form.',
+      },
+      {
+        id: 'lead-acknowledgement-body',
+        image: '/screenshots/lead-acknowledgement-body.png',
+        title: 'Acknowledgement email, body',
+        caption: 'The reply is written from the lead’s own answers. Here the AI notices that the electricity cost stated doesn’t match the low usage described, and asks for the real figure instead of assuming.',
+      },
+      {
+        id: 'lead-warm-alert-header',
+        image: '/screenshots/lead-warm-alert-header.png',
+        title: 'Warm alert',
+        caption: 'Staff are notified when a lead is classed as warm.',
+      },
+      {
+        id: 'lead-warm-alert-details',
+        image: '/screenshots/lead-warm-alert-details.png',
+        title: 'Warm alert, contact details',
+        caption: 'Staff get the full lead profile and a note that the AI has already replied, so the team monitors the conversation and follows up at the right time instead of starting from scratch.',
       },
       {
         id: 'lead-hot-lead-alert',
