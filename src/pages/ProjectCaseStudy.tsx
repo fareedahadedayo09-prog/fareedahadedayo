@@ -86,7 +86,7 @@ function Screenshots({ project }: { project: Project }) {
             <div style={{ overflow: 'hidden', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--bg-raised)' }}>
               <img
                 src={shot.image}
-                alt={shot.caption}
+                alt={shot.alt ?? shot.caption}
                 loading="lazy"
                 decoding="async"
                 style={{ width: '100%', height: 'auto', display: 'block' }}

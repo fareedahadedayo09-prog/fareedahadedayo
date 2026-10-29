@@ -60,7 +60,7 @@ portfolio/
    ├─ data/                ALL CONTENT LIVES HERE
    │  ├─ site.ts           Personal details, resume, contact, CTAs and links
    │  ├─ projects.ts       The four projects, full case studies, statuses
-   │  ├─ tools.ts          Tool stack in three tiers with experience levels
+   │  ├─ tools.ts          Technical tools and skills grouped by category
    │  ├─ audit.ts          Audit method + the fictional Velara practice audit
    │  ├─ content.ts        Engineering principles, about, privacy principles
    ├─ components/          Reusable UI (layout, project cards, buttons, process map)
@@ -97,8 +97,8 @@ screenshots: [
 ],
 ```
 
-3. `title` appears above the image, and `caption` is used as visible text and alternative text. An optional
-   `note` appears below the caption.
+3. `title` appears above the image, `caption` is visible below it, and optional `alt` provides separate
+   alternative text. An optional `note` appears beneath the caption.
 4. Add new entries to the array to add more screenshots. The grid wraps automatically.
 
 
@@ -174,17 +174,9 @@ documents: {
 Until `href` is set, the page shows a labelled "Document coming soon" placeholder instead of a broken
 download button.
 
-### 4.9 Update the tool stack
+### 4.9 Update technical skills
 
-`src/data/tools.ts`. Every tool carries an `experience` value that controls how it is described:
-
-- `primary` - my main tool for this job
-- `used` - worked with it on a specific project
-- `learning` - know what it does, started working with it
-- `planned` - part of a design, not yet used in a build
-
-To add a tool, add an object to `coreTools` (featured, with a description), `supportingTools`
-(compact chip list) or `opsTools` (infrastructure tier). It appears with no other change.
+`src/data/tools.ts` lists tools and workflow skills you can use, grouped by category. Add or remove names in the relevant category’s `tools` array; the site renders them as compact skill chips. Case studies separately state which tools and workflow paths are demonstrated in each project.
 
 ### 4.10 Update social links
 
@@ -326,7 +318,7 @@ These are baked into the content and should be preserved when you edit:
 
 - The COD order system is a working prototype. The delivery-date, duplicate and reminder paths still need end-to-end verification; dispatch scheduling and courier notifications are not built.
 - BrightSun Solar is a lead-qualification case study. The warm path is demonstrated; the follow-up digest is disabled and the error alert is not yet tested.
-- The Returns Handler is in progress; policy enforcement, conflicting-instruction handling and human escalation are labelled according to their current implementation state.
+- The Returns and Refunds case study is a completed standalone build. Its gallery documents a six-record returns queue, one auto-handled final-sale request and one human-escalated damaged-item/email-mismatch case; it does not claim production deployment or measured impact.
 - The Invoice Extractor is planned and has not been implemented.
 - Velara Skin Co. is fictional and labelled as illustrative wherever it appears.
 - Monitoring, alerting and human handoff in the infrastructure tier are design capabilities, not running production systems.

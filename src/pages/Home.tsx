@@ -121,11 +121,11 @@ export function Home() {
       <section className="section" id="tools">
         <div className="shell">
           <div className="section-head">
-            <span className="eyebrow">Tools</span>
-            <h2>The stack behind the projects</h2>
+            <span className="eyebrow">Technical Skills</span>
+            <h2>Tools and skills I can use</h2>
             <p className="lede">
-              Four categories, and every tool listed is one used in a project on this site. No proficiency
-              levels, no percentages, and nothing included that has not been used.
+              A practical toolkit across workflow automation, AI and LLM integration, data, APIs and web
+              development. Each case study separately describes the tools and workflow paths demonstrated in that project.
             </p>
           </div>
 

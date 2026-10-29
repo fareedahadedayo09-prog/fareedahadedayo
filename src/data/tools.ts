@@ -1,21 +1,6 @@
-/**
- * ──────────────────────────────────────────────────────────────────────────
- *  TOOL STACK
- * ──────────────────────────────────────────────────────────────────────────
- *  Audited and rewritten. Four categories, and every entry is a tool used in
- *  a project on this site. Nothing is listed that has not been used.
- *
- *  There are no proficiency levels, no percentages and no skill bars. The
- *  description says what the tool is used for, which is what a visitor
- *  actually needs to know.
- *
- *  If a future project introduces a tool, add it under the matching category.
- * ──────────────────────────────────────────────────────────────────────────
- */
-
+/** Technical tools and workflow skills Fareedah says she can use. */
 export type Tool = {
   name: string
-  description: string
 }
 
 export type ToolCategory = {
@@ -27,59 +12,62 @@ export type ToolCategory = {
 export const toolStack: ToolCategory[] = [
   {
     title: 'Workflow Automation',
-    purpose: 'The platform used to build, orchestrate and debug workflows.',
+    purpose: 'Platforms for building and connecting multi-step workflows.',
     tools: [
-      {
-        name: 'n8n',
-        description:
-          'The workflow engine behind every project on this site. Nodes handle the connections between systems, expressions and code nodes carry the decision logic, and the workflow canvas itself is the documentation.',
-      },
+      { name: 'n8n' },
+      { name: 'Make' },
+      { name: 'Zapier' },
     ],
   },
   {
-    title: 'AI and Data Processing',
-    purpose: 'Model capability, applied only where a deterministic rule cannot do the job.',
+    title: 'AI & LLM Integration',
+    purpose: 'Model integrations and practical LLM workflow skills.',
     tools: [
-      {
-        name: 'Claude API',
-        description:
-          'Used for text classification, field extraction and rewriting. Deployed behind a rule check rather than trusted directly, so its output is validated before it reaches a customer.',
-      },
-      {
-        name: 'OpenAI API',
-        description:
-          'The alternative provider, compared against Claude on the same task before either is relied on. Selection is made from measured quality, not preference.',
-      },
+      { name: 'Claude API' },
+      { name: 'Google Gemini API' },
+      { name: 'OpenAI API' },
+      { name: 'Botpress' },
+      { name: 'LLM-powered classification' },
+      { name: 'Prompt design' },
+      { name: 'Structured AI outputs' },
     ],
   },
   {
-    title: 'Data Storage and Business Systems',
-    purpose: 'Where the structured records, statuses and audit trail live.',
+    title: 'Data & Databases',
+    purpose: 'Structured records, data stores and interfaces.',
     tools: [
-      {
-        name: 'Airtable',
-        description:
-          'The system of record across the projects: order records, lead records, return requests and their outcomes. Also used as the review queue where a case needs a person.',
-      },
+      { name: 'Airtable' },
+      { name: 'Airtable Interfaces' },
+      { name: 'Google Sheets' },
+      { name: 'Supabase' },
+      { name: 'PostgreSQL' },
     ],
   },
   {
-    title: 'Integrations and Communication',
-    purpose: 'The intake and delivery surfaces the workflows connect to.',
+    title: 'APIs & Integrations',
+    purpose: 'Connecting services, forms and communication channels.',
     tools: [
-      {
-        name: 'Tally',
-        description:
-          'The form intake for orders, returns and leads. Webhooks trigger the workflow on submission.',
-      },
-      {
-        name: 'Gmail',
-        description:
-          'The delivery channel for customer-facing confirmation and cancellation messages, and the inbox where replies are read.',
-      },
+      { name: 'REST APIs' },
+      { name: 'Webhooks' },
+      { name: 'Gmail integration' },
+      { name: 'Form-triggered workflows' },
+      { name: 'Conditional routing' },
+      { name: 'WhatsApp Cloud API' },
+      { name: 'Google Calendar' },
+      { name: 'Shopify' },
+      { name: 'Tally' },
+    ],
+  },
+  {
+    title: 'Development & Deployment',
+    purpose: 'Building, deploying, testing and troubleshooting web and workflow systems.',
+    tools: [
+      { name: 'React' },
+      { name: 'Vercel' },
+      { name: 'Workflow testing and debugging' },
     ],
   },
 ]
 
-/** Everything shown on the site, for reference. */
-export const allToolNames = toolStack.flatMap((c) => c.tools.map((t) => t.name))
+/** Everything shown in the technical skills section, for reference. */
+export const allToolNames = toolStack.flatMap((category) => category.tools.map((tool) => tool.name))

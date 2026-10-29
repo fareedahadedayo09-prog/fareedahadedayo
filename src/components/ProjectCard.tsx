@@ -17,7 +17,7 @@ export function ProjectCard({ project }: { project: Project }) {
         {cover ? (
           <img
             src={cover}
-            alt={project.screenshots[0]?.caption ?? project.name}
+            alt={project.screenshots[0]?.alt ?? project.screenshots[0]?.caption ?? project.name}
             loading="lazy"
             decoding="async"
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}

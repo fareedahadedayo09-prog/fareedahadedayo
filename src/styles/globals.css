@@ -946,7 +946,26 @@ button {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.tool-skill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tool-skill {
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  padding: 0.45rem 0.75rem;
 }
 
 .tool-card {
