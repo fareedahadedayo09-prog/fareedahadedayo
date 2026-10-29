@@ -3,9 +3,6 @@ import { ProjectCard } from '../components/ProjectCard'
 import { ArrowRight } from '../components/Icons'
 import { projects } from '../data/projects'
 
-const completed = projects.filter((p) => p.status === 'done').length
-const planned = projects.filter((p) => p.status === 'planned').length
-
 export function ProjectsIndex() {
   return (
     <>
@@ -17,11 +14,10 @@ export function ProjectsIndex() {
               Home
             </Link>
             <span className="eyebrow">Selected Projects</span>
-            <h1 className="cs-hero__title">Every project, in the state it is actually in</h1>
+            <h1 className="cs-hero__title">Project case studies</h1>
             <p className="lede" style={{ marginTop: '0.4rem' }}>
-              {completed} completed systems and {planned} planned build. Each card links to a case study with the
-              same six sections, so the comparison stays consistent. Status is stated on every card and every
-              section, because a partly built behaviour should not read as finished.
+              Explore the problem, workflow design, decision logic, exceptions, evidence and limitations behind
+              each project. Open a case study for the full walkthrough.
             </p>
 
             <div className="cs-hero__meta">

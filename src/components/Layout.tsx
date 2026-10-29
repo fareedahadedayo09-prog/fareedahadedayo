@@ -88,27 +88,21 @@ function Footer() {
               </p>
             </div>
 
-            <div className="cluster" style={{ gap: '0.6rem' }}>
-              {ctas.primary.href ? (
-                <a className="btn btn--primary" href={ctas.primary.href} target="_blank" rel="noreferrer">
-                  {ctas.primary.label}
-                  <ArrowRight />
-                </a>
-              ) : (
-                <span className="btn btn--pending" aria-disabled="true">
-                  {ctas.primary.label} · Coming soon
-                </span>
-              )}
-              {ctas.secondary.href ? (
-                <a className="btn btn--secondary" href={ctas.secondary.href} target="_blank" rel="noreferrer">
-                  {ctas.secondary.label}
-                </a>
-              ) : (
-                <span className="btn btn--pending" aria-disabled="true">
-                  {ctas.secondary.label} · Coming soon
-                </span>
-              )}
-            </div>
+            {ctas.primary.href || ctas.secondary.href ? (
+              <div className="cluster" style={{ gap: '0.6rem' }}>
+                {ctas.primary.href ? (
+                  <a className="btn btn--primary" href={ctas.primary.href} target="_blank" rel="noreferrer">
+                    {ctas.primary.label}
+                    <ArrowRight />
+                  </a>
+                ) : null}
+                {ctas.secondary.href ? (
+                  <a className="btn btn--secondary" href={ctas.secondary.href} target="_blank" rel="noreferrer">
+                    {ctas.secondary.label}
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
           </div>
 
           <hr className="divider" />
@@ -138,9 +132,7 @@ function Footer() {
                   <a className="link-arrow" href={contact.github.href} target="_blank" rel="noreferrer">
                     {contact.github.label}
                   </a>
-                ) : (
-                  <span className="faint">{contact.github.label}: {contact.github.detail}</span>
-                )}
+                ) : null}
               </div>
             </div>
 
@@ -169,16 +161,12 @@ function Footer() {
                   <a className="link-arrow" href={social.x} target="_blank" rel="noreferrer">
                     X
                   </a>
-                ) : (
-                  <span className="faint">X: not linked yet</span>
-                )}
+                ) : null}
                 {social.posts.length > 0 ? (
                   <a className="link-arrow" href={social.posts[0]} target="_blank" rel="noreferrer">
                     Latest technical note
                   </a>
-                ) : (
-                  <span className="faint">Technical notes: none yet</span>
-                )}
+                ) : null}
               </div>
             </div>
           </div>

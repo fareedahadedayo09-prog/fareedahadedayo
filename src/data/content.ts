@@ -82,27 +82,18 @@ export const scope = {
 export const about = {
   eyebrow: 'About',
   lead:
-    'I am Fareedah Sanusi Adedayo. I work as an automation consultant and systems builder: I examine how business processes actually work, find where manual work and process gaps create friction, and build automation systems around the problems worth solving.',
+    'I am Fareedah Sanusi Adedayo, a self-taught AI workflow automation builder. I map business processes, define rules and exceptions, and build workflows that connect tools and handle data reliably.',
   paragraphs: [
     'My work sits at the intersection of operational analysis and technical implementation. The parts I am most interested in are the ones that decide whether an automation is useful rather than merely busy: which rule produces the outcome, what happens when the input is wrong, what happens when the system does not know, and what happens when a person should decide instead.',
     'I approach each engagement the same way, whatever the function. The process is mapped first, the problem is diagnosed against real data, and automation is only proposed where the benefit justifies it. Nothing is built before the rules and the exceptions are written down.',
     'I document the work as I go. Every case study on this site states what was implemented, what was tested, and what is still only designed, with the limitations written alongside the results.',
-    'I am open to consulting engagements, implementation projects and corporate roles in automation, business operations and process improvement.',
-  ],
-  placeholders: [
-    {
-      label: 'Background',
-      text: 'Open placeholder. Replace with a line about your background and how you came to automation work, or delete this block.',
-    },
-    {
-      label: 'Current focus',
-      text: 'Open placeholder. Replace with what you are working on right now, or delete this block.',
-    },
+    'I am pursuing an LLB in Civil Law and seeking a remote AI automation internship or junior workflow-automation role.'
   ],
   facts: [
-    { label: 'Role', value: 'AI Automation Consultant and Systems Builder' },
+    { label: 'Role', value: 'AI Workflow Automation Builder' },
     { label: 'Approach', value: 'Diagnose first, then design, then build and validate' },
-    { label: 'Engagements', value: 'Consulting, implementation projects, corporate roles' },
+    { label: 'Seeking', value: 'Remote AI automation internships and junior roles' },
+    { label: 'Education', value: 'LLB, Civil Law, in progress; expected January 2029' },
     { label: 'Location', value: 'Abuja, Nigeria' },
   ],
 }

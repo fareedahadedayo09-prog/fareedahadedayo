@@ -20,14 +20,6 @@ export const ArrowRight = (props: IconProps) => (
   </svg>
 )
 
-export const ImageIcon = (props: IconProps) => (
-  <svg {...base(props)}>
-    <rect x="3" y="4" width="18" height="16" rx="2" />
-    <circle cx="8.5" cy="9.5" r="1.5" />
-    <path d="M21 16l-5-5-11 7" />
-  </svg>
-)
-
 export const VideoIcon = (props: IconProps) => (
   <svg {...base(props)}>
     <rect x="2.5" y="6" width="13" height="12" rx="2" />

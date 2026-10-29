@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { HashLink } from '../components/HashLink'
-import { Portrait } from '../components/Portrait'
 import { ProjectCard } from '../components/ProjectCard'
 import { ToolsSection } from '../components/ToolsSection'
 import { ArrowRight, CheckIcon } from '../components/Icons'
@@ -23,33 +22,29 @@ export function Home() {
       {/* ─────────────────────────── Hero ───────────────────────────── */}
       <section className="hero">
         <div className="shell">
-          <div className="hero__grid hero__image-first">
-            <div className="hero__copy">
-              <span className="eyebrow">{site.roleLabel}</span>
-              <h1 className="hero__headline">{site.headline}</h1>
-              <p className="hero__lead">{site.heroLead}</p>
+          <div className="hero__copy hero__copy--solo">
+            <span className="eyebrow">{site.roleLabel}</span>
+            <h1 className="hero__headline">{site.headline}</h1>
+            <p className="hero__lead">{site.heroLead}</p>
 
-              <div className="hero__actions">
-                <HashLink to="/#projects" className="btn btn--primary">
-                  Explore Projects
-                  <ArrowRight width={15} height={15} />
-                </HashLink>
-                <HashLink to="/#contact" className="btn btn--secondary">
-                  Contact Me
-                </HashLink>
-              </div>
-
-              <div className="hero__availability">
-                {site.availability.map((item, i) => (
-                  <span key={item} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-                    {i > 0 ? <span className="dot" aria-hidden="true" /> : null}
-                    {item}
-                  </span>
-                ))}
-              </div>
+            <div className="hero__actions">
+              <HashLink to="/#projects" className="btn btn--primary">
+                Explore Projects
+                <ArrowRight width={15} height={15} />
+              </HashLink>
+              <HashLink to="/#contact" className="btn btn--secondary">
+                Contact Me
+              </HashLink>
             </div>
 
-            <Portrait />
+            <div className="hero__availability">
+              {site.availability.map((item, i) => (
+                <span key={item} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+                  {i > 0 ? <span className="dot" aria-hidden="true" /> : null}
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -213,23 +208,6 @@ export function Home() {
 
             <div className="stack" style={{ gap: '1rem' }}>
               <div className="card">
-                <div className="cluster" style={{ gap: '0.6rem', marginBottom: '0.8rem' }}>
-                  <CheckIcon width={18} height={18} style={{ color: 'var(--accent)' }} />
-                  <h3 style={{ margin: 0, fontSize: '1rem' }}>Open placeholders</h3>
-                </div>
-                <div className="stack-sm">
-                  {about.placeholders.map((placeholder) => (
-                    <div key={placeholder.label} style={{ borderLeft: '2px solid var(--border)', paddingLeft: '0.9rem' }}>
-                      <span className="mono" style={{ fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-faint)' }}>
-                        {placeholder.label}
-                      </span>
-                      <p className="muted" style={{ fontSize: '0.84rem', marginTop: '0.35rem' }}>{placeholder.text}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="card">
                 <h3 style={{ fontSize: '1rem' }}>Documented the same way</h3>
                 <ul className="stack-sm" style={{ marginTop: '0.7rem' }}>
                   {[
@@ -261,9 +239,9 @@ export function Home() {
                   Relevant professional opportunities
                 </h2>
                 <p className="lede">
-                  Consulting engagements, implementation projects and corporate roles in automation, business
-                  operations and process improvement. If you have a process that should be automated, start with
-                  an audit rather than a build.
+                  I am seeking remote internships and junior roles focused on AI workflow automation, process
+                  improvement and business operations. I am especially interested in work involving n8n, APIs,
+                  structured data and carefully scoped AI integrations.
                 </p>
               </div>
 
@@ -281,13 +259,6 @@ export function Home() {
                 ) : null}
               </div>
             </div>
-
-            <hr className="divider" style={{ margin: '2rem 0' }} />
-
-            <p className="faint" style={{ fontSize: '0.82rem' }}>
-              Booking links for an operations audit and a discovery call are not configured yet, so they are
-              not shown. Nothing on this page is a button that does not work.
-            </p>
           </div>
         </div>
       </section>

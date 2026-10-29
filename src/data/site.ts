@@ -28,28 +28,14 @@ export const site = {
   name: 'Fareedah Sanusi Adedayo',
   wordmark: 'Fareedah Sanusi Adedayo',
   wordmarkShort: 'FA',
-  roleLabel: 'AI Automation Consultant and Systems Builder',
+  roleLabel: 'AI Workflow Automation Builder',
   location: 'Abuja, Nigeria',
-  availability: ['Open to consulting engagements', 'Automation implementation projects', 'Corporate automation roles'],
+  availability: ['Seeking remote AI automation internships', 'Open to junior workflow automation roles', 'Remote opportunities worldwide'],
 
   /** ── Hero ──────────────────────────────────────────────────────── */
   headline: 'Automation systems built around real operational problems.',
   heroLead:
     'I analyze business processes, identify opportunities to improve how work gets done, and build automation systems around defined requirements, decision logic and measurable outcomes.',
-
-  /**
-   * ── Professional portrait ──────────────────────────────────────────────
-   * Drop your photo into /public and point `src` at it.
-   *   recommended: public/portrait.jpg  (4:5 or 1:1, ~400–800 KB)
-   *
-   * Falls back to a clean labelled placeholder if the file is missing, so the
-   * site never shows a broken image.
-   */
-  portrait: {
-    src: '/portrait.svg',
-    alt: 'Professional portrait of Fareedah Sanusi Adedayo',
-    caption: 'Portrait',
-  },
 
   /** ── Navigation ─────────────────────────────────────────────────── */
   nav: [
@@ -64,7 +50,7 @@ export const site = {
   /** ── Resume / CV ────────────────────────────────────────────────── */
   resume: {
     label: 'Resume',
-    href: '',
+    href: '/resume.pdf',
     detail: 'PDF',
   },
 
@@ -72,8 +58,8 @@ export const site = {
   contact: {
     email: {
       label: 'Email',
-      href: 'mailto:fareedahadedayo08@gmail.com',
-      detail: 'fareedahadedayo08@gmail.com',
+      href: 'mailto:fareedahsanusi25@gmail.com',
+      detail: 'fareedahsanusi25@gmail.com',
     } as ContactLink,
     linkedin: {
       label: 'LinkedIn',
