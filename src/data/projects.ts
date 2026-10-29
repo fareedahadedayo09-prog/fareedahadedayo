@@ -195,7 +195,7 @@ export const projects: Project[] = [
         caption: 'The branded page names the customer and product and confirms the order was cancelled without a charge.',
       },
     ],
-    loomUrl: 'https://www.loom.com/share/bb406124f4de4588b50c9f196c56a1f1',
+    loomUrl: 'https://www.loom.com/share/21e03fb607ea4f81a292ff88ec9f0184',
     links: [],
   },
 
@@ -232,7 +232,7 @@ export const projects: Project[] = [
         status: 'partial',
         paragraphs: [
           'A new Airtable lead moves through n8n for field normalisation and a duplicate check. A non-duplicate lead is scored by an AI model, and the structured score is saved back to Airtable. n8n then routes the lead as Hot, Warm or Review.',
-          'The diagram marks the warm path as demonstrated. It sends a personalised AI-written Gmail reply, alerts the team with the lead profile, and updates the AI Replied status in Airtable. Hot-lead and review alerts, scoring fallback, the follow-up digest and error alert are shown as built but not demonstrated in the case study.',
+          'The diagram marks the warm path as demonstrated. It sends a personalised AI-written Gmail reply, alerts the team with the lead profile, and updates the AI Replied status in Airtable. A separate screenshot shows the hot-lead alert email. Review alerts, scoring fallback, the follow-up digest and error alert are shown as built but not demonstrated in the case study.'
         ],
         table: {
           keys: ['Intake', 'Normalisation', 'Duplicate check', 'Scoring', 'Routing', 'Warm path', 'Other paths'],
@@ -281,11 +281,12 @@ export const projects: Project[] = [
         label: 'Evidence and testing',
         status: 'partial',
         paragraphs: [
-          'The workflow canvas below identifies the warm path as demonstrated and marks other branches as built but not demonstrated in the case study.',
+          'The workflow canvas identifies the warm path as demonstrated. A separate screenshot shows the hot-lead alert email. Other branches are described only as shown on the canvas.',
         ],
         bullets: [
-          'Demonstrated path shown: warm lead reply, team alert and Airtable reply-status update.',
-          'The canvas also depicts duplicate handling, hot-lead and review alerts, scoring fallback, a follow-up digest, and an error alert.',
+          'The workflow canvas shows the warm lead reply, team alert and Airtable reply-status update.',
+          'The hot-lead alert email is shown in a separate screenshot.',
+          'The canvas also depicts duplicate handling, review alerts, scoring fallback, a follow-up digest and an error alert.',
         ],
       },
       {
@@ -296,7 +297,7 @@ export const projects: Project[] = [
           'The workflow diagram does not demonstrate every branch. The follow-up digest is switched off, and the error alert is not yet tested.',
         ],
         bullets: [
-          'Duplicate handling, hot-lead alerting, review routing and scoring fallback are not demonstrated in the case study.',
+          'Duplicate handling, review routing and scoring fallback are shown on the canvas but not demonstrated in the provided evidence.',
           'The follow-up digest is built but switched off.',
           'The error alert is built but not yet tested.',
         ],
@@ -308,6 +309,12 @@ export const projects: Project[] = [
         image: '/screenshots/lead-qualification-workflow.png',
         title: 'Workflow canvas',
         caption: 'BrightSun Solar lead qualification workflow, showing intake, duplicate checks, scoring, routing, lead replies and team alerts.',
+      },
+      {
+        id: 'lead-hot-lead-alert',
+        image: '/screenshots/lead-qualification-hot-lead-alert.png',
+        title: 'Hot-lead alert email',
+        caption: 'A BrightSun Solar email marks the enquiry as a high-priority hot lead and recommends a team follow-up action.',
       },
     ],
     links: [],
