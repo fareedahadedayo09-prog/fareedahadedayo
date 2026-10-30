@@ -172,6 +172,12 @@ function Screenshots({ project }: { project: Project }) {
   )
 }
 
+function sectionLabel(project: Project, section: CaseStudySection) {
+  return project.slug === 'lead-qualification'
+    ? section.label
+    : CASE_STUDY_LABELS[section.id] ?? section.label
+}
+
 function Section({ section, project, index }: { section: CaseStudySection; project: Project; index: number }) {
   const isEvidence = section.id === 'evidence'
   const bullets = section.bullets ?? []
@@ -273,7 +279,7 @@ export function ProjectCaseStudy() {
           <nav className="cs-nav" aria-label="Case study sections">
             {project.sections.map((section) => (
               <a key={section.id} href={`#${section.id}`}>
-                {CASE_STUDY_LABELS[section.id] ?? section.label}
+                {sectionLabel(project, section)}
               </a>
             ))}
           </nav>
@@ -292,7 +298,7 @@ export function ProjectCaseStudy() {
                       <span className="mono faint" style={{ marginRight: '0.4rem' }}>
                         {String(i + 1).padStart(2, '0')}
                       </span>
-                      {CASE_STUDY_LABELS[section.id] ?? section.label}
+                      {sectionLabel(project, section)}
                     </a>
                   </li>
                 ))}
