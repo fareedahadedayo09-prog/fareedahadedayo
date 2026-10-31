@@ -87,12 +87,12 @@ export const about = {
     'My work sits at the intersection of operational analysis and technical implementation. The parts I am most interested in are the ones that decide whether an automation is useful rather than merely busy: which rule produces the outcome, what happens when the input is wrong, what happens when the system does not know, and what happens when a person should decide instead.',
     'I approach each engagement the same way, whatever the function. The process is mapped first, the problem is diagnosed against real data, and automation is only proposed where the benefit justifies it. Nothing is built before the rules and the exceptions are written down.',
     'I document the work as I go. Every case study on this site states what was implemented, what was tested, and what is still only designed, with the limitations written alongside the results.',
-    'I am pursuing an LLB in Civil Law and seeking a remote AI automation internship or junior workflow-automation role.'
+    'I am pursuing an LLB in Civil Law and am open to AI Automation Specialist roles that align with my skills.'
   ],
   facts: [
     { label: 'Role', value: 'AI Workflow Automation Builder' },
     { label: 'Approach', value: 'Diagnose first, then design, then build and validate' },
-    { label: 'Seeking', value: 'Remote AI automation internships and junior roles' },
+    { label: 'Role interests', value: 'AI Automation Specialist roles aligned with my skills' },
     { label: 'Education', value: 'LLB, Civil Law, in progress; expected January 2029' },
     { label: 'Location', value: 'Abuja, Nigeria' },
   ],
