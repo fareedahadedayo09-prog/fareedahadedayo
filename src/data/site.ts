@@ -30,7 +30,7 @@ export const site = {
   wordmarkShort: 'FA',
   roleLabel: 'AI Automation Consultant and Systems Builder',
   location: 'Abuja, Nigeria',
-  availability: ['Open to consulting engagements', 'Automation implementation projects', 'Corporate automation roles'],
+  availability: ['Open to remote internships and junior automation roles, supporting workflow builds, testing and documentation.'],
 
   /** ── Hero ──────────────────────────────────────────────────────── */
   headline: 'Automation systems built around real operational problems.',

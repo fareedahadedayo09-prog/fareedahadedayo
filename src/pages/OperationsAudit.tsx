@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { CtaButton } from '../components/CtaButton'
 import { ROICalculator } from '../components/ROICalculator'
 import { ArrowRight } from '../components/Icons'
 import { site } from '../data/site'
@@ -128,18 +127,15 @@ export function OperationsAudit() {
                 </p>
               </div>
               <div className="cluster" style={{ gap: '0.7rem' }}>
-                <CtaButton cta={site.ctas.primary} />
-                <CtaButton cta={site.ctas.secondary} variant="secondary" />
+                <a className="btn btn--primary" href={site.contact.email.href}>
+                  {site.contact.email.label}
+                  <ArrowRight width={14} height={14} />
+                </a>
+                <span className="faint mono" style={{ fontSize: '0.72rem' }}>
+                  {site.contact.email.detail}
+                </span>
               </div>
             </div>
-
-            <hr className="divider" style={{ margin: '1.8rem 0 1.2rem' }} />
-
-            <p className="faint" style={{ fontSize: '0.8rem' }}>
-              Booking links are not configured yet, so no buttons are shown. Set{' '}
-              <span className="mono">ctas.primary.href</span> and <span className="mono">ctas.secondary.href</span>{' '}
-              in <span className="mono">src/data/site.ts</span> to add them.
-            </p>
           </div>
         </div>
       </section>

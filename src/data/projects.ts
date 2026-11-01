@@ -353,7 +353,7 @@ export const projects: Project[] = [
     tools: ['n8n', 'Airtable', 'Tally'],
     timeline: 'Completed',
     overview:
-      'Returns are the case where a workflow has to be more careful than the process it replaces. A customer is asking for something back, the policy may not cover it, and the customer may give instructions that contradict each other. This system applies the policy rules consistently while keeping an explicit exit to a human for anything the rules cannot settle.',
+      'Returns are the case where a workflow has to be more careful than the process it replaces. A customer is asking for something back, the policy may not cover it, and the customer may give instructions that contradict each other. This system applies the policy rules consistently while keeping an explicit exit to a human for anything the rules cannot settle. Scope: Processes return requests, applies configured policy rules and drafts customer responses. It does not issue refunds or transfer money. The example uses a fictional store policy for illustration; real deployments must account for applicable consumer protection requirements.',
     sections: [
       {
         id: 'problem',
@@ -395,7 +395,7 @@ export const projects: Project[] = [
         },
         note: {
           tone: 'grey',
-          text: 'Stages are listed in the order the request passes through them. Conflict detection is designed and documented but is not yet implemented; the sections below mark it as such.',
+          text: 'Scope: Processes return requests, applies configured policy rules and drafts customer responses. It does not issue refunds or transfer money. The example uses a fictional store policy; real deployments must account for applicable consumer protection requirements. Stages are listed in the order the request passes through them. Conflict detection is designed and documented but is not yet implemented; the sections below mark it as such.',
         },
       },
       {
@@ -413,7 +413,7 @@ export const projects: Project[] = [
         ],
         note: {
           tone: 'warn',
-          text: 'Partial: the rule order is implemented and documented. Conflict detection between contradictory instructions is designed but not yet built.',
+          text: 'Partial: the rule order is implemented and documented. Conflict detection between contradictory instructions is designed but not yet built. The example uses a fictional store policy for illustration; real deployments must account for applicable consumer protection requirements.',
         },
       },
       {
@@ -462,7 +462,32 @@ export const projects: Project[] = [
         ],
       },
     ],
-    screenshots: [],
+    screenshots: [
+      {
+        id: 'returns-01',
+        image: '/screenshots/01-order-submission.png',
+        title: '1. Return request intake',
+        caption: 'The intake form capturing the return request before workflow execution.',
+      },
+      {
+        id: 'returns-02',
+        image: '/screenshots/02-customer-email.png',
+        title: '2. Draft customer response',
+        caption: 'The draft response prepared for the customer after policy evaluation.',
+      },
+      {
+        id: 'returns-03',
+        image: '/screenshots/03-verified-outcome.png',
+        title: '3. Verified outcome',
+        caption: 'The outcome recorded after the request was processed.',
+      },
+      {
+        id: 'returns-04',
+        image: '/screenshots/04-airtable-record.png',
+        title: '4. Airtable record',
+        caption: 'The corresponding record in Airtable holding the status and rule applied.',
+      },
+    ],
     links: [],
   },
 

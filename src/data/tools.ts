@@ -2,14 +2,13 @@
  * ──────────────────────────────────────────────────────────────────────────
  *  TOOL STACK
  * ──────────────────────────────────────────────────────────────────────────
- *  Audited and rewritten. Four categories, and every entry is a tool used in
- *  a project on this site. Nothing is listed that has not been used.
+ *  Two categories, and every entry is described honestly. No proficiency
+ *  levels, no percentages and no skill bars. The description says what the
+ *  tool is used for, which is what a visitor actually needs to know.
  *
- *  There are no proficiency levels, no percentages and no skill bars. The
- *  description says what the tool is used for, which is what a visitor
- *  actually needs to know.
- *
- *  If a future project introduces a tool, add it under the matching category.
+ *  Used in featured projects: tools demonstrably used in the three completed
+ *  projects on this site. Additional hands-on familiarity: tools explored
+ *  outside those builds, not presented as production experience.
  * ──────────────────────────────────────────────────────────────────────────
  */
 
@@ -26,47 +25,19 @@ export type ToolCategory = {
 
 export const toolStack: ToolCategory[] = [
   {
-    title: 'Workflow Automation',
-    purpose: 'The platform used to build, orchestrate and debug workflows.',
+    title: 'Used in featured projects',
+    purpose: 'Tools demonstrably used in the three completed projects on this site. Each one appears in a live workflow and its output can be traced to a record.',
     tools: [
       {
         name: 'n8n',
         description:
-          'The workflow engine behind every project on this site. Nodes handle the connections between systems, expressions and code nodes carry the decision logic, and the workflow canvas itself is the documentation.',
+          'The workflow engine behind every completed project on this site. Nodes handle the connections between systems, expressions and code nodes carry the decision logic, and the workflow canvas itself is the documentation.',
       },
-    ],
-  },
-  {
-    title: 'AI and Data Processing',
-    purpose: 'Model capability, applied only where a deterministic rule cannot do the job.',
-    tools: [
-      {
-        name: 'Claude API',
-        description:
-          'Used for text classification, field extraction and rewriting. Deployed behind a rule check rather than trusted directly, so its output is validated before it reaches a customer.',
-      },
-      {
-        name: 'OpenAI API',
-        description:
-          'The alternative provider, compared against Claude on the same task before either is relied on. Selection is made from measured quality, not preference.',
-      },
-    ],
-  },
-  {
-    title: 'Data Storage and Business Systems',
-    purpose: 'Where the structured records, statuses and audit trail live.',
-    tools: [
       {
         name: 'Airtable',
         description:
-          'The system of record across the projects: order records, lead records, return requests and their outcomes. Also used as the review queue where a case needs a person.',
+          'The system of record across the completed projects: order records, lead records, return requests and their outcomes. Also used as the review queue where a case needs a person.',
       },
-    ],
-  },
-  {
-    title: 'Integrations and Communication',
-    purpose: 'The intake and delivery surfaces the workflows connect to.',
-    tools: [
       {
         name: 'Tally',
         description:
@@ -75,7 +46,23 @@ export const toolStack: ToolCategory[] = [
       {
         name: 'Gmail',
         description:
-          'The delivery channel for customer-facing confirmation and cancellation messages, and the inbox where replies are read.',
+          'The delivery channel for customer-facing confirmation and cancellation messages, and the inbox where replies are read. Used in the Order Confirmation and Risk-Check System.',
+      },
+    ],
+  },
+  {
+    title: 'Additional hands-on familiarity',
+    purpose: 'Tools explored outside the featured builds. Hands-on familiarity from practice and testing, not demonstrated in the completed project workflows, and not presented as claimed proficiency.',
+    tools: [
+      {
+        name: 'Claude API',
+        description:
+          'Explored for text classification, field extraction and rewriting. Hands-on familiarity; not deployed in the featured completed workflows, where deterministic rules are used instead.',
+      },
+      {
+        name: 'OpenAI API',
+        description:
+          'Explored as an alternative model provider and compared on the same tasks. Hands-on familiarity; not integrated into the completed project workflows shown here.',
       },
     ],
   },

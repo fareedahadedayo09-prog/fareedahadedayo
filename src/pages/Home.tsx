@@ -131,8 +131,9 @@ export function Home() {
             <span className="eyebrow">Tools</span>
             <h2>The stack behind the projects</h2>
             <p className="lede">
-              Four categories, and every tool listed is one used in a project on this site. No proficiency
-              levels, no percentages, and nothing included that has not been used.
+              Two categories: tools demonstrably used in the featured projects, and additional hands-on
+              familiarity explored outside those builds. No proficiency levels, no percentages, and no claimed
+              proficiency beyond what the projects show.
             </p>
           </div>
 
@@ -300,11 +301,10 @@ export function Home() {
               </div>
             </div>
 
-            <hr className="divider" style={{ margin: '2rem 0' }} />
+            <hr className="divider" style={{ margin: '2rem 0 1rem' }} />
 
             <p className="faint" style={{ fontSize: '0.82rem' }}>
-              Booking links for an operations audit and a discovery call are not configured yet, so they are
-              not shown. Nothing on this page is a button that does not work.
+              Reach out by email for remote internships, junior automation roles or workflow support.
             </p>
           </div>
         </div>
