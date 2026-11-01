@@ -37,7 +37,7 @@ npm run typecheck  # type-check only
 | `/audit/velara-skin-co` | Fictional practice audit demonstrating the method |
 | `*` | 404 page |
 
-Project slugs: `order-confirmation-risk-check`, `lead-qualification`, `returns-refunds-handler`, `invoice-extractor`.
+Project slugs: `order-confirmation-risk-check`, `lead-qualification`, `returns-refunds-handler`.
 
 Configured links work normally. Actions without a destination are omitted rather than shown as dead buttons.
 
@@ -319,6 +319,5 @@ These are baked into the content and should be preserved when you edit:
 - The COD order system is a working prototype. The delivery-date, duplicate and reminder paths still need end-to-end verification; dispatch scheduling and courier notifications are not built.
 - BrightSun Solar is a lead-qualification case study. The warm path is demonstrated; the follow-up digest is disabled and the error alert is not yet tested.
 - The Returns and Refunds case study is a completed standalone build. Its gallery documents a six-record returns queue, one auto-handled final-sale request and one human-escalated damaged-item/email-mismatch case; it does not claim production deployment or measured impact.
-- The Invoice Extractor is planned and has not been implemented.
 - Velara Skin Co. is fictional and labelled as illustrative wherever it appears.
 - Monitoring, alerting and human handoff in the infrastructure tier are design capabilities, not running production systems.
