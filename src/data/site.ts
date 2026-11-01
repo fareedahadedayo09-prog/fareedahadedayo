@@ -96,7 +96,7 @@ export const site = {
 
   /** ── Social sharing metadata ────────────────────────────────────── */
   og: {
-    title: 'Fareedah Sanusi Adedayo: AI Automation Engineering',
+    title: 'Fareedah Sanusi Adedayo: AI Workflow Automation Builder',
     description:
       'Automation systems built around real operational problems. Workflows for order operations, lead qualification and business processes.',
     image: '/og-image.svg',

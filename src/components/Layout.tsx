@@ -37,7 +37,7 @@ function Header() {
         <nav id="primary-nav" className={`nav ${open ? 'is-open' : 'is-closed'}`} aria-label="Primary">
           {site.nav.map((item) =>
             item.href.startsWith('/#') ? (
-              <HashLink key={item.label} to={item.href} className="nav__link">
+              <HashLink key={item.label} to={item.href} className="nav__link" onClick={() => setOpen(false)}>
                 {item.label}
               </HashLink>
             ) : (

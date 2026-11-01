@@ -592,7 +592,7 @@ button {
 
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
@@ -1086,41 +1086,6 @@ button {
   line-height: 1.62;
 }
 
-/* ---- Process map -------------------------------------------------- */
-
-.process-map {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--bg-raised);
-  overflow: hidden;
-  padding: clamp(1rem, 0.6rem + 1.4vw, 1.8rem);
-}
-
-.process-map svg {
-  width: 100%;
-  height: auto;
-}
-
-.process-step {
-  fill: var(--surface);
-  stroke: var(--border-strong);
-  stroke-width: 1;
-}
-
-.process-step-text {
-  fill: var(--text);
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.process-arrow {
-  stroke: var(--text-faint);
-  stroke-width: 1;
-  fill: none;
-  marker-end: url(#arrowhead);
-}
-
 /* ---- Demo / dashboard cards --------------------------------------- */
 
 .demo-grid {
@@ -1270,7 +1235,7 @@ table.data td:first-child {
 
 .grid-2 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: clamp(1rem, 0.6rem + 1.4vw, 2rem);
 }
 
@@ -1352,5 +1317,20 @@ table.data td:first-child {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* Allow existing controls to wrap on narrow screens without changing desktop layout. */
+@media (max-width: 360px) {
+  .badge {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .btn {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight } from '../components/Icons'
 import { site } from '../data/site'
-import { auditProcess, auditSupportingTools, velara } from '../data/audit'
+import { auditProcess, auditSupportingTools } from '../data/audit'
 
 export function OperationsAudit() {
   return (
@@ -64,31 +64,6 @@ export function OperationsAudit() {
                 <span className="tool-chip__note">{tool.role}</span>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Practice audit ─────────────────────────────────────────────── */}
-      <section className="section section--tight" style={{ paddingTop: 0 }}>
-        <div className="shell">
-          <div className="section-head">
-            <span className="eyebrow">Worked Example</span>
-            <h2>{velara.name}: {velara.tagline}</h2>
-            <p className="lede">
-              A fictional business used to show what the review produces: a process map, an investigation
-              checklist, prioritised recommendations, and a clear list of what should not be automated.
-            </p>
-          </div>
-
-          <div className="notice notice--warn">
-            <strong>Fictional demonstration.</strong> {velara.disclaimer}
-          </div>
-
-          <div style={{ marginTop: '1.6rem' }}>
-            <Link to="/audit/velara-skin-co" className="btn btn--primary">
-              Open the practice audit
-              <ArrowRight width={15} height={15} />
-            </Link>
           </div>
         </div>
       </section>

@@ -304,11 +304,11 @@ export const projects: Project[] = [
             'Notifies the team with the lead profile.',
             'Updates the Airtable record to reflect that an AI reply has been sent.',
           ] },
-          { type: 'paragraph', text: 'The response can also identify inconsistencies in submitted information and ask the prospect for clarification rather than making unsupported assumptions.' },
+          { type: 'paragraph', text: 'The supplied screenshot shows the acknowledgement layout, but its lead-specific body is redacted. It does not independently establish how the model handles inconsistent answers.' },
           { type: 'link', label: 'View warm acknowledgement email', href: '/screenshots/lead-acknowledgement-body.webp' },
           { type: 'heading', text: 'Review cases' },
           { type: 'paragraph', text: '**Objective: Prevent uncertain enquiries from being treated as qualified opportunities.**' },
-          { type: 'paragraph', text: 'Incomplete or unclear submissions are routed to a review notification rather than automatically receiving the normal warm-lead response. This provides a separate path for enquiries that require human assessment.' },
+          { type: 'paragraph', text: 'The canvas includes a review-notification route for enquiries requiring human assessment. The exact conditions for incomplete or unclear submissions and their end-to-end behavior are not verified by the supplied evidence.' },
           { type: 'heading', text: 'Qualification boundaries' },
           { type: 'paragraph', text: 'The intake records property type, location, decision-maker status, energy expenditure, budget and the stated problem. The supplied files do not include the scoring prompt, numeric thresholds or duplicate-search expression. These fields are inputs, not a verified scoring formula. Separate cold and unsuitable routes are not established by the current evidence. Handling of malformed or incomplete AI output still requires dedicated testing; a parser node alone does not prove recovery.' },
           { type: 'heading', text: 'Additional routing safeguards' },
@@ -356,7 +356,7 @@ export const projects: Project[] = [
           { type: 'heading', text: '04. Personalised acknowledgement' },
           { type: 'link', label: 'View email header', href: '/screenshots/lead-acknowledgement-header.webp' },
           { type: 'link', label: 'View email body', href: '/screenshots/lead-acknowledgement-body.webp' },
-          { type: 'paragraph', text: 'Demonstrates the warm-lead response generated from the prospect’s submission. In this example, the response identifies an inconsistent energy-cost answer and requests clarification instead of assuming the information is correct.' },
+          { type: 'paragraph', text: 'Shows the warm-lead acknowledgement layout. Lead-specific details are redacted, so the wording, personalisation and any clarification of energy-cost information cannot be verified from this image.' },
           { type: 'heading', text: '05. Internal warm-lead notification' },
           { type: 'link', label: 'View notification header', href: '/screenshots/lead-warm-alert-header.webp' },
           { type: 'link', label: 'View notification details', href: '/screenshots/lead-warm-alert-details.webp' },
@@ -417,13 +417,13 @@ export const projects: Project[] = [
         id: 'lead-acknowledgement-header',
         image: '/screenshots/lead-acknowledgement-header.webp',
         title: 'Acknowledgement email, header',
-        caption: 'The lead gets a branded reply within minutes of submitting the form.',
+        caption: 'A branded acknowledgement email. The screenshot alone does not establish response latency.',
       },
       {
         id: 'lead-acknowledgement-body',
         image: '/screenshots/lead-acknowledgement-body.webp',
         title: 'Acknowledgement email, body',
-        caption: 'The reply is generated from the lead’s answers. In this demonstrated path, the AI flags an inconsistent energy-cost answer and asks for clarification rather than assuming. Contact-specific text is redacted in the image.',
+        caption: 'Warm-lead acknowledgement layout. The lead-specific body is redacted; this image does not verify personalised wording or clarification of inconsistent answers.',
       },
       {
         id: 'lead-warm-alert-header',
@@ -464,7 +464,7 @@ export const projects: Project[] = [
       {
         id: 'problem',
         label: 'The problem',
-        status: 'verified',
+        status: 'partial',
         paragraphs: [],
         blocks: [
           { type: 'paragraph', text: "Return requests can require multiple steps: identifying the correct order, checking the applicable policy, understanding the customer's issue, composing an appropriate response, and deciding whether a support representative needs to intervene." },
@@ -483,7 +483,7 @@ export const projects: Project[] = [
       {
         id: 'workflow',
         label: 'How it works',
-        status: 'verified',
+        status: 'partial',
         paragraphs: [],
         blocks: [
           { type: 'paragraph', text: 'Processes return requests, applies configured policy rules and drafts customer responses. It does not issue refunds or transfer money.' },
@@ -511,7 +511,7 @@ export const projects: Project[] = [
       {
         id: 'decisions',
         label: 'Decision logic',
-        status: 'verified',
+        status: 'partial',
         paragraphs: [],
         blocks: [
           { type: 'heading', text: 'How decisions are handled' },
@@ -573,7 +573,7 @@ export const projects: Project[] = [
       {
         id: 'evidence',
         label: 'Evidence and testing',
-        status: 'verified',
+        status: 'partial',
         paragraphs: [],
         blocks: [
           { type: 'heading', text: 'Recorded evidence' },

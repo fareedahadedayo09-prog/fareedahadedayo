@@ -30,11 +30,10 @@ npm run typecheck  # type-check only
 
 | Route | Page |
 | --- | --- |
-| `/` | Hero, selected projects, engineering approach, tool stack, privacy, about, contact and practice-audit teaser |
+| `/` | Hero, selected projects, engineering approach, tool stack, privacy, about, contact and audit-method teaser |
 | `/projects` | Projects index |
 | `/projects/:slug` | Case study with six sections and evidence |
 | `/audit` | Operations audit method (7 steps), supporting tools, sample documents, CTA |
-| `/audit/velara-skin-co` | Fictional practice audit demonstrating the method |
 | `*` | 404 page |
 
 Project slugs: `order-confirmation-risk-check`, `lead-qualification`, `returns-refunds-handler`.
@@ -61,9 +60,9 @@ portfolio/
    │  ├─ site.ts           Personal details, resume, contact, CTAs and links
    │  ├─ projects.ts       The four projects, full case studies, statuses
    │  ├─ tools.ts          Technical tools and skills grouped by category
-   │  ├─ audit.ts          Audit method + the fictional Velara practice audit
+   │  ├─ audit.ts          Audit method and supporting tools
    │  ├─ content.ts        Engineering principles, about, privacy principles
-   ├─ components/          Reusable UI (layout, project cards, buttons, process map)
+   ├─ components/          Reusable UI (layout, project cards, buttons)
    ├─ pages/               One component per route
    └─ styles/globals.css   Design tokens and all styling
 ```
@@ -319,5 +318,4 @@ These are baked into the content and should be preserved when you edit:
 - The COD order system is a working prototype. The delivery-date, duplicate and reminder paths still need end-to-end verification; dispatch scheduling and courier notifications are not built.
 - BrightSun Solar is a lead-qualification case study. The warm path is demonstrated; the follow-up digest is disabled and the error alert is not yet tested.
 - The Returns and Refunds case study is a completed standalone build. Its gallery documents a six-record returns queue, one auto-handled final-sale request and one human-escalated damaged-item/email-mismatch case; it does not claim production deployment or measured impact.
-- Velara Skin Co. is fictional and labelled as illustrative wherever it appears.
 - Monitoring, alerting and human handoff in the infrastructure tier are design capabilities, not running production systems.

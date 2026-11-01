@@ -14,7 +14,6 @@ import {
   privacyPrinciples,
   scope,
 } from '../data/content'
-import { velara } from '../data/audit'
 
 export function Home() {
   return (
@@ -80,7 +79,7 @@ export function Home() {
         <div className="shell">
           <div className="section-head">
             <span className="eyebrow">Approach</span>
-            <h2>Consulting first, then implementation</h2>
+            <h2>Understand the process, then build</h2>
             <p className="lede">
               Automation work starts with understanding the business, not with connecting tools. The same
               five steps apply whether the process is in sales, customer service, finance or administration.
@@ -141,8 +140,8 @@ export function Home() {
             <h2>What I will not automate</h2>
             <p className="lede">
               Some decisions require a person, some inputs require permissions that should not be granted, and
-              some failures should never be allowed to look like success. These are the principles applied to
-              every engagement.
+              some failures should never be allowed to look like success. These are the principles I apply to
+              my workflow builds.
             </p>
           </div>
 
@@ -262,7 +261,7 @@ export function Home() {
         <div className="shell">
           <div className="card" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1.2rem' }}>
             <div className="stack" style={{ gap: '0.5rem', flex: '1 1 380px' }}>
-              <span className="eyebrow">Consulting</span>
+              <span className="eyebrow">Process Review</span>
               <h3 style={{ margin: 0, fontSize: '1.15rem' }}>
                 Before any automation is proposed, the process is audited
               </h3>
@@ -276,30 +275,11 @@ export function Home() {
                 Operations Audit &amp; Implementation
                 <ArrowRight width={14} height={14} />
               </Link>
-              <Link to="/audit/velara-skin-co" className="btn btn--ghost">
-                Read the sample practice audit
-              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ───────────────────── Practice audit strip ────────────────── */}
-      <section className="section section--tight" style={{ paddingTop: 0, paddingBottom: 'clamp(4rem, 3rem + 4vw, 7rem)' }}>
-        <div className="shell">
-          <div className="section-head" style={{ marginBottom: '1.5rem' }}>
-            <span className="eyebrow">Practice Audit</span>
-            <h2>{velara.name}: {velara.tagline}</h2>
-          </div>
-          <div className="notice notice--warn">
-            <strong>Fictional demonstration.</strong> {velara.disclaimer}
-          </div>
-          <Link to="/audit/velara-skin-co" className="link-arrow" style={{ marginTop: '1.2rem' }}>
-            Open the practice audit
-            <ArrowRight />
-          </Link>
-        </div>
-      </section>
     </>
   )
 }
