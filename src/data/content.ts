@@ -85,14 +85,14 @@ export const about = {
     'I am Fareedah Sanusi Adedayo, a self-taught AI workflow automation builder. I map business processes, define rules and exceptions, and build workflows that connect tools and handle data reliably.',
   paragraphs: [
     'My work sits at the intersection of operational analysis and technical implementation. The parts I am most interested in are the ones that decide whether an automation is useful rather than merely busy: which rule produces the outcome, what happens when the input is wrong, what happens when the system does not know, and what happens when a person should decide instead.',
-    'I approach each engagement the same way, whatever the function. The process is mapped first, the problem is diagnosed against real data, and automation is only proposed where the benefit justifies it. Nothing is built before the rules and the exceptions are written down.',
+    'In these builds, I use explicit routing rules, Airtable records and customer or team notifications. I document the paths demonstrated by the evidence separately from branches that still need end-to-end testing.',
     'I document the work as I go. Every case study on this site states what was implemented, what was tested, and what is still only designed, with the limitations written alongside the results.',
-    'I am pursuing an LLB in Civil Law and am open to AI Automation Specialist roles that align with my skills.'
+    'I am pursuing an LLB in Civil Law and am seeking a supervised remote internship or junior automation role.'
   ],
   facts: [
     { label: 'Role', value: 'AI Workflow Automation Builder' },
     { label: 'Approach', value: 'Diagnose first, then design, then build and validate' },
-    { label: 'Role interests', value: 'AI Automation Specialist roles aligned with my skills' },
+    { label: 'Role interests', value: 'Remote internships and junior automation roles' },
     { label: 'Education', value: 'LLB, Civil Law, in progress; expected January 2029' },
     { label: 'Location', value: 'Abuja, Nigeria' },
   ],

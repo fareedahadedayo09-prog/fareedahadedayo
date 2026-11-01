@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { CtaButton } from '../components/CtaButton'
 import { ArrowRight } from '../components/Icons'
 import { site } from '../data/site'
 import { auditProcess, auditSupportingTools, velara } from '../data/audit'
@@ -17,9 +16,9 @@ export function OperationsAudit() {
             <span className="eyebrow">Operations Audit &amp; Implementation</span>
             <h1 className="cs-hero__title">Assess the process before proposing automation</h1>
             <p className="lede" style={{ marginTop: '0.4rem' }}>
-              Most automation projects fail before a single workflow is built, because the process was never
-              documented and the baseline was never measured. This is the review run first: map what actually
-              happens, decide whether automation is appropriate, and state every assumption behind an estimate.
+              Before proposing automation, document the process and measure a baseline. This review maps what
+              actually happens, considers whether automation is appropriate, and states the assumptions behind
+              estimates that would need validation.
             </p>
           </div>
         </div>
@@ -46,8 +45,7 @@ export function OperationsAudit() {
           </div>
 
           <div className="notice" style={{ marginTop: '1.8rem' }}>
-            <strong>This is a method, not a track record.</strong> It is the approach followed on every
-            engagement. It makes no claim about completed client work, transformations or measured returns.
+            <strong>This is a method, not a track record.</strong> It is the approach I would use for a review. It makes no claim about completed client work, transformations or measured returns.
           </div>
         </div>
       </section>
@@ -111,18 +109,14 @@ export function OperationsAudit() {
                 </p>
               </div>
               <div className="cluster" style={{ gap: '0.7rem' }}>
-                <CtaButton cta={site.ctas.primary} />
-                <CtaButton cta={site.ctas.secondary} variant="secondary" />
+                <a className="btn btn--primary" href={site.contact.email.href}>
+                  Email about an operations audit
+                  <ArrowRight width={15} height={15} />
+                </a>
               </div>
             </div>
 
-            <hr className="divider" style={{ margin: '1.8rem 0 1.2rem' }} />
 
-            <p className="faint" style={{ fontSize: '0.8rem' }}>
-              Booking links are not configured yet, so no buttons are shown. Set{' '}
-              <span className="mono">ctas.primary.href</span> and <span className="mono">ctas.secondary.href</span>{' '}
-              in <span className="mono">src/data/site.ts</span> to add them.
-            </p>
           </div>
         </div>
       </section>

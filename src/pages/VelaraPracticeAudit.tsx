@@ -144,8 +144,9 @@ export function VelaraPracticeAudit() {
                   <span className="badge badge--illustrative badge--dot">Sample prioritization</span>
                 </div>
                 <p>
-                  The order is the recommendation. Doing these in a different order would waste effort or
-                  build on unstable ground, so the rationale is stated for each.
+                  This sample priority order follows the illustrative assumptions above, not confirmed findings.
+                  Validate the linked hypotheses and dependencies before adopting these recommendations.
+                  Any ROI or financial impact estimate would also require measured volumes, costs and outcomes.
                 </p>
 
                 <div className="stack" style={{ gap: 0, marginTop: '1.4rem' }}>

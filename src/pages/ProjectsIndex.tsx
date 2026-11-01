@@ -31,7 +31,16 @@ export function ProjectsIndex() {
       <section style={{ paddingBottom: 'clamp(4rem, 3rem + 4vw, 7rem)' }}>
         <div className="shell">
           <div className="project-grid">
-            {projects.map((project) => (
+            {projects.filter((project) => project.status !== 'planned').map((project) => (
+              <ProjectCard key={project.slug} project={project} />
+            ))}
+          </div>
+          <div className="section-head" style={{ marginTop: '2rem' }}>
+            <h2>Planned Work</h2>
+            <p className="muted">Design intent only; not implemented or tested.</p>
+          </div>
+          <div className="project-grid">
+            {projects.filter((project) => project.status === 'planned').map((project) => (
               <ProjectCard key={project.slug} project={project} />
             ))}
           </div>

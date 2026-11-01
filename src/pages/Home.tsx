@@ -68,7 +68,16 @@ export function Home() {
           </div>
 
           <div className="project-grid">
-            {projects.map((project) => (
+            {projects.filter((project) => project.status !== 'planned').map((project) => (
+              <ProjectCard key={project.slug} project={project} />
+            ))}
+          </div>
+          <div className="section-head" style={{ marginTop: '2rem' }}>
+            <h2>Planned Work</h2>
+            <p className="muted">Design intent only; not implemented or tested.</p>
+          </div>
+          <div className="project-grid">
+            {projects.filter((project) => project.status === 'planned').map((project) => (
               <ProjectCard key={project.slug} project={project} />
             ))}
           </div>
@@ -124,8 +133,8 @@ export function Home() {
             <span className="eyebrow">Technical Skills</span>
             <h2>Tools and skills I can use</h2>
             <p className="lede">
-              A practical toolkit across workflow automation, AI and LLM integration, data, APIs and web
-              development. Each case study separately describes the tools and workflow paths demonstrated in that project.
+              Tools shown in the featured workflows are separated from additional hands-on familiarity.
+              Each case study states which paths are demonstrated and which still need testing.
             </p>
           </div>
 

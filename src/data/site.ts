@@ -30,7 +30,7 @@ export const site = {
   wordmarkShort: 'FA',
   roleLabel: 'AI Workflow Automation Builder',
   location: 'Abuja, Nigeria',
-  availability: ['Open to AI Automation Specialist roles aligned with my skills'],
+  availability: ['Open to remote internships and junior automation roles, supporting workflow builds, testing and documentation.'],
 
   /** ── Hero ──────────────────────────────────────────────────────── */
   headline: 'Automation systems built around real operational problems.',
