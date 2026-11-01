@@ -2,8 +2,7 @@
  * ──────────────────────────────────────────────────────────────────────────
  *  OPERATIONS AUDIT
  * ──────────────────────────────────────────────────────────────────────────
- *  The review run before proposing automation, with each step's deliverable
- *  and the tools supporting the review.
+ *  The review run before proposing automation, with each step's deliverable.
  * ──────────────────────────────────────────────────────────────────────────
  */
 
@@ -50,11 +49,4 @@ export const auditProcess: AuditStep[] = [
       'Define success metrics and a testing plan before building, then run the workflow against normal and failure scenarios and report honestly what was verified and what was not.',
     output: 'Success metrics, a test scenario list and an acceptance criterion for each.',
   },
-]
-
-export const auditSupportingTools = [
-  { name: 'Miro', role: 'Process mapping and current-state workshops.' },
-  { name: 'FigJam', role: 'Structured process diagrams and templated maps.' },
-  { name: 'Notion', role: 'Audit reports and proposal documents.' },
-  { name: 'Google Sheets', role: 'Baseline and impact calculations.' },
 ]

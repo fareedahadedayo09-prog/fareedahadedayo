@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight } from '../components/Icons'
 import { site } from '../data/site'
-import { auditProcess, auditSupportingTools } from '../data/audit'
+import { auditProcess } from '../data/audit'
 
 export function OperationsAudit() {
   return (
@@ -44,27 +44,6 @@ export function OperationsAudit() {
             ))}
           </div>
 
-          <div className="notice" style={{ marginTop: '1.8rem' }}>
-            <strong>This is a method, not a track record.</strong> It is the approach I would use for a review. It makes no claim about completed client work, transformations or measured returns.
-          </div>
-        </div>
-      </section>
-
-      {/* ── Supporting tools ──────────────────────────────────────────── */}
-      <section className="section section--tight" style={{ paddingTop: 0 }}>
-        <div className="shell">
-          <div className="section-head">
-            <span className="eyebrow">Supporting Tools</span>
-            <h2>What the review produces and where it is written</h2>
-          </div>
-          <div className="tool-cluster">
-            {auditSupportingTools.map((tool) => (
-              <div className="tool-chip" key={tool.name}>
-                <span className="tool-chip__name">{tool.name}</span>
-                <span className="tool-chip__note">{tool.role}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 

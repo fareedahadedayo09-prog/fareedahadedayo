@@ -81,19 +81,18 @@ export const scope = {
 
 export const about = {
   eyebrow: 'About',
-  lead:
-    'I am Fareedah Sanusi Adedayo, a self-taught AI workflow automation builder. I map business processes, define rules and exceptions, and build workflows that connect tools and handle data reliably.',
   paragraphs: [
-    'My work sits at the intersection of operational analysis and technical implementation. The parts I am most interested in are the ones that decide whether an automation is useful rather than merely busy: which rule produces the outcome, what happens when the input is wrong, what happens when the system does not know, and what happens when a person should decide instead.',
-    'In these builds, I use explicit routing rules, Airtable records and customer or team notifications. I document the paths demonstrated by the evidence separately from branches that still need end-to-end testing.',
-    'I document the work as I go. Every case study on this site states what was implemented, what was tested, and what is still only designed, with the limitations written alongside the results.',
-    'I am pursuing an LLB in Civil Law and am seeking a supervised remote internship or junior automation role.'
+    "I'm Fareedah, an AI Workflow Automation Builder and an LLB Civil Law student.",
+    "I've always enjoyed solving problems and building things. That interest first drew me to robotics, and eventually led me to AI automation. I like taking something that seems complicated, understanding how it works and figuring out how to build a better way of doing it.",
+    "Studying law has added another dimension to how I approach problems. I'm used to examining rules, considering different circumstances and paying attention to details. I find those habits useful when designing workflows, especially when decisions, exceptions and human intervention matter.",
+    "I enjoy the practical side of automation: mapping processes, connecting systems, testing different scenarios and figuring out what happens when something doesn't go according to plan.",
+    "Outside the technical work, I'm someone who enjoys learning independently, exploring ideas and building things to see how far I can take them.",
   ],
   facts: [
     { label: 'Role', value: 'AI Workflow Automation Builder' },
     { label: 'Approach', value: 'Diagnose first, then design, then build and validate' },
     { label: 'Role interests', value: 'Remote internships and junior automation roles' },
-    { label: 'Education', value: 'LLB, Civil Law, in progress; expected January 2029' },
+    { label: 'Education', value: 'LLB, Civil Law, in progress' },
     { label: 'Location', value: 'Abuja, Nigeria' },
   ],
 }

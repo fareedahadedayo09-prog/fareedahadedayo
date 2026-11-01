@@ -11,8 +11,8 @@ export type ToolCategory = {
 
 export const toolStack: ToolCategory[] = [
   {
-    title: 'Used in featured projects',
-    purpose: 'Shown in the three featured workflow builds. Case studies distinguish demonstrated paths from untested branches; not all three builds are complete.',
+    title: 'Demonstrated in featured workflow builds',
+    purpose: 'Tools and techniques visibly used across the three featured projects. Each case study distinguishes tested functionality from incomplete or untested branches.',
     tools: [
       { name: 'n8n' }, { name: 'Airtable' }, { name: 'Tally' },
       { name: 'Gmail integration' }, { name: 'Claude API' },
@@ -23,8 +23,8 @@ export const toolStack: ToolCategory[] = [
     ],
   },
   {
-    title: 'Additional hands-on familiarity',
-    purpose: 'Previously listed hands-on tools, not demonstrated in the featured workflow evidence. This is not a claim of production proficiency.',
+    title: 'Additional hands-on experience',
+    purpose: "Tools and technologies I've also worked with, but which are not demonstrated in the featured project evidence. Experience varies by tool and does not imply production-level proficiency.",
     tools: [
       { name: 'Make' }, { name: 'Zapier' }, { name: 'OpenAI API' },
       { name: 'Botpress' }, { name: 'Airtable Interfaces' },

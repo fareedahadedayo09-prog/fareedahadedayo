@@ -192,13 +192,8 @@ export const projects: Project[] = [
         id: 'cod-workflow-canvas',
         image: '/screenshots/cod-workflow-diagram.webp',
         title: 'COD order-processing workflow',
-        caption: 'Workflow canvas',
-      },
-      {
-        id: 'cod-risk-alert',
-        image: '/screenshots/cod-high-risk-alert.webp',
-        title: 'High-risk alert',
-        caption: 'The team alert shows the risk summary, call action and checklist. Customer-identifying values are redacted.',
+        caption: 'Processing overview: the n8n order workflow, including intake, risk routing and customer response paths. The canvas shows structure, not proof that every branch has been tested.',
+        alt: 'n8n cash-on-delivery order workflow diagram.',
       },
       {
         id: 'cod-airtable-outcomes',
@@ -211,6 +206,12 @@ export const projects: Project[] = [
         image: '/screenshots/cod-cancellation-page.webp',
         title: 'Cancellation page',
         caption: 'The branded page confirms the order was cancelled without a charge. Customer and order details are redacted.',
+      },
+      {
+        id: 'cod-risk-alert',
+        image: '/screenshots/cod-high-risk-alert.webp',
+        title: 'High-risk alert',
+        caption: 'The team alert shows the risk summary, call action and checklist. Customer-identifying values are redacted.',
       },
     ],
     loomUrl: 'https://www.loom.com/share/21e03fb607ea4f81a292ff88ec9f0184',
@@ -395,6 +396,12 @@ export const projects: Project[] = [
     ],
     screenshots: [
       {
+        id: 'lead-airtable-intake',
+        image: '/screenshots/lead-airtable-intake.webp',
+        title: 'Airtable, intake',
+        caption: 'The enquiry lands in Airtable with fields for property type, location, decision-maker status, monthly energy spend, budget and main problem. Contact-specific values are redacted.',
+      },
+      {
         id: 'lead-qualification-workflow',
         image: '/screenshots/lead-qualification-workflow.webp',
         title: 'Lead qualification workflow diagram',
@@ -406,12 +413,6 @@ export const projects: Project[] = [
         image: '/screenshots/lead-n8n-canvas.webp',
         title: 'n8n workflow canvas',
         caption: 'The BrightSun Solar lead system in n8n. A new Airtable lead is checked for duplicates, scored by an AI model, saved, and routed by score. This walkthrough follows one warm lead.',
-      },
-      {
-        id: 'lead-airtable-intake',
-        image: '/screenshots/lead-airtable-intake.webp',
-        title: 'Airtable, intake',
-        caption: 'The enquiry lands in Airtable with fields for property type, location, decision-maker status, monthly energy spend, budget and main problem. Contact-specific values are redacted.',
       },
       {
         id: 'lead-acknowledgement-header',
@@ -639,6 +640,13 @@ export const projects: Project[] = [
     ],
     screenshots: [
       {
+        id: 'returns-n8n-workflow',
+        image: '/screenshots/returns-n8n-workflow.webp',
+        title: 'n8n workflow canvas',
+        caption: 'Full n8n orchestration graph featuring scheduled triggers, database lookups, business logic validation, Google Gemini LLM structured parsing, conditional email routing, and error handling.',
+        alt: 'n8n editor canvas displaying visual node workflow.',
+      },
+      {
         id: 'returns-airtable-desk',
         image: '/screenshots/returns-airtable-grid.webp',
         title: 'Airtable Returns Desk',
@@ -661,13 +669,6 @@ export const projects: Project[] = [
         caption: 'Automated internal team alert triggered for Order BL-1006 (damaged item claim with email mismatch), providing human support agents with full diagnostic context and a temporary holding reply flag.',
         alt: 'Gmail screenshot showing team notification alert for order BL-1006.',
         note: 'The customer name and email address are redacted.',
-      },
-      {
-        id: 'returns-n8n-workflow',
-        image: '/screenshots/returns-n8n-workflow.webp',
-        title: 'n8n workflow canvas',
-        caption: 'Full n8n orchestration graph featuring scheduled triggers, database lookups, business logic validation, Google Gemini LLM structured parsing, conditional email routing, and error handling.',
-        alt: 'n8n editor canvas displaying visual node workflow.',
       },
     ],
     links: [],

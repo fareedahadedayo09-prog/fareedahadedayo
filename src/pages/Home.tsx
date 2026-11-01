@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { HashLink } from '../components/HashLink'
 import { ProjectCard } from '../components/ProjectCard'
 import { ToolsSection } from '../components/ToolsSection'
-import { ArrowRight, CheckIcon } from '../components/Icons'
+import { ArrowRight } from '../components/Icons'
 import { site } from '../data/site'
 import { projects } from '../data/projects'
 import {
@@ -177,7 +177,7 @@ export function Home() {
             <div className="stack" style={{ gap: '1.3rem' }}>
               <div>
                 <span className="eyebrow">{about.eyebrow}</span>
-                <h2 style={{ marginTop: '0.8rem' }}>Understanding the problem before building the system</h2>
+                <h2 style={{ marginTop: '0.8rem' }}>About me</h2>
               </div>
 
               {about.paragraphs.map((paragraph) => (
@@ -205,24 +205,6 @@ export function Home() {
               </dl>
             </div>
 
-            <div className="stack" style={{ gap: '1rem' }}>
-              <div className="card">
-                <h3 style={{ fontSize: '1rem' }}>Documented the same way</h3>
-                <ul className="stack-sm" style={{ marginTop: '0.7rem' }}>
-                  {[
-                    'What is built, stated as built.',
-                    'What has been tested, stated with the test scenario.',
-                    'What is only designed, labelled as designed.',
-                    'Known limitations written next to the results.',
-                  ].map((item) => (
-                    <li key={item} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                      <CheckIcon width={15} height={15} style={{ flex: 'none', marginTop: '0.28rem', color: 'var(--accent)' }} />
-                      <span className="muted" style={{ fontSize: '0.86rem' }}>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
           </div>
         </div>
       </section>

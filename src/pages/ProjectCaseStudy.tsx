@@ -1,3 +1,4 @@
+import { EvidenceGallery } from '../components/EvidenceGallery'
 import { Link, useParams } from 'react-router-dom'
 import {
   CASE_STUDY_LABELS,
@@ -141,37 +142,6 @@ function LoomVideo({ project }: { project: Project }) {
   )
 }
 
-function Screenshots({ project }: { project: Project }) {
-  if (project.screenshots.length === 0) return null
-  return (
-    <div style={{ marginTop: '1.6rem' }}>
-      <h3 style={{ fontSize: '0.82rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-faint)', fontFamily: 'var(--font-mono)', fontWeight: 500 }}>
-        Recorded evidence
-      </h3>
-      <div className="grid-2" style={{ gap: '1.3rem', marginTop: '1rem' }}>
-        {project.screenshots.map((shot) => (
-          <figure key={shot.id} style={{ margin: 0 }}>
-            <div style={{ overflow: 'hidden', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--bg-raised)' }}>
-              <img
-                src={shot.image}
-                alt={shot.alt ?? shot.caption}
-                loading="lazy"
-                decoding="async"
-                style={{ width: '100%', height: 'auto', display: 'block' }}
-              />
-            </div>
-            <figcaption style={{ marginTop: '0.7rem' }}>
-              <div style={{ fontWeight: 600, fontSize: '0.86rem' }}>{shot.title}</div>
-              <div className="muted" style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>{shot.caption}</div>
-              {shot.note ? <div className="muted" style={{ fontSize: '0.8rem', marginTop: '0.55rem' }}>{shot.note}</div> : null}
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 function sectionLabel(project: Project, section: CaseStudySection) {
   return project.slug === 'lead-qualification'
     ? section.label
@@ -220,7 +190,7 @@ function Section({ section, project, index }: { section: CaseStudySection; proje
       )}
 
       {isEvidence ? <LoomVideo project={project} /> : null}
-      {isEvidence ? <Screenshots project={project} /> : null}
+      {isEvidence ? <EvidenceGallery key={project.slug} screenshots={project.screenshots} /> : null}
     </section>
   )
 }
