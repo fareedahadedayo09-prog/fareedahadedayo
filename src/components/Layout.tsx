@@ -8,10 +8,9 @@ function Header() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
 
-  // Close the mobile menu whenever the route changes.
   useEffect(() => {
     setOpen(false)
-  }, [location.pathname])
+  }, [location.pathname, location.hash])
 
   return (
     <header className="site-header">
@@ -34,10 +33,14 @@ function Header() {
           {open ? <CloseIcon /> : <MenuIcon />}
         </button>
 
-        <nav id="primary-nav" className={`nav ${open ? 'is-open' : 'is-closed'}`} aria-label="Primary">
+        <nav
+          id="primary-nav"
+          className={`nav ${open ? 'is-open' : 'is-closed'}`}
+          aria-label="Primary"
+        >
           {site.nav.map((item) =>
             item.href.startsWith('/#') ? (
-              <HashLink key={item.label} to={item.href} className="nav__link">
+              <HashLink key={item.label} to={item.href} className="nav__link" onClick={() => setOpen(false)}>
                 {item.label}
               </HashLink>
             ) : (
@@ -45,22 +48,19 @@ function Header() {
                 key={item.label}
                 to={item.href}
                 className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
+                onClick={() => setOpen(false)}
               >
                 {item.label}
               </NavLink>
             ),
           )}
           <div className="nav__cta">
-            {site.resume.href ? (
-              <a className="btn btn--secondary btn--small" href={site.resume.href} target="_blank" rel="noreferrer">
-                {site.resume.label}
-                <ArrowRight />
-              </a>
-            ) : (
-              <span className="btn btn--pending btn--small" aria-disabled="true">
-                {site.resume.label} · {site.resume.detail}
-              </span>
-            )}
+            {site.ctas.primary.href ? (
+              <Link className="btn btn--primary btn--small" to={site.ctas.primary.href}>
+                {site.ctas.primary.label}
+                <ArrowRight width={12} height={12} />
+              </Link>
+            ) : null}
           </div>
         </nav>
       </div>
@@ -69,7 +69,7 @@ function Header() {
 }
 
 function Footer() {
-  const { contact, ctas, social } = site
+  const { contact } = site
 
   return (
     <footer className="site-footer">
@@ -83,31 +83,26 @@ function Footer() {
                 </span>
                 <strong style={{ fontWeight: 600 }}>{site.wordmark}</strong>
               </div>
-              <p className="lede" style={{ maxWidth: '52ch' }}>
+              <p className="lede" style={{ maxWidth: '56ch' }}>
                 {site.heroLead}
               </p>
             </div>
 
-            <div className="cluster" style={{ gap: '0.6rem' }}>
-              {ctas.primary.href ? (
-                <a className="btn btn--primary" href={ctas.primary.href} target="_blank" rel="noreferrer">
-                  {ctas.primary.label}
-                  <ArrowRight />
+            <div className="cluster" style={{ gap: '0.6rem', flexWrap: 'wrap' }}>
+              <Link to="/projects" className="btn btn--primary">
+                {site.ctas.primary.label}
+                <ArrowRight width={14} height={14} />
+              </Link>
+              {site.ctas.secondary.href ? (
+                <a
+                  className="btn btn--secondary"
+                  href={site.ctas.secondary.href}
+                  target={/^https?:\/\//i.test(site.ctas.secondary.href) ? '_blank' : undefined}
+                  rel="noreferrer"
+                >
+                  {site.ctas.secondary.label}
                 </a>
-              ) : (
-                <span className="btn btn--pending" aria-disabled="true">
-                  {ctas.primary.label} · Coming soon
-                </span>
-              )}
-              {ctas.secondary.href ? (
-                <a className="btn btn--secondary" href={ctas.secondary.href} target="_blank" rel="noreferrer">
-                  {ctas.secondary.label}
-                </a>
-              ) : (
-                <span className="btn btn--pending" aria-disabled="true">
-                  {ctas.secondary.label} · Coming soon
-                </span>
-              )}
+              ) : null}
             </div>
           </div>
 
@@ -122,72 +117,42 @@ function Footer() {
               <div className="stack-sm">
                 {contact.email.href ? (
                   <a className="link-arrow" href={contact.email.href}>
-                    {contact.email.label}
+                    {contact.email.detail ?? contact.email.label}
                   </a>
-                ) : (
-                  <span className="faint">{contact.email.label}: {contact.email.detail}</span>
-                )}
+                ) : null}
                 {contact.linkedin.href ? (
                   <a className="link-arrow" href={contact.linkedin.href} target="_blank" rel="noreferrer">
-                    {contact.linkedin.label}
+                    LinkedIn
                   </a>
-                ) : (
-                  <span className="faint">{contact.linkedin.label}: {contact.linkedin.detail}</span>
-                )}
-                {contact.github.href ? (
-                  <a className="link-arrow" href={contact.github.href} target="_blank" rel="noreferrer">
-                    {contact.github.label}
-                  </a>
-                ) : (
-                  <span className="faint">{contact.github.label}: {contact.github.detail}</span>
-                )}
+                ) : null}
               </div>
             </div>
 
             <div className="stack-sm">
-              <span className="eyebrow">Site</span>
+              <span className="eyebrow">Explore</span>
               <div className="stack-sm">
                 {site.nav.map((item) => (
                   <HashLink key={item.label} to={item.href} className="faint">
                     {item.label}
                   </HashLink>
                 ))}
+                <Link to="/audit" className="faint">Operations Audit</Link>
               </div>
             </div>
 
             <div className="stack-sm">
-              <span className="eyebrow">Build in public</span>
-              <div className="stack-sm">
-                {social.linkedin ? (
-                  <a className="link-arrow" href={social.linkedin} target="_blank" rel="noreferrer">
-                    LinkedIn
-                  </a>
-                ) : (
-                  <span className="faint">LinkedIn: not linked yet</span>
-                )}
-                {social.x ? (
-                  <a className="link-arrow" href={social.x} target="_blank" rel="noreferrer">
-                    X
-                  </a>
-                ) : (
-                  <span className="faint">X: not linked yet</span>
-                )}
-                {social.posts.length > 0 ? (
-                  <a className="link-arrow" href={social.posts[0]} target="_blank" rel="noreferrer">
-                    Latest technical note
-                  </a>
-                ) : (
-                  <span className="faint">Technical notes: none yet</span>
-                )}
-              </div>
+              <span className="eyebrow">About this site</span>
+              <p className="faint" style={{ fontSize: '0.78rem', lineHeight: 1.6, maxWidth: '36ch' }}>
+                Built with React, TypeScript and Vite. Every project shows what is built, what is tested
+                and what is still missing. No fabricated metrics.
+              </p>
             </div>
           </div>
 
           <hr className="divider" />
 
           <p className="faint mono" style={{ fontSize: '0.72rem', paddingTop: '1.6rem', paddingBottom: '0.5rem' }}>
-            {site.roleLabel} · {site.location} · Built with n8n, React and Vercel.
-            No client data, no fabricated metrics.
+            {site.roleLabel} · {site.location} · Built with React, n8n and Vercel.
           </p>
         </div>
       </div>
@@ -195,7 +160,6 @@ function Footer() {
   )
 }
 
-/** Scrolls to top on route change, except when a hash target is present. */
 function ScrollManager() {
   const { pathname, hash } = useLocation()
   useEffect(() => {

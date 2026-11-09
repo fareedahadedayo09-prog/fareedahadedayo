@@ -2,23 +2,18 @@
  * ──────────────────────────────────────────────────────────────────────────
  *  SITE CONFIG
  * ──────────────────────────────────────────────────────────────────────────
- *  Personal details and the destinations for every call to action.
- *  Everything else on the site is project or methodology content and lives in
- *  the other files under src/data/.
+ *  Personal details, positioning, navigation and contact destinations.
  * ──────────────────────────────────────────────────────────────────────────
  */
 
 export type ContactLink = {
   label: string
-  /** Absolute URL, e.g. "mailto:you@example.com" or "https://linkedin.com/in/you". */
   href: string
-  /** Short line rendered under the button, e.g. "you@example.com". */
   detail?: string
 }
 
 export type Cta = {
   label: string
-  /** Leave empty to omit the button entirely rather than show a dead one. */
   href: string
   detail?: string
 }
@@ -28,45 +23,36 @@ export const site = {
   name: 'Fareedah Sanusi Adedayo',
   wordmark: 'Fareedah Sanusi Adedayo',
   wordmarkShort: 'FA',
-  roleLabel: 'AI Automation Consultant and Systems Builder',
-  location: 'Abuja, Nigeria',
-  availability: ['Open to consulting engagements', 'Automation implementation projects', 'Corporate automation roles'],
+  roleLabel: 'AI Workflow Automation Builder',
+  location: 'Abuja, Nigeria · Remote',
+  availability: [
+    'Available for remote consulting engagements',
+    'Available for automation implementation projects',
+  ],
 
   /** ── Hero ──────────────────────────────────────────────────────── */
-  headline: 'Automation systems built around real operational problems.',
+  headline: 'Automation systems for better-run e-commerce operations.',
   heroLead:
-    'I analyze business processes, identify opportunities to improve how work gets done, and build automation systems around defined requirements, decision logic and measurable outcomes.',
+    'I build automation systems that help businesses manage orders, customer enquiries, returns and repetitive operations more reliably. I combine workflow automation, connected business tools and AI where it adds practical value.',
 
-  /**
-   * ── Professional portrait ──────────────────────────────────────────────
-   * Drop your photo into /public and point `src` at it.
-   *   recommended: public/portrait.jpg  (4:5 or 1:1, ~400–800 KB)
-   *
-   * Falls back to a clean labelled placeholder if the file is missing, so the
-   * site never shows a broken image.
-   */
+  /** ── Professional portrait ──────────────────────────────────────── */
   portrait: {
     src: '/portrait.svg',
     alt: 'Professional portrait of Fareedah Sanusi Adedayo',
-    caption: 'Portrait',
+    caption: 'Portrait placeholder — drop a 4:5 photo into public/portrait.jpg',
   },
 
   /** ── Navigation ─────────────────────────────────────────────────── */
   nav: [
+    { label: 'Problems I solve', href: '/#problems' },
+    { label: 'Services', href: '/#services' },
     { label: 'Projects', href: '/projects' },
-    { label: 'Approach', href: '/#approach' },
-    { label: 'Tools', href: '/#tools' },
-    { label: 'Operations Audit', href: '/audit' },
+    { label: 'How I work', href: '/#process' },
     { label: 'About', href: '/#about' },
+    { label: 'Journal', href: '/#journal' },
+    { label: 'FAQ', href: '/#faq' },
     { label: 'Contact', href: '/#contact' },
   ],
-
-  /** ── Resume / CV ────────────────────────────────────────────────── */
-  resume: {
-    label: 'Resume',
-    href: '',
-    detail: 'PDF',
-  },
 
   /** ── Contact channels ───────────────────────────────────────────── */
   contact: {
@@ -80,39 +66,27 @@ export const site = {
       href: 'https://www.linkedin.com/in/fareedah-adedayo-8b7b1729a',
       detail: 'linkedin.com/in/fareedah-adedayo-8b7b1729a',
     } as ContactLink,
-    github: { label: 'GitHub', href: '', detail: 'Not linked yet' } as ContactLink,
   },
 
-  /**
-   * ── Calls to action ──────────────────────────────────────────────────
-   * Leave `href` empty and the button is omitted rather than shown as a
-   * nonfunctional control. Nothing on this site is ever a dead button.
-   */
+  /** ── Calls to action ────────────────────────────────────────────── */
   ctas: {
     primary: {
-      label: 'Request an AI Operations Audit',
-      href: '',
-      detail: '30 min · remote',
+      label: 'Explore my work',
+      href: '/projects',
+      detail: 'See case studies',
     } as Cta,
     secondary: {
-      label: 'Book a Discovery Call',
-      href: '',
-      detail: '20 min · remote',
+      label: 'Discuss an automation project',
+      href: 'mailto:fareedahadedayo08@gmail.com?subject=Automation%20project%20enquiry',
+      detail: 'Start by email',
     } as Cta,
-  },
-
-  /** ── Build in public ────────────────────────────────────────────── */
-  social: {
-    linkedin: 'https://www.linkedin.com/in/fareedah-adedayo-8b7b1729a',
-    x: '',
-    posts: [] as string[],
   },
 
   /** ── Social sharing metadata ────────────────────────────────────── */
   og: {
-    title: 'Fareedah Sanusi Adedayo: AI Automation Engineering',
+    title: 'Fareedah Sanusi Adedayo — AI Workflow Automation Builder',
     description:
-      'Automation systems built around real operational problems. Workflows for order operations, lead qualification and business processes.',
+      'Automation systems for better-run e-commerce operations. Workflow automation for orders, customer enquiries, returns and lead management.',
     image: '/og-image.svg',
   },
 }
