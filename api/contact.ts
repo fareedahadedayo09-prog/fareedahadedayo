@@ -1,37 +1,15 @@
 /**
- * Vercel serverless function for the contact/enquiry form.
+ * Vercel Node serverless function for the contact/enquiry form.
  *
  * - Validates the payload server-side.
  * - Includes a honeypot + simple timestamp check to deter bot spam.
- * - Sends the submission via EmailJS-free approach: submits to a configured
- *   Formspree-like endpoint or falls back to logging and returning success
- *   (so the site doesn't hard-fail when no forwarding is configured).
+ * - Optionally forwards submissions to a JSON POST endpoint (Zapier, Make,
+ *   custom email endpoint, Supabase, etc.) configured via the
+ *   CONTACT_WEBHOOK_URL environment variable. If unset, submissions are
+ *   logged and the endpoint still returns success so the UI works in preview.
  *
- * No API keys are exposed to the frontend. To wire up real email delivery,
- * set CONTACT_WEBHOOK_URL in Vercel environment variables to any endpoint
- * that accepts a JSON POST (e.g. a Zapier webhook, Make webhook, custom
- * email endpoint, or Supabase insert URL).
+ * No API keys are exposed to the frontend.
  */
-
-export const config = { runtime: 'edge' }
-
-type Json = Record<string, unknown>
-
-function json(body: Json, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'content-type': 'application/json',
-      'access-control-allow-origin': '*',
-      'access-control-allow-methods': 'POST, OPTIONS',
-      'access-control-allow-headers': 'content-type',
-    },
-  })
-}
-
-function validEmail(s: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)
-}
 
 type Enquiry = {
   name: string
@@ -43,25 +21,27 @@ type Enquiry = {
   timestamp: number
 }
 
-function validate(body: Partial<Enquiry> & { hp?: unknown; ts?: unknown }) {
-  const errors: Record<string, string> = {}
-  const name = (body.name ?? '').toString().trim()
-  const email = (body.email ?? '').toString().trim()
-  const businessType = (body.businessType ?? '').toString().trim()
-  const challenge = (body.challenge ?? '').toString().trim()
-  const website = (body.website ?? '').toString().trim()
-  const improve = (body.improve ?? '').toString().trim()
-  const ts = typeof body.ts === 'number' ? body.ts : 0
-  const hp = typeof body.hp === 'string' ? body.hp : ''
+function validEmail(s: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)
+}
 
-  // Honeypot: if filled in (bots fill every field), reject.
+function validate(body: any) {
+  const errors: Record<string, string> = {}
+  const name = typeof body?.name === 'string' ? body.name.trim() : ''
+  const email = typeof body?.email === 'string' ? body.email.trim() : ''
+  const businessType = typeof body?.businessType === 'string' ? body.businessType.trim() : ''
+  const challenge = typeof body?.challenge === 'string' ? body.challenge.trim() : ''
+  const website = typeof body?.website === 'string' ? body.website.trim() : ''
+  const improve = typeof body?.improve === 'string' ? body.improve.trim() : ''
+  const ts = typeof body?.ts === 'number' ? body.ts : 0
+  const hp = typeof body?.hp === 'string' ? body.hp : ''
+
   if (hp && hp.length > 0) {
-    return { errors: { _bot: 'spam' }, value: null as Enquiry | null }
+    return { errors: { _bot: 'spam' }, value: null }
   }
-  // Timestamp: if submitted in < 1.5s it's likely a bot form-fill.
   const now = Date.now()
   if (!ts || now - ts < 1500) {
-    return { errors: { _bot: 'submitted too quickly' }, value: null as Enquiry | null }
+    return { errors: { _bot: 'submitted too quickly' }, value: null }
   }
 
   if (name.length < 2) errors.name = 'Please enter your name.'
@@ -74,46 +54,55 @@ function validate(body: Partial<Enquiry> & { hp?: unknown; ts?: unknown }) {
   return {
     errors,
     value: {
-      name, email, website: website || undefined, businessType, challenge, improve: improve || undefined, timestamp: now,
+      name,
+      email,
+      website: website || undefined,
+      businessType,
+      challenge,
+      improve: improve || undefined,
+      timestamp: now,
     } as Enquiry,
   }
 }
 
-export default async function handler(req: Request) {
-  if (req.method === 'OPTIONS') return json({ ok: true })
-  if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405)
+export default async function handler(req, res) {
+  res.setHeader('access-control-allow-origin', '*')
+  res.setHeader('access-control-allow-methods', 'POST, OPTIONS')
+  res.setHeader('access-control-allow-headers', 'content-type')
 
-  let body: Record<string, unknown> = {}
-  try {
-    body = (await req.json()) as Record<string, unknown>
-  } catch {
-    return json({ error: 'invalid json' }, 400)
+  if (req.method === 'OPTIONS') {
+    return res.status(200).json({ ok: true })
+  }
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'method not allowed' })
   }
 
-  const { errors, value } = validate(body as Partial<Enquiry> & { hp?: unknown; ts?: unknown })
-  if (!value) return json({ ok: false, errors }, 422)
+  const { errors, value } = validate(req.body)
+  if (!value) {
+    return res.status(422).json({ ok: false, errors })
+  }
 
-  const forwardUrl = (typeof process !== 'undefined' && (process as any).env?.CONTACT_WEBHOOK_URL) || ''
+  const forwardUrl = process.env.CONTACT_WEBHOOK_URL || ''
 
   if (forwardUrl) {
     try {
-      const res = await fetch(forwardUrl, {
+      const up = await fetch(forwardUrl, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(value),
       })
-      if (!res.ok) {
-        return json({ ok: false, error: 'upstream_error' }, 502)
+      if (!up.ok) {
+        return res.status(502).json({ ok: false, error: 'upstream_error' })
       }
     } catch {
-      return json({ ok: false, error: 'network_error' }, 502)
+      return res.status(502).json({ ok: false, error: 'network_error' })
     }
   } else {
-    // No forwarding configured: log on the server for inspection and return
-    // success so the UI shows a useful confirmation. The message is not
-    // delivered to an inbox until CONTACT_WEBHOOK_URL is configured.
     console.log('ENQUIRY_SUBMISSION', JSON.stringify(value))
   }
 
-  return json({ ok: true, message: 'Thanks \u2014 your enquiry has been received.' })
+  return res.status(200).json({
+    ok: true,
+    message: "Thanks \u2014 your enquiry has been received. I will reply within two business days.",
+  })
 }
