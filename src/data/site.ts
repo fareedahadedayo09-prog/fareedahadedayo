@@ -1,25 +1,11 @@
 /**
- * ──────────────────────────────────────────────────────────────────────────
- *  SITE CONFIG
- * ──────────────────────────────────────────────────────────────────────────
- *  Personal details, positioning, navigation and contact destinations.
- * ──────────────────────────────────────────────────────────────────────────
+ * Site config.
  */
 
-export type ContactLink = {
-  label: string
-  href: string
-  detail?: string
-}
-
-export type Cta = {
-  label: string
-  href: string
-  detail?: string
-}
+export type ContactLink = { label: string; href: string; detail?: string }
+export type Cta = { label: string; href: string; detail?: string }
 
 export const site = {
-  /** ── Personal brand ─────────────────────────────────────────────── */
   name: 'Fareedah Sanusi Adedayo',
   wordmark: 'Fareedah Sanusi Adedayo',
   wordmarkShort: 'FA',
@@ -30,31 +16,29 @@ export const site = {
     'Available for automation implementation projects',
   ],
 
-  /** ── Hero ──────────────────────────────────────────────────────── */
   headline: 'Automation systems for better-run e-commerce operations.',
   heroLead:
     'I build automation systems that help businesses manage orders, customer enquiries, returns and repetitive operations more reliably. I combine workflow automation, connected business tools and AI where it adds practical value.',
 
-  /** ── Professional portrait ──────────────────────────────────────── */
   portrait: {
     src: '/portrait.svg',
     alt: 'Professional portrait of Fareedah Sanusi Adedayo',
     caption: 'Portrait placeholder — drop a 4:5 photo into public/portrait.jpg',
   },
 
-  /** ── Navigation ─────────────────────────────────────────────────── */
   nav: [
-    { label: 'Problems I solve', href: '/#problems' },
+    { label: 'Problems', href: '/#problems' },
     { label: 'Services', href: '/#services' },
     { label: 'Projects', href: '/projects' },
+    { label: 'Tools', href: '/tools' },
     { label: 'How I work', href: '/#process' },
+    { label: 'Calculators', href: '/calculators' },
+    { label: 'Simulators', href: '/simulators' },
+    { label: 'Journal', href: '/journal' },
     { label: 'About', href: '/#about' },
-    { label: 'Journal', href: '/#journal' },
-    { label: 'FAQ', href: '/#faq' },
     { label: 'Contact', href: '/#contact' },
   ],
 
-  /** ── Contact channels ───────────────────────────────────────────── */
   contact: {
     email: {
       label: 'Email',
@@ -68,25 +52,19 @@ export const site = {
     } as ContactLink,
   },
 
-  /** ── Calls to action ────────────────────────────────────────────── */
   ctas: {
-    primary: {
-      label: 'Explore my work',
-      href: '/projects',
-      detail: 'See case studies',
-    } as Cta,
+    primary: { label: 'Explore my work', href: '/projects', detail: 'See case studies' } as Cta,
     secondary: {
-      label: 'Discuss an automation project',
-      href: 'mailto:fareedahadedayo08@gmail.com?subject=Automation%20project%20enquiry',
-      detail: 'Start by email',
+      label: 'Discuss a project',
+      href: '/#contact',
+      detail: 'Enquiry form',
     } as Cta,
   },
 
-  /** ── Social sharing metadata ────────────────────────────────────── */
   og: {
     title: 'Fareedah Sanusi Adedayo — AI Workflow Automation Builder',
     description:
-      'Automation systems for better-run e-commerce operations. Workflow automation for orders, customer enquiries, returns and lead management.',
+      'Automation systems for better-run e-commerce operations. Order processing, returns handling, lead qualification and lifecycle workflows.',
     image: '/og-image.svg',
   },
 }

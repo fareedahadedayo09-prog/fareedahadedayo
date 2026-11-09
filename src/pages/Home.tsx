@@ -1,28 +1,23 @@
 import { Link } from 'react-router-dom'
 import { Portrait } from '../components/Portrait'
 import { ProjectCard } from '../components/ProjectCard'
-import { ROICalculator } from '../components/ROICalculator'
-import { ToolsSection } from '../components/ToolsSection'
+import { EnquiryForm } from '../components/EnquiryForm'
 import { ArrowRight, CheckIcon } from '../components/Icons'
 import { site } from '../data/site'
 import { projects } from '../data/projects'
-import { about, capabilities, faq, journal, methodology, privacyFooter, privacyPrinciples } from '../data/content'
+import { about, capabilities, faq, methodology, privacyFooter, privacyPrinciples } from '../data/content'
 import { problemCategories } from '../data/problems'
 import { services } from '../data/services'
 import { getProject } from '../data/projects'
+import { toolCategories, tools } from '../data/tools'
+import { EXPERIENCE_META } from '../data/tools'
 
-// Helper to format a journal date.
-function formatJournalDate(iso: string) {
-  // Manually format to avoid locale surprises.
-  const [y, m, d] = iso.split('-')
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  return `${months[parseInt(m, 10) - 1]} ${parseInt(d, 10)}, ${y}`
-}
-
-// Featured projects — show up to three on the homepage (all four if small).
 const featured = projects.filter((p) => p.status !== 'planned').slice(0, 3)
 
 export function Home() {
+  // Tools preview: show 3 recently-used tools drawn from different categories.
+  const previewTools = tools.filter((t) => t.experience === 'projects').slice(0, 6)
+
   return (
     <>
       {/* ─────────────────────────── Hero ───────────────────────────── */}
@@ -39,7 +34,7 @@ export function Home() {
                   Explore my work
                   <ArrowRight width={15} height={15} />
                 </Link>
-                <a href={site.ctas.secondary.href} className="btn btn--secondary">
+                <a href="#contact" className="btn btn--secondary">
                   Discuss an automation project
                 </a>
               </div>
@@ -59,7 +54,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* ─────────── Business problems I help address ─────────────── */}
+      {/* ─────────── Business problems ─────────────── */}
       <section className="section" id="problems">
         <div className="shell">
           <div className="section-head">
@@ -135,9 +130,9 @@ export function Home() {
               <span className="eyebrow">Featured work</span>
               <h2>Projects you can inspect in detail</h2>
               <p className="lede">
-                Each case study starts with the business problem in plain English, with technical
-                architecture, decision rules and testing evidence behind it. Status is labelled on every
-                section, so a partly built behaviour is never presented as finished.
+                Each case study explains the problem, what was automated vs kept human, shows the workflow
+                step-by-step (you can click through the diagram), and labels every result as verified,
+                partial or designed.
               </p>
             </div>
             <Link to="/projects" className="btn btn--secondary">
@@ -150,6 +145,17 @@ export function Home() {
             {featured.map((project) => (
               <ProjectCard key={project.slug} project={project} />
             ))}
+          </div>
+
+          <div className="cluster" style={{ gap: '0.6rem', marginTop: '1.6rem', flexWrap: 'wrap' }}>
+            <Link to="/simulators" className="btn btn--ghost btn--small">
+              Try the interactive simulators
+              <ArrowRight width={12} height={12} />
+            </Link>
+            <Link to="/calculators" className="btn btn--ghost btn--small">
+              Estimate your process cost
+              <ArrowRight width={12} height={12} />
+            </Link>
           </div>
         </div>
       </section>
@@ -187,37 +193,76 @@ export function Home() {
         </div>
       </section>
 
-      {/* ─────────────────────── Tools ─────────────────────── */}
+      {/* ─────────────────────── Tools (preview) ─────────────────────── */}
       <section className="section" id="tools">
         <div className="shell">
-          <div className="section-head">
-            <span className="eyebrow">Tools</span>
-            <h2>Tools organised by what they are used for</h2>
-            <p className="lede">
-              I do not use tool logos as a substitute for explaining what I can do with them. Each tool is
-              grouped by its practical purpose, and I distinguish tools I have built with end-to-end from
-              ones I have evaluated and experimented with.
-            </p>
+          <div className="section-head section-head--row">
+            <div className="section-head" style={{ marginBottom: 0, flex: '1 1 360px' }}>
+              <span className="eyebrow">Tools</span>
+              <h2>Tools organised by what they are used for</h2>
+              <p className="lede">
+                I do not use tool logos as a substitute for explaining what I can do with them. Each tool
+                is grouped by practical purpose and carries an honest experience label. The full ecosystem
+                is searchable and filterable.
+              </p>
+            </div>
+            <Link to="/tools" className="btn btn--secondary">
+              Full tool ecosystem
+              <ArrowRight width={14} height={14} />
+            </Link>
           </div>
 
-          <ToolsSection />
+          <div className="tools-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
+            {previewTools.map((t) => (
+              <div key={t.id} className="tool-ecosystem-card" style={{ cursor: 'default' }}>
+                <div className="tool-ecosystem-card__head">
+                  <span className="tool-monogram">{t.monogram}</span>
+                  <span className="tool-ecosystem-card__name">{t.name}</span>
+                </div>
+                <div className="tool-ecosystem-card__meta">
+                  <span className={`badge ${EXPERIENCE_META[t.experience].tone === 'done' ? 'badge--done' : EXPERIENCE_META[t.experience].tone === 'progress' ? 'badge--progress' : 'badge--planned'}`}>
+                    {EXPERIENCE_META[t.experience].label}
+                  </span>
+                  <span className="badge badge--illustrative">
+                    {toolCategories.find((c) => c.id === t.category)?.title}
+                  </span>
+                </div>
+                <p className="tool-ecosystem-card__used">{t.usedFor}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ──────────────── ROI calculator ─────────────────── */}
-      <section className="section" id="roi">
+      {/* ─────────────── Calculators & Simulators CTA (no decorative ROI card) ─────────────── */}
+      <section className="section">
         <div className="shell">
-          <div className="section-head">
-            <span className="eyebrow">Estimate the impact</span>
-            <h2>Interactive ROI calculator for enquiry and order handling</h2>
-            <p className="lede">
-              A working model that runs entirely in your browser. Change any assumption and the estimate
-              updates immediately. It is a planning tool, not a forecast — every assumption is yours to
-              challenge.
-            </p>
+          <div className="grid-2" style={{ gap: '1.2rem' }}>
+            <Link to="/calculators" className="card" style={{ padding: '1.4rem 1.5rem', textDecoration: 'none', color: 'inherit', display: 'block' }}>
+              <span className="eyebrow" style={{ position: 'static' }}>Working calculator</span>
+              <h3 style={{ fontSize: '1.15rem', margin: '0.5rem 0' }}>Estimate the cost of a manual process</h3>
+              <p className="muted" style={{ fontSize: '0.88rem', margin: 0, lineHeight: 1.6 }}>
+                Two-step client-side tool: first size the cost of the process as it runs today (including
+                error rework), then estimate what automation could realistically recover.
+              </p>
+              <span className="link-arrow" style={{ marginTop: '1rem', display: 'inline-flex' }}>
+                Open the calculator
+                <ArrowRight width={12} height={12} />
+              </span>
+            </Link>
+            <Link to="/simulators" className="card" style={{ padding: '1.4rem 1.5rem', textDecoration: 'none', color: 'inherit', display: 'block' }}>
+              <span className="eyebrow" style={{ position: 'static' }}>Interactive demonstrations</span>
+              <h3 style={{ fontSize: '1.15rem', margin: '0.5rem 0' }}>Walk through the decision logic</h3>
+              <p className="muted" style={{ fontSize: '0.88rem', margin: 0, lineHeight: 1.6 }}>
+                Three working simulators mirror the actual decision rules for COD orders, returns, and lead
+                qualification. Pick a scenario to see every check run.
+              </p>
+              <span className="link-arrow" style={{ marginTop: '1rem', display: 'inline-flex' }}>
+                Open simulators
+                <ArrowRight width={12} height={12} />
+              </span>
+            </Link>
           </div>
-
-          <ROICalculator />
         </div>
       </section>
 
@@ -315,40 +360,21 @@ export function Home() {
                   prototype or a planned build, it is labelled as one.
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ─────────────────── Build journal ────────────────── */}
-      <section className="section" id="journal">
-        <div className="shell">
-          <div className="section-head">
-            <span className="eyebrow">Build journal</span>
-            <h2>What I am building and learning</h2>
-            <p className="lede">
-              Short notes on current work, new experiments, integration lessons and testing discoveries.
-              Updated as I build. No fabricated historical entries.
-            </p>
-          </div>
-
-          <div className="journal-list">
-            {journal.map((entry) => (
-              <article className="journal-entry" key={entry.date + entry.title}>
-                <div className="journal-entry__date">{formatJournalDate(entry.date)}</div>
-                <div>
-                  <h3 className="journal-entry__title">{entry.title}</h3>
-                  <p className="journal-entry__body">{entry.body}</p>
-                  {entry.tags && entry.tags.length > 0 ? (
-                    <div className="journal-entry__tags">
-                      {entry.tags.map((t) => (
-                        <span key={t}>#{t}</span>
-                      ))}
-                    </div>
-                  ) : null}
+              <div className="card">
+                <div className="cluster" style={{ gap: '0.6rem', marginBottom: '0.6rem' }}>
+                  <span className="eyebrow" style={{ position: 'static' }}>Build journal</span>
                 </div>
-              </article>
-            ))}
+                <h3 style={{ fontSize: '1rem', margin: 0 }}>What I am building right now</h3>
+                <p className="muted" style={{ fontSize: '0.86rem', marginTop: '0.4rem', marginBottom: '0.8rem' }}>
+                  Short notes on new builds, integration lessons and testing discoveries, updated as I go.
+                </p>
+                <Link to="/journal" className="link-arrow">
+                  Read the journal
+                  <ArrowRight width={12} height={12} />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -376,58 +402,45 @@ export function Home() {
         </div>
       </section>
 
-      {/* ───────────────────── Contact ────────────────────── */}
+      {/* ───────────────────── Contact (functional enquiry form) ────────────────────── */}
       <section className="section" id="contact">
         <div className="shell">
           <div className="contact-surface">
-            <div className="grid-2" style={{ alignItems: 'start', position: 'relative', zIndex: 1 }}>
+            <div className="grid-2" style={{ alignItems: 'start', position: 'relative', zIndex: 1, gap: '2rem' }}>
               <div className="stack" style={{ gap: '1rem' }}>
                 <span className="eyebrow">Contact</span>
                 <h2 style={{ fontSize: 'clamp(1.55rem, 1.15rem + 1.9vw, 2.25rem)' }}>
                   Have a repetitive process slowing your business down?
                 </h2>
                 <p className="lede" style={{ maxWidth: '58ch' }}>
-                  Tell me how your current process works. We can explore whether automation would make it
-                  simpler, more reliable or easier to manage. There is no commitment from a first
-                  conversation.
+                  Tell me about it below. I will reply within two business days. There is no commitment
+                  from a first conversation.
                 </p>
 
-                <div className="hero__actions" style={{ marginTop: '0.6rem' }}>
-                  <a href={site.contact.email.href} className="btn btn--primary">
-                    Send an email
-                    <ArrowRight width={14} height={14} />
-                  </a>
-                  <a href={site.contact.linkedin.href} target="_blank" rel="noreferrer" className="btn btn--secondary">
-                    Connect on LinkedIn
-                  </a>
+                <div className="contact-channels" style={{ marginTop: '0.4rem' }}>
+                  <div className="contact-channel">
+                    <span className="contact-channel__label">Email</span>
+                    <span className="contact-channel__value">
+                      <a href={site.contact.email.href}>{site.contact.email.detail}</a>
+                    </span>
+                  </div>
+                  <div className="contact-channel">
+                    <span className="contact-channel__label">LinkedIn</span>
+                    <span className="contact-channel__value">
+                      <a href={site.contact.linkedin.href} target="_blank" rel="noreferrer">
+                        {site.contact.linkedin.detail}
+                      </a>
+                    </span>
+                  </div>
+                  <div className="contact-channel">
+                    <span className="contact-channel__label">Location</span>
+                    <span className="contact-channel__value">{site.location}</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="contact-channels">
-                <div className="contact-channel">
-                  <span className="contact-channel__label">Email</span>
-                  <span className="contact-channel__value">
-                    <a href={site.contact.email.href}>{site.contact.email.detail}</a>
-                  </span>
-                </div>
-                <div className="contact-channel">
-                  <span className="contact-channel__label">LinkedIn</span>
-                  <span className="contact-channel__value">
-                    <a href={site.contact.linkedin.href} target="_blank" rel="noreferrer">
-                      {site.contact.linkedin.detail}
-                    </a>
-                  </span>
-                </div>
-                <div className="contact-channel">
-                  <span className="contact-channel__label">Location</span>
-                  <span className="contact-channel__value">{site.location}</span>
-                </div>
-                <div className="contact-channel">
-                  <span className="contact-channel__label">Availability</span>
-                  <span className="contact-channel__value">
-                    Open for remote consulting engagements and automation implementation projects.
-                  </span>
-                </div>
+              <div>
+                <EnquiryForm />
               </div>
             </div>
           </div>

@@ -6,11 +6,10 @@ import { StatusBadge } from './StatusBadge'
 
 /**
  * Project card for the project library.
- * Shows the business problem up front (in plain English) and a one-line
- * description of what the system does, rather than dense paragraphs.
+ * Plain-English problem and system summary up front; one status badge; tags.
  */
 export function ProjectCard({ project }: { project: Project }) {
-  const cover = project.screenshots[0]?.image
+  const cover = project.heroVisual?.image
 
   return (
     <article className="project-card">
@@ -18,7 +17,7 @@ export function ProjectCard({ project }: { project: Project }) {
         {cover ? (
           <img
             src={cover}
-            alt={project.screenshots[0]?.caption ?? project.name}
+            alt={project.heroVisual?.caption ?? project.name}
             loading="lazy"
             decoding="async"
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
@@ -58,20 +57,9 @@ export function ProjectCard({ project }: { project: Project }) {
           <Link to={`/projects/${project.slug}`}>{project.name}</Link>
         </h3>
 
-        <div className="stack-sm" style={{ gap: '0.35rem' }}>
-          <p className="project-card__desc" style={{ margin: 0 }}>
-            <span className="faint" style={{ fontSize: '0.74rem', letterSpacing: '0.06em', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', display: 'block', marginBottom: '0.2rem' }}>
-              Problem
-            </span>
-            {project.businessProblem}
-          </p>
-          <p className="project-card__desc" style={{ margin: 0 }}>
-            <span className="faint" style={{ fontSize: '0.74rem', letterSpacing: '0.06em', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', display: 'block', marginBottom: '0.2rem' }}>
-              What it does
-            </span>
-            {project.systemDoes}
-          </p>
-        </div>
+        <p className="project-card__desc" style={{ margin: 0 }}>
+          {project.tagline}
+        </p>
 
         <div className="project-card__tags">
           {project.tools.map((tool) => (
@@ -90,7 +78,7 @@ export function ProjectCard({ project }: { project: Project }) {
           </span>
           <Link to={`/projects/${project.slug}`} className="link-arrow">
             View case study
-            <ArrowRight />
+            <ArrowRight width={12} height={12} />
           </Link>
         </div>
       </div>

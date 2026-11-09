@@ -136,7 +136,6 @@ function Footer() {
                     {item.label}
                   </HashLink>
                 ))}
-                <Link to="/audit" className="faint">Operations Audit</Link>
               </div>
             </div>
 

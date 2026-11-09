@@ -2355,7 +2355,452 @@ pre.code-block .c {
   border-color: var(--accent);
 }
 
-/* ─────────────────────── Misc additions ─────────────────────── */
+/* ─────────── Architecture explorer (interactive diagram) ─────────── */
+
+.arch-explorer {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(1rem, 0.8rem + 1vw, 1.8rem);
+  margin: 1.2rem 0;
+  overflow-x: auto;
+}
+
+.arch-explorer__flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  min-width: max-content;
+  padding-bottom: 0.4rem;
+  margin-bottom: 1.1rem;
+}
+
+.arch-ex-node {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 0.7rem 0.9rem;
+  min-width: 140px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  font: inherit;
+  position: relative;
+  transition: border-color 0.16s ease, background-color 0.16s ease, transform 0.16s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  border-top: 2px solid var(--node-accent, var(--text-faint));
+}
+
+.arch-ex-node:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+}
+
+.arch-ex-node.is-active {
+  background: var(--surface-2);
+  border-color: var(--node-accent, var(--accent-line));
+  box-shadow: 0 0 0 1px var(--node-accent, var(--accent-line));
+}
+
+.arch-ex-node:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.arch-ex-node__step {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--node-accent, var(--text-faint));
+}
+
+.arch-ex-node__title {
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.arch-ex-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem;
+  min-height: 110px;
+}
+
+.arch-ex-panel__pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pill-accent, var(--text-muted));
+  background: color-mix(in srgb, var(--pill-accent, var(--accent)) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pill-accent, var(--accent)) 35%, transparent);
+}
+
+.arch-ex-panel__title {
+  font-size: 1rem;
+  margin: 0.2rem 0 0.5rem;
+  line-height: 1.3;
+}
+
+.arch-ex-panel__detail {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ─────────────── Search field ─────────────────── */
+
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.55rem 0.9rem;
+  min-width: 260px;
+  flex: 1 1 260px;
+  max-width: 420px;
+}
+
+.search-field input {
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: var(--text);
+  font: inherit;
+  width: 100%;
+  font-size: 0.88rem;
+}
+
+.search-field input::placeholder {
+  color: var(--text-faint);
+}
+
+/* ─────────────── Expandable technical section ─────────────────── */
+
+.expander {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  margin: 1.6rem 0;
+  overflow: hidden;
+}
+
+.expander__btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.05rem 1.2rem;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.expander__btn:hover {
+  background: var(--surface-2);
+}
+
+.expander__title {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.expander__chevron {
+  color: var(--text-faint);
+  transition: transform 0.2s ease;
+  flex: none;
+}
+
+.expander.is-open .expander__chevron {
+  transform: rotate(90deg);
+}
+
+.expander__body {
+  display: none;
+  padding: 0 1.2rem 1.2rem;
+  border-top: 1px solid var(--border);
+}
+
+.expander.is-open .expander__body {
+  display: block;
+}
+
+/* ─────────────── Enquiry form ─────────────────── */
+
+.enquiry-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+.enquiry-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.enquiry-field--full {
+  grid-column: 1 / -1;
+}
+
+.enquiry-field label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.enquiry-field label .req {
+  color: var(--accent);
+  margin-left: 0.2rem;
+}
+
+.enquiry-field input,
+.enquiry-field select,
+.enquiry-field textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.6rem 0.75rem;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.enquiry-field textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.enquiry-field input:focus,
+.enquiry-field select:focus,
+.enquiry-field textarea:focus {
+  outline: none;
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.enquiry-field.has-error input,
+.enquiry-field.has-error select,
+.enquiry-field.has-error textarea {
+  border-color: rgba(232, 138, 106, 0.5);
+}
+
+.enquiry-field__error {
+  font-size: 0.74rem;
+  color: #e88a6a;
+}
+
+.enquiry-form__status {
+  grid-column: 1 / -1;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.86rem;
+}
+
+.enquiry-form__status--success {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  color: var(--text);
+}
+
+.enquiry-form__status--error {
+  background: rgba(232, 138, 106, 0.1);
+  border: 1px solid rgba(232, 138, 106, 0.35);
+  color: var(--text);
+}
+
+.enquiry-form__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.enquiry-honey {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .enquiry-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─────────────── Results/Points lists ─────────────────── */
+
+.results-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.results-list li {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 0.8rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  font-size: 0.86rem;
+  align-items: start;
+}
+
+.results-list li .badge {
+  justify-self: start;
+}
+
+/* ─────────────── Tools ecosystem ─────────────────── */
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.9rem;
+}
+
+.tool-ecosystem-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.05rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  transition: border-color 0.16s ease, background-color 0.16s ease, transform 0.16s ease;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  font: inherit;
+  width: 100%;
+}
+
+.tool-ecosystem-card:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+
+.tool-ecosystem-card.is-active {
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 1px var(--accent-soft);
+}
+
+.tool-monogram {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--accent-line);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  flex: none;
+}
+
+.tool-ecosystem-card__head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.tool-ecosystem-card__name {
+  font-weight: 600;
+  font-size: 0.96rem;
+}
+
+.tool-ecosystem-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.tool-ecosystem-card__used {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* Tool detail panel when a tool is selected */
+
+.tool-detail-panel {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.2rem, 1rem + 1vw, 1.8rem);
+  margin-top: 1.2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 720px) {
+  .tool-detail-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─────────────── Empty state ─────────────────── */
+
+.empty-state {
+  padding: 2.4rem 1rem;
+  text-align: center;
+  color: var(--text-faint);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+}
+
+/* ─────────────── Result pill colors for extended outcomes ─────────────────── */
+
+.sim-outcome--approved {
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+}
+.sim-outcome--approved .sim-outcome__label { color: var(--accent); }
+.sim-outcome--routed {
+  background: rgba(100, 180, 255, 0.08);
+  border-color: rgba(100, 180, 255, 0.3);
+}
+.sim-outcome--routed .sim-outcome__label { color: #80b8ff; }
+.sim-outcome--staged {
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+}
+.sim-outcome--staged .sim-outcome__label { color: var(--accent); }
+
+/* ─────────────── Misc additions ─────────────────── */
 
 .kbd {
   font-family: var(--font-mono);
