@@ -8,27 +8,23 @@ export type Cta = { label: string; href: string; detail?: string }
 export const CALENDLY_URL = 'https://calendly.com/reedahadedayo/30min'
 
 export const site = {
-  name: 'Fareedah Sanusi Adedayo',
-  wordmark: 'Fareedah Sanusi Adedayo',
+  name: 'Fareedah Adedayo',
+  wordmark: 'Fareedah Adedayo',
   wordmarkShort: 'FA',
   roleLabel: 'AI Workflow Automation Builder',
   location: 'Abuja, Nigeria · Remote',
-  availability: [
-    'Available for remote consulting engagements',
-    'Available for automation implementation projects',
-  ],
+  availability: 'Available for remote projects.',
 
-  headline: 'Automation systems for better-run e-commerce operations.',
+  headline: 'Automation for better\u2011run e\u2011commerce operations.',
   heroLead:
-    'I build automation systems that help businesses manage orders, customer enquiries, returns and repetitive operations more reliably. I combine workflow automation, connected business tools and AI where it adds practical value.',
+    'I build workflows that handle order checks, customer replies and returns, so your team can focus on growing the business.',
 
+  // Portrait shown only if public/portrait.jpg exists.
   portrait: {
-    src: '/portrait.svg',
-    alt: 'Professional portrait of Fareedah Sanusi Adedayo',
-    caption: 'Portrait placeholder — drop a 4:5 photo into public/portrait.jpg',
+    src: '/portrait.jpg',
+    alt: 'Portrait of Fareedah Adedayo',
   },
 
-  // 6 links max; single-line; CTA button is separate.
   nav: [
     { label: 'Problems', href: '/#problems' },
     { label: 'Services', href: '/#services' },
@@ -52,14 +48,12 @@ export const site = {
   },
 
   ctas: {
-    // Primary CTA (nav button) says "Book a call" — single nav button.
     primary: {
       label: 'Book a call',
       href: CALENDLY_URL,
-      detail: 'Free 30-min consultation',
+      detail: 'Free 30-min call',
       external: true,
     } as Cta & { external?: boolean },
-    // Footer secondary CTA for "Send an email".
     secondary: {
       label: 'Send an email',
       href: 'mailto:fareedahadedayo08@gmail.com',
@@ -67,11 +61,14 @@ export const site = {
   },
 
   og: {
-    title: 'Fareedah Sanusi Adedayo — AI Workflow Automation Builder',
+    title: 'Fareedah Adedayo, AI Workflow Automation Builder',
     description:
-      'Automation systems for better-run e-commerce operations. Order processing, returns handling, lead qualification and lifecycle workflows.',
+      'Automation for better-run e-commerce operations. Order checks, customer replies and returns handled by reliable workflows.',
     image: '/og-image.svg',
   },
+
+  footerAttribution:
+    'Product logos belong to their respective owners and are used only to identify the tools I work with.',
 }
 
 export type SiteConfig = typeof site

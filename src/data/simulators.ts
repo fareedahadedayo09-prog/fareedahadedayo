@@ -28,7 +28,7 @@ export type Scenario = {
   title: string
   description: string
   illustrative?: boolean // marks rules that are designed, not yet built
-  // Arbitrary scenario input — each simulator interprets its own shape.
+  // Arbitrary scenario input, each simulator interprets its own shape.
   input: Record<string, unknown>
 }
 
@@ -134,7 +134,7 @@ export function simulateCOD(input: Record<string, unknown>): SimulationResult {
   const addrOk = address.length >= COD_RULES.MIN_ADDRESS_LENGTH
   checks.push({
     id: 'address', label: 'Delivery address is complete', tone: addrOk ? 'pass' : 'warn',
-    detail: addrOk ? `Address (${address.length} chars).` : `Address is only ${address.length} characters — likely incomplete.`,
+    detail: addrOk ? `Address (${address.length} chars).` : `Address is only ${address.length} characters, likely incomplete.`,
   })
   const phoneDigits = digits(phone)
   const phoneOk = phoneDigits.length >= COD_RULES.MIN_PHONE_DIGITS && /^[0-9+\s()-]*$/.test(phone) && phone.length > 0
@@ -173,10 +173,10 @@ export function simulateCOD(input: Record<string, unknown>): SimulationResult {
 
   const structurallyInvalid = !nameOk || !hasItems || !qtyOk || !priceOk || !delivOk || !phoneOk
   if (structurallyInvalid) {
-    checks.push({ id: 'total', label: 'Order total', tone: 'fail', detail: 'Not calculated — input must be corrected first.' })
-    checks.push({ id: 'risk', label: 'Risk check', tone: 'fail', detail: 'Not run — input is invalid.' })
+    checks.push({ id: 'total', label: 'Order total', tone: 'fail', detail: 'Not calculated, input must be corrected first.' })
+    checks.push({ id: 'risk', label: 'Risk check', tone: 'fail', detail: 'Not run, input is invalid.' })
     return {
-      outcome: { tone: 'rejected', label: 'Input rejected — hold for correction', detail: 'Structural problems in the order (missing field or non-numeric value). Submission recorded as an error; no customer message is sent.' },
+      outcome: { tone: 'rejected', label: 'Input rejected, hold for correction', detail: 'Structural problems in the order (missing field or non-numeric value). Submission recorded as an error; no customer message is sent.' },
       checks,
       computed: { total: null },
     }
@@ -301,27 +301,27 @@ export function simulateReturns(raw: Record<string, unknown>): SimulationResult 
   const hasFinalSale = items.some((i) => i.is_final_sale)
   checks.push({ id: 'final', label: 'No final-sale items', tone: hasFinalSale ? 'fail' : 'pass', detail: hasFinalSale ? 'One or more items are marked final sale.' : 'No final-sale items in the request.' })
   const hasReason = (input.reason ?? '').toString().trim().length > 0
-  checks.push({ id: 'reason', label: 'Return reason provided', tone: hasReason ? 'pass' : 'warn', detail: hasReason ? `Reason: ${input.reason}.` : 'No reason supplied — a team member will ask.' })
+  checks.push({ id: 'reason', label: 'Return reason provided', tone: hasReason ? 'pass' : 'warn', detail: hasReason ? `Reason: ${input.reason}.` : 'No reason supplied, a team member will ask.' })
   const hasConflict = !!input.conflicting_instructions && String(input.conflicting_instructions).trim().length > 0
   checks.push({ id: 'conflict', label: 'No conflicting instructions', tone: hasConflict ? 'warn' : 'pass', detail: hasConflict ? `Conflicting request: "${String(input.conflicting_instructions)}".` : 'No conflicting instructions detected.' })
 
   if (!hasOrder || !hasItems || !daysValid) {
-    return { outcome: { tone: 'rejected', label: 'Request incomplete — hold for correction', detail: 'Required information is missing. The request is recorded and a team member will follow up to correct it; no decision is issued.' }, checks }
+    return { outcome: { tone: 'rejected', label: 'Request incomplete, hold for correction', detail: 'Required information is missing. The request is recorded and a team member will follow up to correct it; no decision is issued.' }, checks }
   }
 
   // Eligibility logic.
   if (hasConflict) {
-    return { outcome: { tone: 'flagged', label: 'Flagged for human review — conflicting instructions', detail: 'The customer has made conflicting requests (e.g. exchange AND refund). A person resolves this before any action is taken.' }, checks }
+    return { outcome: { tone: 'flagged', label: 'Flagged for human review, conflicting instructions', detail: 'The customer has made conflicting requests (e.g. exchange AND refund). A person resolves this before any action is taken.' }, checks }
   }
   if (days !== null && days > RETURNS_RULES.RETURN_WINDOW_DAYS) {
-    return { outcome: { tone: 'flagged', label: 'Flagged for human review — outside window', detail: `Return is outside the ${RETURNS_RULES.RETURN_WINDOW_DAYS}-day window. Standard policy does not approve; a person decides whether to make an exception.` }, checks }
+    return { outcome: { tone: 'flagged', label: 'Flagged for human review, outside window', detail: `Return is outside the ${RETURNS_RULES.RETURN_WINDOW_DAYS}-day window. Standard policy does not approve; a person decides whether to make an exception.` }, checks }
   }
   if (hasFinalSale) {
-    return { outcome: { tone: 'flagged', label: 'Flagged for human review — final-sale item', detail: 'One or more items are final sale. Standard policy denies; a person reviews if an exception is warranted.' }, checks }
+    return { outcome: { tone: 'flagged', label: 'Flagged for human review, final-sale item', detail: 'One or more items are final sale. Standard policy denies; a person reviews if an exception is warranted.' }, checks }
   }
 
   return {
-    outcome: { tone: 'approved', label: 'Return approved — return instructions queued', detail: 'Request meets policy. The workflow records the approval and queues return instructions to the customer. Exchange/refund is executed according to the customer\u2019s selection.' },
+    outcome: { tone: 'approved', label: 'Return approved, return instructions queued', detail: 'Request meets policy. The workflow records the approval and queues return instructions to the customer. Exchange/refund is executed according to the customer\u2019s selection.' },
     checks,
   }
 }
@@ -433,22 +433,22 @@ export function simulateLead(raw: Record<string, unknown>): SimulationResult {
   checks.push({ id: 'source', label: 'Source recorded', tone: hasSource ? 'pass' : 'warn', detail: hasSource ? `Source: ${source}.` : 'Source not recorded.' })
 
   if (!checks_name || !contactOk) {
-    checks.push({ id: 'classify', label: 'Classification', tone: 'fail', detail: 'Not run — record is incomplete.' })
+    checks.push({ id: 'classify', label: 'Classification', tone: 'fail', detail: 'Not run, record is incomplete.' })
     checks.push({ id: 'route', label: 'Routing', tone: 'fail', detail: 'Not run.' })
-    return { outcome: { tone: 'rejected', label: 'Record held — incomplete', detail: 'Missing contact or name. Record retained in the incomplete-leads queue; no outreach is attempted until a person fills in the missing data.' }, checks }
+    return { outcome: { tone: 'rejected', label: 'Record held, incomplete', detail: 'Missing contact or name. Record retained in the incomplete-leads queue; no outreach is attempted until a person fills in the missing data.' }, checks }
   }
 
   const cls = classifyLead(message)
-  checks.push({ id: 'classify', label: 'Classification', tone: cls.bucketId ? 'pass' : 'warn', detail: cls.bucketId ? `Matched bucket: ${cls.label}.` : 'No bucket matched — held for manual review.' })
+  checks.push({ id: 'classify', label: 'Classification', tone: cls.bucketId ? 'pass' : 'warn', detail: cls.bucketId ? `Matched bucket: ${cls.label}.` : 'No bucket matched, held for manual review.' })
 
   if (!cls.bucketId) {
     checks.push({ id: 'route', label: 'Routing', tone: 'warn', detail: 'No deterministic match; record placed in review queue with raw message attached.' })
-    return { outcome: { tone: 'flagged', label: 'Unclassified — held for human review', detail: 'The message does not match any existing bucket cleanly. A person reviews and either classifies it or replies for clarification.' }, checks }
+    return { outcome: { tone: 'flagged', label: 'Unclassified, held for human review', detail: 'The message does not match any existing bucket cleanly. A person reviews and either classifies it or replies for clarification.' }, checks }
   }
 
   checks.push({ id: 'route', label: 'Routing', tone: 'pass', detail: `Routed to ${cls.label} queue; next action assigned in Airtable.` })
   return {
-    outcome: { tone: 'routed', label: `Classified as ${cls.label} — routed`, detail: `The lead has been structured, classified as "${cls.label}", assigned an owner and a next action in Airtable.` },
+    outcome: { tone: 'routed', label: `Classified as ${cls.label}, routed`, detail: `The lead has been structured, classified as "${cls.label}", assigned an owner and a next action in Airtable.` },
     checks,
     computed: { bucket: cls.label ?? 'unclassified' },
   }
@@ -465,7 +465,7 @@ export type SimulatorDef = {
   subtitle: string
   scenarios: Scenario[]
   run: (input: Record<string, unknown>) => SimulationResult
-  /** Field schema used to render the input panel (optional — we show summaries instead of raw JSON for clarity). */
+  /** Field schema used to render the input panel (optional, we show summaries instead of raw JSON for clarity). */
   disclaimer: string
 }
 

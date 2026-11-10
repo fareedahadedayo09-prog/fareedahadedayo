@@ -1,11 +1,11 @@
 /**
  * ──────────────────────────────────────────────────────────────────────────
- *  TOOLS & TECHNOLOGIES — visual logo grid data
+ *  TOOLS & TECHNOLOGIES, visual logo grid data
  * ──────────────────────────────────────────────────────────────────────────
  *  Ordered list of groups, each with a set of tools. Logos come from the
  *  official Simple Icons CDN for recognised brands. For concepts with no
  *  single-brand logo (REST APIs, Webhooks, pgvector, Airtable Interfaces)
- *  we render a minimal custom mark defined in ToolCustomMarks.tsx — never
+ *  we render a minimal custom mark defined in ToolCustomMarks.tsx, never
  *  an invented brand logo.
  * ──────────────────────────────────────────────────────────────────────────
  */

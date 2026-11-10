@@ -1,6 +1,6 @@
 /**
  * ──────────────────────────────────────────────────────────────────────────
- *  PROJECT CONTENT — case-study-first structure
+ *  PROJECT CONTENT, case-study-first structure
  * ──────────────────────────────────────────────────────────────────────────
  *
  *  Each project follows the required 6-part structure:
@@ -15,7 +15,7 @@
  *  Media policy: at most one strong visual (diagram/screenshot) per case
  *  study. No long screenshot galleries.
  *
- *  Four projects exactly as specified — no invented completed builds.
+ *  Four projects exactly as specified, no invented completed builds.
  * ──────────────────────────────────────────────────────────────────────────
  */
 

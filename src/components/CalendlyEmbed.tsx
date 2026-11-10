@@ -41,7 +41,7 @@ export function CalendlyEmbed({
     }
 
     if (existing) {
-      // Script already present in the DOM — may still be loading.
+      // Script already present in the DOM, may still be loading.
       const w = window as any
       if (w[CALENDLY_NAMESPACE]?.initInlineWidget) {
         init()

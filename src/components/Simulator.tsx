@@ -23,7 +23,7 @@ function ScenarioInputSummary({ input }: { input: Record<string, unknown> }) {
           <div className="sim-order__line" key={k}>
             <dt>{k.replace(/_/g, ' ')}</dt>
             <dd style={{ whiteSpace: 'pre-wrap' }}>
-              {v === '' || v === null || v === undefined ? <span className="faint">—</span> : formatVal(v)}
+              {v === '' || v === null || v === undefined ? <span className="faint">·</span> : formatVal(v)}
             </dd>
           </div>
         ))}
@@ -105,7 +105,7 @@ export function Simulator({ simulatorId }: { simulatorId: SimulatorId }) {
                 <div key={k} className="stack-sm" style={{ gap: '0.1rem' }}>
                   <span className="faint mono" style={{ fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{k.replace(/_/g, ' ')}</span>
                   <span className="sim-total" style={{ fontSize: '1.05rem' }}>
-                    {typeof v === 'number' ? v.toLocaleString() : v ?? <span className="faint">—</span>}
+                    {typeof v === 'number' ? v.toLocaleString() : v ?? <span className="faint">·</span>}
                   </span>
                 </div>
               ))}

@@ -44,82 +44,140 @@ function Header() {
     if (isDesktop) setOpen(false)
   }, [isDesktop])
 
+  // Lock body scroll when overlay is open.
+  useEffect(() => {
+    if (open) {
+      const prev = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = prev
+      }
+    }
+  }, [open])
+
+  // Escape closes the overlay.
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
+
   const cta = site.ctas.primary as { label: string; href: string; external?: boolean }
+  const closeMenu = () => setOpen(false)
 
   return (
-    <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
-      <div className="shell site-header__inner">
-        <Link to="/" className="wordmark" aria-label={`${site.wordmark}: home`}>
-          <span className="wordmark__mark" aria-hidden="true">
-            {site.wordmarkShort}
-          </span>
-          <span className="wordmark__name">{site.wordmark}</span>
-        </Link>
+    <>
+      <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
+        <div className="shell site-header__inner">
+          <Link to="/" className="wordmark" aria-label={`${site.wordmark}: home`}>
+            <span className="wordmark__mark" aria-hidden="true">
+              {site.wordmarkShort}
+            </span>
+            <span className="wordmark__name">{site.wordmark}</span>
+          </Link>
 
-        <nav
-          id="primary-nav"
-          className={`nav ${open ? 'is-open' : 'is-closed'}`}
-          aria-label="Primary"
-        >
-          {site.nav.map((item) => {
-            const isAnchor = item.href.startsWith('/#') || item.href.startsWith('#')
-            if (isAnchor) {
+          <nav
+            id="primary-nav"
+            className="nav"
+            aria-label="Primary"
+          >
+            {site.nav.map((item) => {
+              const isAnchor = item.href.startsWith('/#') || item.href.startsWith('#')
+              if (isAnchor) {
+                return (
+                  <HashLink key={item.label} to={item.href} className="nav__link">
+                    {item.label}
+                  </HashLink>
+                )
+              }
               return (
-                <HashLink
+                <NavLink
                   key={item.label}
                   to={item.href}
-                  className="nav__link"
-                  onClick={() => setOpen(false)}
+                  end={item.href === '/projects' ? false : true}
+                  className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
                 >
                   {item.label}
-                </HashLink>
+                </NavLink>
               )
-            }
-            return (
-              <NavLink
-                key={item.label}
-                to={item.href}
-                end={item.href === '/projects' ? false : true}
-                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
-                onClick={() => setOpen(false)}
+            })}
+          </nav>
+
+          <div className="nav__cta">
+            {cta.external ? (
+              <a
+                className="btn btn--primary btn--small nav-cta-btn"
+                href={cta.href}
+                target="_blank"
+                rel="noreferrer"
               >
-                {item.label}
-              </NavLink>
-            )
-          })}
-        </nav>
+                {cta.label}
+                <ArrowRight width={12} height={12} />
+              </a>
+            ) : (
+              <Link className="btn btn--primary btn--small nav-cta-btn" to={cta.href}>
+                {cta.label}
+                <ArrowRight width={12} height={12} />
+              </Link>
+            )}
+          </div>
 
-        <div className="nav__cta">
-          {cta.external ? (
-            <a
-              className="btn btn--primary btn--small nav-cta-btn"
-              href={cta.href}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {cta.label}
-              <ArrowRight width={12} height={12} />
-            </a>
-          ) : (
-            <Link className="btn btn--primary btn--small nav-cta-btn" to={cta.href}>
-              {cta.label}
-              <ArrowRight width={12} height={12} />
-            </Link>
-          )}
+          <button
+            type="button"
+            className="nav-toggle"
+            aria-expanded={open}
+            aria-controls="mobile-nav-overlay"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <CloseIcon width={22} height={22} /> : <MenuIcon width={22} height={22} />}
+          </button>
         </div>
+      </header>
 
-        <button
-          type="button"
-          className="nav-toggle"
-          aria-expanded={open}
-          aria-controls="primary-nav"
-          aria-label={open ? 'Close menu' : 'Open menu'}
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? <CloseIcon /> : <MenuIcon />}
-        </button>
+      {/* Full-screen mobile overlay */}
+      <div
+        id="mobile-nav-overlay"
+        className={`mobile-nav ${open ? 'mobile-nav--open' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site navigation"
+        hidden={!open}
+      >
+        <nav aria-label="Mobile" className="mobile-nav__inner">
+          <ul className="mobile-nav__list">
+            {site.nav.map((item, i) => {
+              const isAnchor = item.href.startsWith('/#') || item.href.startsWith('#')
+              const style = { '--i': i } as React.CSSProperties
+              if (isAnchor) {
+                return (
+                  <li key={item.label} style={style}>
+                    <HashLink to={item.href} className="mobile-nav__link" onClick={closeMenu}>
+                      {item.label}
+                    </HashLink>
+                  </li>
+                )
+              }
+              return (
+                <li key={item.label} style={style}>
+                  <NavLink
+                    to={item.href}
+                    end={item.href === '/projects' ? false : true}
+                    className="mobile-nav__link"
+                    onClick={closeMenu}
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              )
+            })}
+          </ul>
+        </nav>
       </div>
-    </header>
+    </>
   )
 }
 
@@ -133,9 +191,6 @@ function Footer() {
           <div className="section-head section-head--row">
             <div className="stack" style={{ gap: '1.1rem' }}>
               <div className="cluster" style={{ gap: '0.65rem' }}>
-                <span className="wordmark__mark" aria-hidden="true">
-                  {site.wordmarkShort}
-                </span>
                 <strong style={{ fontWeight: 600 }}>{site.wordmark}</strong>
               </div>
               <p className="lede" style={{ maxWidth: '56ch' }}>
@@ -193,8 +248,7 @@ function Footer() {
             <div className="stack-sm">
               <span className="eyebrow">About this site</span>
               <p className="faint" style={{ fontSize: '0.78rem', lineHeight: 1.6, maxWidth: '36ch' }}>
-                Built with React, TypeScript and Vite. Every project shows what is built, what is tested
-                and what is still missing. No fabricated metrics.
+                {site.footerAttribution}
               </p>
             </div>
           </div>

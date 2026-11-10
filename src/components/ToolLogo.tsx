@@ -12,7 +12,7 @@ import {
  *
  * - 'simple-icons' logos come from the official Simple Icons CDN
  *   (cdn.simpleicons.org/<slug>/<hex>) pre-filled with the brand's official
- *   colour — no CSS filter tricks needed.
+ *   colour, no CSS filter tricks needed.
  *
  * - 'custom' marks are minimal neutral SVGs for concepts without a single
  *   brand logo (REST APIs, Webhooks, pgvector, Airtable Interfaces).

@@ -21,7 +21,7 @@ export const services: Service[] = [
     id: 'order-workflows',
     title: 'E-commerce order workflow automation',
     summary:
-      'Automated checks, confirmations and exception handling for incoming orders — especially cash-on-delivery and manual-confirmation flows.',
+      'Automated checks, confirmations and exception handling for incoming orders, especially cash-on-delivery and manual-confirmation flows.',
     detail:
       'From intake to dispatch, the system prices orders, applies configured risk rules, sends confirmations, and records the outcome in one place. Orders that fail checks are flagged rather than processed blind.',
     projectRef: 'order-confirmation-risk-check',
@@ -47,7 +47,7 @@ export const services: Service[] = [
     id: 'lifecycle',
     title: 'Abandoned-cart and customer lifecycle automation',
     summary:
-      'Follow-up messages and lifecycle sequences that are triggered by what the customer actually did — not by a generic schedule.',
+      'Follow-up messages and lifecycle sequences that are triggered by what the customer actually did, not by a generic schedule.',
     detail:
       'Prototype-stage lifecycle workflows that connect order events to timed follow-up messages, with logic for customer segments and opt-out handling. Currently demonstrated as a prototype, not a live store integration.',
     projectRef: 'glowlab-lifecycle',
@@ -65,7 +65,7 @@ export const services: Service[] = [
     id: 'integrations',
     title: 'Business process automation and system integrations',
     summary:
-      'Connecting tools your business already uses — forms, databases, email, spreadsheets and messaging — so information moves without being re-typed.',
+      'Connecting tools your business already uses, forms, databases, email, spreadsheets and messaging, so information moves without being re-typed.',
     detail:
       'Typical work: webhook-driven flows between form tools, Airtable and email; data validation before records are written; structured queues for items a person needs to review.',
   },

@@ -12,15 +12,14 @@ import { about, capabilities, faq, methodology, privacyFooter, privacyPrinciples
 import { problemCategories } from '../data/problems'
 import { services } from '../data/services'
 import toolStack from '../data/tools'
-import { getProject } from '../data/projects'
 
 const featured = projects.filter((p) => p.status !== 'planned').slice(0, 3)
 
-const checklist = [
-  'Understand your business and current operational process.',
-  'Identify repetitive tasks, bottlenecks, or workflow inefficiencies.',
-  'Explore whether automation or AI could help.',
-  'Discuss potential solutions and practical next steps.',
+const bookingChecks = [
+  'Understand your current process',
+  'Spot repetitive tasks and bottlenecks',
+  'See whether automation or AI can help',
+  'Agree practical next steps',
 ]
 
 export function Home() {
@@ -33,7 +32,7 @@ export function Home() {
             <div className="hero__copy">
               <Reveal>
                 <span className="eyebrow">{site.roleLabel}</span>
-                <h1 className="hero__headline">{site.headline}</h1>
+                <h1 className="hero__headline" style={{ textWrap: 'balance' as any }}>{site.headline}</h1>
                 <p className="hero__lead">{site.heroLead}</p>
 
                 <div className="hero__actions">
@@ -41,23 +40,14 @@ export function Home() {
                     Explore my work
                     <ArrowRight width={15} height={15} />
                   </Link>
-                  <a
-                    href={CALENDLY_LINK}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn btn--secondary"
-                  >
-                    Book a consultation
+                  <a href={CALENDLY_LINK} target="_blank" rel="noreferrer" className="btn btn--secondary">
+                    Book a call
                   </a>
                 </div>
 
-                <div className="hero__availability">
-                  {site.availability.map((item, i) => (
-                    <span key={item} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-                      {i > 0 ? <span className="dot" aria-hidden="true" /> : null}
-                      {item}
-                    </span>
-                  ))}
+                <div className="hero__availability" style={{ marginTop: '0.8rem' }}>
+                  <span className="status-dot" aria-hidden="true" />
+                  {site.availability}
                 </div>
               </Reveal>
             </div>
@@ -69,52 +59,53 @@ export function Home() {
         </div>
       </section>
 
-      {/* ─────────── Business problems ─────────────── */}
+      {/* ─────────── Problems ─────────────── */}
       <section className="section" id="problems">
         <div className="shell">
           <Reveal>
-            <div className="section-head">
-              <span className="eyebrow">01 &nbsp;·&nbsp; Problems</span>
-              <h2>The operational problems I help address</h2>
+            <div className="section-head" style={{ maxWidth: '60ch' }}>
+              <span className="eyebrow">Problems</span>
+              <h2>Where manual work costs you time and money</h2>
               <p className="lede">
-                If any of these sound like a normal afternoon in your business, that is the kind of friction
-                well-designed automation is good at removing. These are not generic AI promises — they are the
-                places where repetitive manual work creates mistakes, delays and extra cost.
+                These are the everyday tasks where automation removes errors and delays.
               </p>
             </div>
           </Reveal>
 
-          <div className="problem-grid">
-            {problemCategories.map((cat, i) => (
-              <Reveal key={cat.id} delay={i * 80} y={16}>
-                <div className="problem-card">
-                  <span className="problem-card__num">{cat.eyebrow} / {cat.title}</span>
-                  <h3 className="problem-card__title">{cat.title}</h3>
-                  <p className="problem-card__summary">{cat.summary}</p>
-                  <ul>
-                    {cat.problems.map((p) => (
-                      <li key={p}>{p}</li>
-                    ))}
-                  </ul>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          <Reveal delay={80}>
+            <div className="problem-grid problem-grid--3-2">
+              <div className="problem-grid__row">
+                {problemCategories.slice(0, 3).map((cat) => (
+                  <div className="problem-card problem-card--simple" key={cat.id}>
+                    <h3 className="problem-card__title">{cat.title}</h3>
+                    <p className="problem-card__summary">{cat.line}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="problem-grid__row problem-grid__row--center">
+                {problemCategories.slice(3).map((cat) => (
+                  <div className="problem-card problem-card--simple" key={cat.id}>
+                    <h3 className="problem-card__title">{cat.title}</h3>
+                    <p className="problem-card__summary">{cat.line}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* ───────────── Services / Capabilities ──────────────── */}
+      {/* ───────────── Services ──────────────── */}
       <section className="section" id="services">
         <div className="shell">
           <Reveal>
             <div className="section-head section-head--row">
               <div className="section-head" style={{ marginBottom: 0, flex: '1 1 360px' }}>
-                <span className="eyebrow">02 &nbsp;·&nbsp; Services</span>
+                <span className="eyebrow">Services</span>
                 <h2>Types of systems I design and implement</h2>
                 <p className="lede">
                   These are the kinds of workflows I build. Every offering here is grounded in at least one
-                  project on this site, but I do not claim to have delivered every one for a paying client.
-                  Bring me your specific process and we will work out whether — and what — to automate.
+                  project on this site.
                 </p>
               </div>
             </div>
@@ -127,38 +118,24 @@ export function Home() {
                   <h3 className="service-card__title">{svc.title}</h3>
                   <p className="service-card__summary">{svc.summary}</p>
                   <p className="service-card__detail">{svc.detail}</p>
-                  {svc.projectRef && getProject(svc.projectRef) ? (
-                    <Link to={`/projects/${svc.projectRef}`} className="service-card__ref">
-                      See related case study →
-                    </Link>
-                  ) : null}
                 </div>
               </Reveal>
             ))}
           </div>
-
-          <Reveal>
-            <div className="notice" style={{ marginTop: '1.6rem' }}>
-              <strong>Not sure where your problem fits?</strong> That is normal — many operational problems sit
-              across two of these categories. Start by describing the process to me and I will tell you
-              frankly what makes sense to build, if anything.
-            </div>
-          </Reveal>
         </div>
       </section>
 
-      {/* ─────────────────── Featured projects ─────────────────────── */}
+      {/* ─────────────────── Projects ─────────────────────── */}
       <section className="section" id="projects">
         <div className="shell">
           <Reveal>
             <div className="section-head section-head--row">
               <div className="section-head" style={{ marginBottom: 0, flex: '1 1 340px' }}>
-                <span className="eyebrow">03 &nbsp;·&nbsp; Selected work</span>
+                <span className="eyebrow">Selected work</span>
                 <h2>Projects you can inspect in detail</h2>
                 <p className="lede">
                   Each case study explains the problem, what was automated vs kept human, shows the workflow
-                  step-by-step (you can click through the diagram), and labels every result as verified,
-                  partial or designed.
+                  step-by-step, and labels every result as verified, partial or designed.
                 </p>
               </div>
               <Link to="/projects" className="btn btn--secondary">
@@ -178,26 +155,25 @@ export function Home() {
         </div>
       </section>
 
-      {/* ─────── Consultation invitation after case studies ─────── */}
+      {/* ─────── Consultation CTA ─────── */}
       <Reveal>
         <section className="section" id="consultation-cta" style={{ paddingTop: 0 }}>
           <div className="shell">
             <div className="contact-surface card--featured" style={{ padding: 'clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem)' }}>
               <div className="grid-2" style={{ alignItems: 'center', gap: '1.6rem' }}>
                 <div className="stack" style={{ gap: '0.7rem' }}>
-                  <span className="eyebrow">Free 30-minute consultation</span>
+                  <span className="eyebrow">Free 30-minute call</span>
                   <h2 style={{ fontSize: 'clamp(1.4rem, 1rem + 1.7vw, 2rem)', margin: 0 }}>
                     Have an operational problem worth solving?
                   </h2>
                   <p className="muted" style={{ fontSize: '0.94rem', lineHeight: 1.7, margin: 0, maxWidth: '58ch' }}>
                     Tell me about the repetitive tasks, disconnected tools, or process bottlenecks slowing
-                    down your business. Let's explore whether AI or workflow automation could make a
-                    practical difference.
+                    down your business.
                   </p>
                 </div>
                 <div className="cluster" style={{ gap: '0.6rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                   <a href={CALENDLY_LINK} target="_blank" rel="noreferrer" className="btn btn--primary">
-                    Let's discuss your workflow
+                    Book a free call
                     <ArrowRight width={14} height={14} />
                   </a>
                   <Link to="/simulators" className="btn btn--ghost btn--small">
@@ -211,16 +187,15 @@ export function Home() {
         </section>
       </Reveal>
 
-      {/* ───────────────── How I work (process) ────────────────── */}
+      {/* ───────────────── Process ────────────────── */}
       <section className="section" id="process">
         <div className="shell">
           <Reveal>
             <div className="section-head">
-              <span className="eyebrow">04 &nbsp;·&nbsp; Process</span>
+              <span className="eyebrow">Process</span>
               <h2>Diagnose before you build</h2>
               <p className="lede">
-                Automation should solve a genuine business problem, not be introduced just because a tool
-                makes it possible. Every engagement follows the same five steps.
+                Automation should solve a genuine business problem. Every engagement follows the same five steps.
               </p>
             </div>
           </Reveal>
@@ -250,13 +225,13 @@ export function Home() {
         </div>
       </section>
 
-      {/* ─────────────────────── Tools (logo stack) ─────────────────────── */}
+      {/* ─────────────────────── Tools ─────────────────────── */}
       <section className="section" id="tools">
         <div className="shell">
           <Reveal>
             <div className="section-head section-head--row">
               <div className="section-head" style={{ marginBottom: 0, flex: '1 1 360px' }}>
-                <span className="eyebrow">05 &nbsp;·&nbsp; Tools &amp; Technologies</span>
+                <span className="eyebrow">Tools &amp; Technologies</span>
                 <h2>The stack I build with</h2>
                 <p className="lede">
                   The technologies I use to design, build and connect automation systems.
@@ -298,7 +273,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* ─────────────── What I will not automate ─────────────── */}
+      {/* ─────────────── Judgement ─────────────── */}
       <section className="section" id="principles">
         <div className="shell">
           <Reveal>
@@ -306,8 +281,7 @@ export function Home() {
               <span className="eyebrow">Judgement</span>
               <h2>Where automation stops and a person decides</h2>
               <p className="lede">
-                Some decisions require a person. These principles apply to every workflow I build, so the
-                system knows when to stop and hand over instead of producing a confident wrong answer.
+                Some decisions require a person. These principles apply to every workflow I build.
               </p>
             </div>
           </Reveal>
@@ -337,7 +311,7 @@ export function Home() {
             <div className="grid-2" style={{ alignItems: 'start' }}>
               <div className="stack" style={{ gap: '1.3rem' }}>
                 <div>
-                  <span className="eyebrow">06 &nbsp;·&nbsp; About</span>
+                  <span className="eyebrow">{about.eyebrow}</span>
                   <h2 style={{ marginTop: '0.8rem' }}>Law student, self-taught builder</h2>
                 </div>
 
@@ -394,9 +368,7 @@ export function Home() {
                 <div className="card">
                   <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>No fake claims</h3>
                   <p className="muted" style={{ fontSize: '0.86rem', lineHeight: 1.65 }}>
-                    No fabricated client results. No invented testimonials. No vanity node counters. No
-                    performance statistics I cannot point at a test run to support. Where something is a
-                    prototype or a planned build, it is labelled as one.
+                    Everything here is real. Prototypes and planned builds are labelled as such.
                   </p>
                 </div>
               </div>
@@ -410,7 +382,7 @@ export function Home() {
         <div className="shell">
           <Reveal>
             <div className="section-head">
-              <span className="eyebrow">Questions people usually ask</span>
+              <span className="eyebrow">Questions</span>
               <h2>Answers for prospective clients</h2>
               <p className="lede">
                 If you are a business owner trying to decide whether it is worth talking to me, these are the
@@ -424,36 +396,33 @@ export function Home() {
         </div>
       </section>
 
-      {/* ───────────────────── Contact — inline Calendly booking ────────────────────── */}
+      {/* ───────────────────── Contact ────────────────────── */}
       <section className="section" id="contact">
         <div className="shell">
           <Reveal>
             <div className="contact-surface">
               <div className="grid-2" style={{ alignItems: 'start', position: 'relative', zIndex: 1, gap: '2rem' }}>
                 <div className="stack" style={{ gap: '1rem' }}>
-                  <span className="eyebrow">Book a consultation</span>
+                  <span className="eyebrow">Book a call</span>
                   <h2 style={{ fontSize: 'clamp(1.55rem, 1.15rem + 1.9vw, 2.25rem)' }}>
-                    Free 30-minute AI automation consultation
+                    Book a free 30-minute call
                   </h2>
                   <p className="lede" style={{ maxWidth: '58ch' }}>
-                    Pick a time that works for you. The call is held online via Google Meet and there is no
-                    obligation to proceed with a project afterwards.
+                    Pick a time that works for you. We will talk through your process and whether automation
+                    can help.
                   </p>
 
-                  <div>
-                    <h3 style={{ fontSize: '0.96rem', margin: '0 0 0.9rem', color: 'var(--text)' }}>During our conversation, we'll:</h3>
-                    <ul className="check-list" role="list">
-                      {checklist.map((item) => (
-                        <li key={item}>
-                          <CheckIcon width={15} height={15} style={{ color: 'var(--accent)', flex: 'none', marginTop: '0.22rem' }} />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="faint" style={{ fontSize: '0.82rem', margin: '0.8rem 0 0', lineHeight: 1.6 }}>
-                      Meeting format: Online via Google Meet. No obligation to proceed with a project after the call.
-                    </p>
-                  </div>
+                  <ul className="check-list" role="list">
+                    {bookingChecks.map((item) => (
+                      <li key={item}>
+                        <CheckIcon width={15} height={15} style={{ color: 'var(--accent)', flex: 'none', marginTop: '0.22rem' }} />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="faint" style={{ fontSize: '0.84rem', margin: 0, lineHeight: 1.6 }}>
+                    Online via Google Meet. No obligation.
+                  </p>
 
                   <div className="contact-rows">
                     <a className="contact-row" href={site.contact.email.href}>
@@ -474,8 +443,7 @@ export function Home() {
                 <div>
                   <CalendlyEmbed height={720} />
                   <p className="faint" style={{ fontSize: '0.78rem', marginTop: '0.7rem', lineHeight: 1.6 }}>
-                    Calendar provided by Calendly. Select a time that works for you — you'll receive a
-                    confirmation email with a Google Meet link immediately after booking.
+                    Calendar provided by Calendly. Select a time that works for you.
                   </p>
                 </div>
               </div>

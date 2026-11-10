@@ -1,7 +1,7 @@
 /**
  * Minimal inline marks for concepts that do not have an official brand logo
  * (REST APIs, Webhooks, pgvector, Airtable Interfaces). These are neutral,
- * simple line marks — not fake brand logos.
+ * simple line marks, not fake brand logos.
  */
 
 type Props = { size?: number }

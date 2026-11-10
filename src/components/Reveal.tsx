@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 
 /**
- * Reveal — fades and slides content up slightly when it enters the viewport.
+ * Reveal, fades and slides content up slightly when it enters the viewport.
  *
  * - Uses IntersectionObserver only; transform/opacity animations stay on the GPU.
  * - Respects prefers-reduced-motion: content is immediately visible.
