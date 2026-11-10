@@ -137,9 +137,9 @@ export const projects: Project[] = [
       'Routine cash-on-delivery confirmations by email, with staff follow-up for high-value orders and exceptions.',
     status: 'done',
     statusLabel: STATUS_LABELS.done,
-    statusDetail: 'Live and tested. Duplicate detection has been tested; detailed test coverage for individual paths is not yet documented here.',
+    statusDetail: 'Built and tested, but not currently running. Duplicate detection has been tested; detailed test coverage for individual paths is not yet documented here.',
     tools: ['n8n', 'tally', 'airtable', 'gmail'],
-    timeline: 'Completed build',
+    timeline: 'Personal build',
     categories: ['ecommerce-ops', 'customer-experience'],
     heroVisual: { image: '/screenshots/cod-order-confirmation-workflow.png', caption: 'Cash-on-delivery order confirmation workflow overview' },
     hasSimulator: true,
@@ -172,7 +172,7 @@ export const projects: Project[] = [
     ],
     problem: {
       summary:
-        'Every cash-on-delivery order required a staff member to call the customer, confirm they still wanted the product and check their availability for delivery. As orders increased, so did the workload. Some customers had changed their minds by the time staff called.',
+        'This personal build is based on my observations and information supplied by a cash-on-delivery business owner. Every cash-on-delivery order required a staff member to call the customer, confirm they still wanted the product and check their availability for delivery. As orders increased, so did the workload. Some customers had changed their minds by the time staff called.',
       whyItMatters:
         'Calling every customer takes time the team could spend on high-value orders and cases that need personal attention. The business also needs a way to keep track of orders as it grows.',
       bullets: [
@@ -214,7 +214,7 @@ export const projects: Project[] = [
         { text: 'High-value orders are flagged for staff follow-up. Detailed test coverage is not documented here.', state: 'partial' },
       ],
       disclaimer:
-        'The system is live and tested. No measured business results are available yet, and individual test scenarios are not fully documented here.',
+        'The system has been built and tested but is not currently running. No measured business results are available yet, and individual test scenarios are not fully documented here.',
     },
     technical: {
       summary:
