@@ -302,7 +302,7 @@ export function ProjectCaseStudy() {
                   <span className="evidence-toggle" aria-hidden="true">+</span>
                 </summary>
                 <div className="evidence-body">
-                  <p className="muted">These screenshots show test orders, not real customer orders. Select an image to view it at full size.</p>
+                  <p className="muted">{project.evidenceIntro ?? 'Select an image to view it at full size.'}</p>
                   {project.evidence.map((item) => (
                     <figure className="evidence-figure" key={item.image}>
                       <figcaption>
