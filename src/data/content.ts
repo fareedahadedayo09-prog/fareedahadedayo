@@ -23,7 +23,7 @@ export const methodology: MethodStep[] = [
   {
     n: 4,
     title: 'Build and test',
-    body: 'Implement against agreed test cases. Edge cases are tested explicitly and failures are routed cleanly.',
+    body: 'Build against agreed test cases, check exceptions, and document what has and has not been verified.',
   },
   {
     n: 5,
@@ -33,9 +33,9 @@ export const methodology: MethodStep[] = [
 ]
 
 export const capabilities = [
-  { title: 'Practical AI, not gimmicks', body: 'AI is used to classify, extract and summarise where it adds value. Outputs are validated before they reach a customer.' },
-  { title: 'Clear handoffs', body: 'Cases the system cannot decide are recorded and routed to a person, with full context attached.' },
-  { title: 'Connected tools', body: 'Workflows tie into the tools your team already uses, so data moves without being retyped.' },
+  { title: 'Practical AI, not gimmicks', body: 'Use AI for tasks such as extraction and classification where it adds value, with checks suited to the workflow.' },
+  { title: 'Clear handoffs', body: 'Design a clear route for cases that need a person, with the context they need to make a decision.' },
+  { title: 'Connected tools', body: 'Assess how existing tools can connect so information can move between them without repeated entry.' },
 ]
 
 /** About section */
@@ -44,7 +44,7 @@ export const about = {
   lead:
     'I am Fareedah Adedayo, a self-taught AI workflow automation builder and law student based in Abuja, Nigeria.',
   paragraphs: [
-    "I'm a self-taught AI workflow automation builder and law student in Abuja, Nigeria. I build practical systems that help small e-commerce and service businesses handle repetitive work more reliably.",
+    'I build practical systems that help small e-commerce and service businesses handle repetitive work more reliably.',
     'My legal training, and my time mentoring in STEM and working with robotics, shaped how I think: clear rules, and clear points where a human steps in.',
   ],
   facts: [
@@ -103,7 +103,7 @@ export const faq: FaqItem[] = [
   },
   {
     q: 'Do you build AI-powered customer support systems?',
-    a: 'I build AI-assisted workflows where AI adds practical value, like classifying enquiries or extracting fields from a message. I do not deploy unguarded chatbots that answer customers without validation, and sensitive cases always route to a person.',
+    a: 'I build AI-assisted workflows where AI adds practical value, such as classifying enquiries or extracting fields. I design checks and human review for sensitive cases rather than relying on AI alone.',
   },
   {
     q: 'How do you decide whether a process should be automated?',
@@ -111,7 +111,7 @@ export const faq: FaqItem[] = [
   },
   {
     q: 'Will a human still be involved when necessary?',
-    a: 'Yes, by design. Unusual cases, conflicting information and sensitive situations like refunds or complaints go to a person with the full context attached.',
+    a: 'Yes. I design workflows with human review for unusual, conflicting or sensitive cases, and document how each handoff works.',
   },
   {
     q: 'How does a project begin?',

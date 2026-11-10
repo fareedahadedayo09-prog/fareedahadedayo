@@ -26,9 +26,9 @@ export const site = {
   },
 
   nav: [
+    { label: 'Projects', href: '/#projects' },
     { label: 'Problems', href: '/#problems' },
     { label: 'Services', href: '/#services' },
-    { label: 'Projects', href: '/#projects' },
     { label: 'Process', href: '/#process' },
     { label: 'About', href: '/#about' },
     { label: 'Contact', href: '/#contact' },
