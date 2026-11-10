@@ -4,11 +4,7 @@ import type { Project } from '../data/projects'
 import { PROJECT_CATEGORY_LABELS, SECTION_STATUS_LABEL, getProject, relatedProjects } from '../data/projects'
 import { StatusBadge } from '../components/StatusBadge'
 import { ArrowRight, CheckIcon, AlertIcon } from '../components/Icons'
-import { ArchitectureExplorer } from '../components/ArchitectureExplorer'
-import { Simulator } from '../components/Simulator'
-import { SIMULATORS } from '../data/simulators'
 import { ProjectCard } from '../components/ProjectCard'
-import { N8nDiagram } from '../components/N8nDiagram'
 
 function TechnicalExpander({ project }: { project: Project }) {
   const [open, setOpen] = useState(false)
@@ -134,7 +130,6 @@ export function ProjectCaseStudy() {
   }
 
   const related = relatedProjects(project)
-  const sim = project.hasSimulator && Object.values(SIMULATORS).find((s) => s.projectSlug === project.slug)
 
   return (
     <article>
@@ -177,7 +172,7 @@ export function ProjectCaseStudy() {
             <a href="#problem">The problem</a>
             <a href="#solution">The solution</a>
             <a href="#how">How it works</a>
-            <a href="#result">The result</a>
+            <a href="#result">Testing &amp; results</a>
             <a href="#technical">Technical detail</a>
           </nav>
         </div>
@@ -233,45 +228,41 @@ export function ProjectCaseStudy() {
             </div>
           </section>
 
-          {/* ─────── 4. How it works (interactive explorer) ─────── */}
+          {/* ─────── 4. How it works ─────── */}
           <section className="cs-section" id="how">
             <div className="cs-section__head">
               <span className="cs-section__num">How it works</span>
               <h2 style={{ fontSize: 'clamp(1.4rem, 1.05rem + 1.5vw, 2rem)' }}>
                 The process, step by step
               </h2>
-              <p className="muted" style={{ fontSize: '0.9rem', maxWidth: '70ch' }}>
-                Click any node to see what happens at that step. Keyboard users can tab through and use the
-                arrow keys.
-              </p>
             </div>
-            <N8nDiagram steps={project.workflow} caption="n8n workflow for this project. The nodes show the trigger, each processing stage, any decisions or human-escalation branches, and the final output/record." />
-            <div style={{ height: '1.4rem' }} />
-            <ArchitectureExplorer steps={project.workflow} />
-
-            {sim ? (
-              <div style={{ marginTop: '1.5rem' }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '0.4rem' }}>Try it out</h3>
-                <p className="muted" style={{ fontSize: '0.88rem', marginTop: 0, marginBottom: '0.9rem' }}>
-                  Walk a sample record through the workflow and see each check run.
-                </p>
-                <Simulator simulatorId={sim.id} />
-                <p className="faint" style={{ fontSize: '0.8rem', marginTop: '0.8rem' }}>
-                  <Link to="/simulators" className="link-arrow">
-                    Try the other simulators
-                    <ArrowRight width={12} height={12} />
-                  </Link>
-                </p>
-              </div>
-            ) : null}
+            <ol className="bullets">
+              {project.workflow.map((step) => (
+                <li key={step.id}><strong>{step.title}.</strong> {step.detail}</li>
+              ))}
+            </ol>
+            {project.workflowScreenshot ? (
+              <figure style={{ margin: '2rem 0 0' }}>
+                <a href={project.workflowScreenshot} target="_blank" rel="noreferrer" aria-label={`Open the ${project.name} n8n workflow screenshot in a new tab`}>
+                  <img src={project.workflowScreenshot} alt="n8n canvas showing the COD order intake, confirmation, reminder and escalation workflows" loading="lazy" style={{ display: 'block', width: '100%', height: 'auto', borderRadius: '12px', border: '1px solid var(--border)' }} />
+                </a>
+                <figcaption className="muted" style={{ fontSize: '0.85rem', marginTop: '0.7rem' }}>
+                  The actual n8n workflow canvas. Open the image to see it in full size. Nodes shown do not by themselves establish that every path was tested.
+                </figcaption>
+              </figure>
+            ) : (
+              <p className="muted" style={{ marginTop: '1.5rem', fontSize: '0.9rem' }}>
+                The original n8n workflow screenshot is not available yet.
+              </p>
+            )}
           </section>
 
           {/* ─────── 5. Result ─────── */}
           <section className="cs-section" id="result">
             <div className="cs-section__head">
-              <span className="cs-section__num">The result</span>
+              <span className="cs-section__num">Testing &amp; results</span>
               <h2 style={{ fontSize: 'clamp(1.4rem, 1.05rem + 1.5vw, 2rem)' }}>
-                What was demonstrated
+                What was tested
               </h2>
             </div>
             <p style={{ fontSize: '1rem' }}>{project.result.summary}</p>
@@ -279,7 +270,7 @@ export function ProjectCaseStudy() {
               {project.result.points.map((p, i) => (
                 <li key={i}>
                   <span className={`badge ${p.state === 'verified' ? 'badge--done' : p.state === 'partial' ? 'badge--progress' : 'badge--planned'}`}>
-                    {SECTION_STATUS_LABEL[p.state === 'verified' ? 'verified' : p.state === 'partial' ? 'partial' : 'planned']}
+                    {p.state === 'planned' ? 'Planned' : SECTION_STATUS_LABEL[p.state]}
                   </span>
                   <span>{p.text}</span>
                 </li>

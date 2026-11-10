@@ -71,6 +71,8 @@ export type Project = {
     useSimulator?: boolean
   }
   hasSimulator?: boolean
+  /** Original n8n canvas screenshot, when available. */
+  workflowScreenshot?: string
   // 6-part body
   problem: {
     summary: string
@@ -124,6 +126,7 @@ export const projects: Project[] = [
   // ─────────────────── 1. COD ORDER CONFIRMATION ───────────────────
   {
     slug: 'order-confirmation-risk-check',
+    workflowScreenshot: '/screenshots/05-workflow-overview.png',
     name: 'COD Order Confirmation & Risk Assessment',
     tagline:
       'Automated pricing, risk checking and confirmation-link dispatch for cash-on-delivery orders.',
@@ -139,7 +142,7 @@ export const projects: Project[] = [
       summary:
         'Cash-on-delivery orders were priced and checked for eligibility by hand before dispatch, producing mispriced totals, inconsistent approval decisions and customers who never received a confirmation link.',
       whyItMatters:
-        'A mispriced or unconfirmed order turns into a failed delivery \u2014 courier time and fuel wasted, a customer who did not get what they expected, and a business with no clean record of what was agreed at order time.',
+        'A mispriced or unconfirmed order turns into a failed delivery - courier time and fuel wasted, a customer who did not get what they expected, and a business with no clean record of what was agreed at order time.',
       bullets: [
         'Repeated manual arithmetic on data the customer had already submitted.',
         'Inconsistent eligibility decisions between similar orders.',
@@ -173,7 +176,7 @@ export const projects: Project[] = [
     ],
     result: {
       summary:
-        'The happy path \u2014 complete, well-formed order within the risk threshold \u2014 is fully automated end-to-end: the form triggers the workflow, pricing is computed, the rule is applied and a confirmation link is queued without human intervention. Exceptions are surfaced for review with the failing check attached.',
+        'The happy path - complete, well-formed order within the risk threshold - is fully automated end-to-end: the form triggers the workflow, pricing is computed, the rule is applied and a confirmation link is queued without human intervention. Exception handling is implemented, but the high-risk and invalid-input paths still need end-to-end verification.',
       points: [
         { text: 'Single line item priced and confirmed: verified.', state: 'verified' },
         { text: 'Multiple line items with mixed quantities: verified.', state: 'verified' },
@@ -212,13 +215,13 @@ export const projects: Project[] = [
         'No duplicate detection yet (known limitation).',
       ],
       testing: [
-        'Walkthrough-tested on clean, high-risk and invalid-input scenarios (use the simulator above).',
+        'Clean orders have been verified; high-risk and invalid-input paths still need end-to-end verification.',
         'Cancellation path and failed-send path not yet end-to-end verified.',
       ],
       limitations: [
         'No duplicate-order detection; two identical submissions produce two runs.',
-        'No reminder ladder if a customer does not confirm.',
-        'Binary branch only \u2014 no "needs more info" escalation tier beyond invalid-input rejection.',
+        'Reminder and escalation paths appear on the workflow canvas; end-to-end testing is not documented here.',
+        'Binary branch only - no "needs more info" escalation tier beyond invalid-input rejection.',
         'Single currency, single delivery-fee model.',
         'No monitoring or failure alerting on the workflow.',
       ],
@@ -253,7 +256,7 @@ export const projects: Project[] = [
       summary:
         'Return decisions were made one message at a time by whoever was available. The same kind of request could get a different answer on different days, policy exceptions were granted conversationally with no record, and conflicting customer instructions were resolved by whoever read them first.',
       whyItMatters:
-        'Returns are high-stakes customer moments \u2014 inconsistent answers erode trust, undocumented policy exceptions create precedent the business did not agree to, and conflicting instructions lead to customers receiving something they did not ask for.',
+        'Returns are high-stakes customer moments - inconsistent answers erode trust, undocumented policy exceptions create precedent the business did not agree to, and conflicting instructions lead to customers receiving something they did not ask for.',
       bullets: [
         'Inconsistent eligibility decisions across similar requests.',
         'Policy exceptions granted conversationally with no audit trail.',
@@ -279,13 +282,13 @@ export const projects: Project[] = [
       { id: 'trigger', label: 'Trigger', title: 'Return request', detail: 'Tally form or message.', tone: 'trigger' },
       { id: 'validate', label: 'Step 1', title: 'Validate', detail: 'Required fields present.', tone: 'default' },
       { id: 'policy', label: 'Step 2', title: 'Evaluate policy', detail: 'Apply rules in order.', tone: 'decision' },
-      { id: 'conflict', label: 'Step 3', title: 'Conflict detection', detail: 'Self-contradictions.', tone: 'decision' },
+      { id: 'conflict', label: 'Step 3', title: 'Conflict detection', detail: 'Self-contradictions (designed, not yet built).', tone: 'decision' },
       { id: 'decision', label: 'Output', title: 'Decision / Escalate', detail: 'Rule applied OR human queue.', tone: 'escalation' },
       { id: 'record', label: 'Record', title: 'Write to Airtable', detail: 'Outcome + rule + reason.', tone: 'record' },
     ],
     result: {
       summary:
-        'Validation and policy-evaluation paths are built so that well-formed return requests are evaluated in a fixed, reviewable order. Cases outside the policy or with conflicting signals stop at a human queue rather than being auto-answered.',
+        'Validation and policy-evaluation paths are built so that well-formed return requests are evaluated in a fixed, reviewable order. Out-of-policy escalation is implemented but not yet end-to-end verified; conflict detection is designed but not yet built.',
       points: [
         { text: 'Complete request passes validation and reaches policy evaluation: implemented, walkthrough-verified.', state: 'verified' },
         { text: 'Missing required field rejected and recorded: implemented, walkthrough-verified.', state: 'verified' },
@@ -298,7 +301,7 @@ export const projects: Project[] = [
     },
     technical: {
       summary:
-        'Staged n8n pipeline so expensive checks (policy lookup, conflict detection) only run after validation passes. Every stage writes a structured record; the human-escalation branch is a first-class output, not a catch-all.',
+        'Staged n8n pipeline with policy evaluation after validation; conflict detection is designed but not yet built. Every stage writes a structured record; the human-escalation branch is a first-class output, not a catch-all.',
       dataFlow: [
         'Return request captured via Tally webhook.',
         'Validation node checks required fields (order reference, item, reason).',
@@ -308,7 +311,7 @@ export const projects: Project[] = [
       ],
       decisionLogic: [
         'Rules evaluated in fixed order so the outcome is deterministic.',
-        'No AI calls in the decision path \u2014 policy rules are explicit.',
+        'No AI calls in the decision path - policy rules are explicit.',
         'First-match semantics mean rule ordering is documented and testable.',
       ],
       validation: [
@@ -321,7 +324,7 @@ export const projects: Project[] = [
         'Disputed payments are designated human-only.',
       ],
       testing: [
-        'Walkthroughs on well-formed, missing-field and out-of-policy scenarios (use the simulator).',
+        'Well-formed and missing-field requests were walkthrough-verified; out-of-policy escalation still needs end-to-end verification.',
         'Conflict detection and escalation notification not yet built.',
       ],
       limitations: [
@@ -393,7 +396,7 @@ export const projects: Project[] = [
     ],
     result: {
       summary:
-        'Well-formed enquiries are extracted, classified and recorded with a next action without manual intervention. Edge cases \u2014 missing contact details, unrecognisable message text, no matching bucket \u2014 are held in a review queue with the reason attached.',
+        'Well-formed enquiries are extracted, classified and recorded with a next action without manual intervention. Missing-contact and unclassifiable enquiries are intended for review; the unclassifiable path has not yet been verified.',
       points: [
         { text: 'Well-formed Tally enquiry classified correctly: verified.', state: 'verified' },
         { text: 'Free-text DM extracted by Claude into structured fields: implemented, walkthrough-verified.', state: 'partial' },
@@ -407,7 +410,7 @@ export const projects: Project[] = [
     },
     technical: {
       summary:
-        'Two intake paths (form and DM) funnel into a single normalisation step. Claude is used only as a structured extractor, constrained by a JSON-schema output, and its output is validated before downstream routing \u2014 it never makes the classification decision itself.',
+        'Two intake paths (form and DM) funnel into a single normalisation step. Claude is used only as a structured extractor, constrained by a JSON-schema output, and its output is validated before downstream routing - it never makes the classification decision itself.',
       dataFlow: [
         'Tally webhook (structured) and DM webhook (free-text) both enter the same n8n workflow.',
         'Free-text messages are sent to Claude with a strict extraction prompt and JSON schema.',
@@ -431,7 +434,7 @@ export const projects: Project[] = [
         'No duplicate detection yet (known limitation).',
       ],
       testing: [
-        'Walkthroughs on well-formed, missing-contact and free-text scenarios (use the simulator).',
+        'Walkthroughs on well-formed, missing-contact and free-text scenarios.',
         'Text extraction handles a narrow range of phrasings; will expand with real message samples.',
       ],
       limitations: [
@@ -471,7 +474,7 @@ export const projects: Project[] = [
     hasSimulator: false,
     problem: {
       summary:
-        'Follow-up after a customer places an order \u2014 or nearly places one \u2014 was manual. Abandoned-cart reminders went out late or not at all, post-purchase check-ins were skipped during busy weeks, and messages were sometimes sent to customers who had already bought or opted out.',
+        'Follow-up after a customer places an order - or nearly places one - was manual. Abandoned-cart reminders went out late or not at all, post-purchase check-ins were skipped during busy weeks, and messages were sometimes sent to customers who had already bought or opted out.',
       whyItMatters:
         'Missed lifecycle moments are invisible until they show up in retention numbers. Sending an irrelevant reminder to a customer who already bought is worse than not sending anything at all.',
       bullets: [
