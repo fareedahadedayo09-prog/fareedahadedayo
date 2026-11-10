@@ -1,27 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Fareedah Sanusi Adedayo, AI Automation Engineer">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#101211" />
-      <stop offset="100%" stop-color="#0b0c0b" />
-    </linearGradient>
-    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#c4f03d" stop-opacity="0.95" />
-      <stop offset="100%" stop-color="#c4f03d" stop-opacity="0" />
-    </linearGradient>
-  </defs>
-
-  <rect width="1200" height="630" fill="url(#bg)" />
-  <rect x="0" y="586" width="760" height="4" fill="url(#bar)" />
-
-  <rect x="120" y="160" width="44" height="44" rx="8" fill="#c4f03d" />
-  <text x="142" y="188" text-anchor="middle" dominant-baseline="central" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="700" fill="#0b0c0b">FA</text>
-
-  <text x="188" y="188" dominant-baseline="central" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="25" letter-spacing="3" fill="#c4f03d">AI AUTOMATION ENGINEER</text>
-
-  <text x="120" y="322" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="60" font-weight="600" fill="#f2f0ea">Automation systems built</text>
-  <text x="120" y="398" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="60" font-weight="600" fill="#f2f0ea">around real operational</text>
-  <text x="120" y="474" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="60" font-weight="600" fill="#f2f0ea">problems.</text>
-
-  <text x="120" y="556" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="23" fill="#9aa0a1">Fareedah Sanusi Adedayo</text>
-  <text x="120" y="588" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="19" fill="#6c7172">n8n · Airtable · Tally · Gmail · Workflow design · Operations audits</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Fareedah Adedayo. Automation for better-run e-commerce operations.">
+  <rect width="1200" height="630" fill="#F5F1EA" />
+  <rect x="72" y="69" width="58" height="58" rx="13" fill="#E04E1B" />
+  <text x="101" y="107" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="700" fill="#FBF9F5">FA</text>
+  <text x="150" y="94" font-family="DejaVu Sans, sans-serif" font-size="22" font-weight="700" fill="#1C1A17">Fareedah Adedayo</text>
+  <text x="150" y="120" font-family="DejaVu Sans Mono, monospace" font-size="13" letter-spacing="1.2" fill="#5C574F">AI WORKFLOW AUTOMATION BUILDER</text>
+  <line x1="72" y1="163" x2="1128" y2="163" stroke="#E3DCCF" stroke-width="2" />
+  <text x="72" y="238" font-family="DejaVu Sans Mono, monospace" font-size="16" letter-spacing="2" fill="#B83D12">E-COMMERCE AUTOMATION</text>
+  <text x="72" y="323" font-family="DejaVu Sans, sans-serif" font-size="56" font-weight="700" fill="#1C1A17">Automation for better-run</text>
+  <text x="72" y="393" font-family="DejaVu Sans, sans-serif" font-size="56" font-weight="700" fill="#1C1A17">e-commerce operations.</text>
+  <text x="72" y="467" font-family="DejaVu Sans, sans-serif" font-size="22" fill="#5C574F">Order checks, customer replies and returns.</text>
+  <line x1="72" y1="530" x2="1128" y2="530" stroke="#E3DCCF" stroke-width="2" />
+  <text x="72" y="571" font-family="DejaVu Sans Mono, monospace" font-size="16" fill="#5C574F">fareedahadedayo.vercel.app</text>
+  <text x="1128" y="571" text-anchor="end" font-family="DejaVu Sans Mono, monospace" font-size="16" fill="#B83D12">ABUJA · REMOTE</text>
 </svg>

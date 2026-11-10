@@ -64,7 +64,7 @@ export const site = {
     title: 'Fareedah Adedayo, AI Workflow Automation Builder',
     description:
       'Automation for better-run e-commerce operations. Order checks, customer replies and returns handled by reliable workflows.',
-    image: '/og-image.svg',
+    image: 'https://fareedahadedayo.vercel.app/og-preview-cream-v1.png',
   },
 
 }
