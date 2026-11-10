@@ -241,6 +241,16 @@ export function ProjectCaseStudy() {
                 <li key={step.id}><strong>{step.title}.</strong> {step.detail}</li>
               ))}
             </ol>
+            {project.heroVisual?.image ? (
+              <figure style={{ margin: '2rem 0 0' }}>
+                <a href={project.heroVisual.image} target="_blank" rel="noreferrer" aria-label={`Open the ${project.name} workflow overview in a new tab`}>
+                  <img src={project.heroVisual.image} alt={project.heroVisual.caption ?? `${project.name} workflow overview`} loading="lazy" decoding="async" style={{ display: 'block', width: '100%', height: 'auto', borderRadius: '12px', border: '1px solid var(--border)' }} />
+                </a>
+                <figcaption className="muted" style={{ fontSize: '0.85rem', marginTop: '0.7rem' }}>
+                  {project.heroVisual.caption ?? `${project.name} workflow overview`}. Open the image to see it in full size.
+                </figcaption>
+              </figure>
+            ) : null}
             {project.workflowScreenshot ? (
               <figure style={{ margin: '2rem 0 0' }}>
                 <a href={project.workflowScreenshot} target="_blank" rel="noreferrer" aria-label={`Open the ${project.name} n8n workflow screenshot in a new tab`}>
