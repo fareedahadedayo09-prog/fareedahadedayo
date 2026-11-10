@@ -131,10 +131,10 @@ export const projects: Project[] = [
     workflowScreenshotAlt: 'n8n canvas for the COD order confirmation system, showing order intake, duplicate checks, confirmation and cancellation, reminders, and availability handling',
     name: 'COD Order Confirmation & Risk Assessment',
     tagline:
-      'Cash-on-delivery orders are checked against a threshold, with customer emails for normal orders and staff alerts for high-risk orders.',
+      'Routine cash-on-delivery confirmations by email, with staff follow-up for high-value orders and exceptions.',
     status: 'done',
     statusLabel: STATUS_LABELS.done,
-    statusDetail: STATUS_DETAIL_DEFAULT.done,
+    statusDetail: 'Live and tested. Duplicate detection has been tested; detailed test coverage for individual paths is not yet documented here.',
     tools: ['n8n', 'tally', 'airtable', 'gmail'],
     timeline: 'Completed build',
     categories: ['ecommerce-ops', 'customer-experience'],
@@ -142,101 +142,69 @@ export const projects: Project[] = [
     hasSimulator: true,
     problem: {
       summary:
-        'Cash-on-delivery orders were priced and checked for eligibility by hand before dispatch, producing mispriced totals, inconsistent approval decisions and customers who never received a confirmation link.',
+        'Every cash-on-delivery order required a staff member to call the customer, confirm they still wanted the product and check their availability for delivery. As orders increased, so did the workload. Some customers had changed their minds by the time staff called.',
       whyItMatters:
-        'A mispriced or unconfirmed order turns into a failed delivery - courier time and fuel wasted, a customer who did not get what they expected, and a business with no clean record of what was agreed at order time.',
+        'Calling every customer takes time the team could spend on high-value orders and cases that need personal attention. The business also needs a way to keep track of orders as it grows.',
       bullets: [
-        'Repeated manual arithmetic on data the customer had already submitted.',
-        'Inconsistent eligibility decisions between similar orders.',
-        'No durable record of which message was sent, to whom, and when.',
-        'Failed deliveries caused by unconfirmed or mispriced orders.',
+        'Every order needed an individual confirmation call.',
+        'Staff spent time following up with customers who no longer wanted to buy.',
+        'A growing number of orders meant more manual follow-up.',
       ],
     },
     solution: {
       summary:
-        'A Tally form triggers an n8n workflow that checks cash-on-delivery orders against a configured amount. Customers with normal orders below the threshold receive an email; high-risk orders are flagged and staff receive an email prompting them to call the customer.',
+        'I built a cash-on-delivery order confirmation workflow that handles routine orders and brings staff in when needed. The system checks for duplicates and records orders in Airtable. Customers with normal orders below a set amount receive an email with options to confirm or cancel, and a reminder if they do not respond. High-value orders are flagged for staff to call, while other situations beyond the system are escalated for human review.',
       automated: [
-        'Pricing: totals and delivery fee are calculated from line items.',
-        'Validation: required fields and numeric checks before any message is sent.',
-        'Routing: customers with normal orders below the amount threshold receive an email; high-risk orders trigger a staff alert.',
-        'Record-keeping: every run writes status, outcome and timestamp to Airtable.',
+        'Check incoming orders for duplicates and record order information in Airtable.',
+        'Email customers with routine orders below the set amount, with options to confirm or cancel.',
+        'Send a reminder after a set period when a customer has not responded.',
+        'Flag high-value orders and email staff to prompt a follow-up call.',
       ],
       humanControl: [
-        'High-risk orders are flagged, and staff receive an email prompting them to call the customer.',
-        'Orders with missing or invalid inputs are held for correction, not messaged.',
-        'Risk thresholds and eligibility conditions are written configuration, editable by the business.',
+        'Staff call customers about high-value orders.',
+        'Staff review and confirm situations that need to be escalated beyond the system.',
       ],
     },
     workflow: [
-      { id: 'trigger', label: 'Trigger', title: 'Order submitted', detail: 'Tally form fires a webhook.', tone: 'trigger' },
-      { id: 'validate', label: 'Step 1', title: 'Validate input', detail: 'Check required fields, numeric quantities.', tone: 'default' },
-      { id: 'price', label: 'Step 2', title: 'Price order', detail: 'Sum line items + delivery fee.', tone: 'default' },
-      { id: 'risk', label: 'Decision', title: 'Risk rule', detail: 'Check the configured amount threshold.', tone: 'decision' },
-      { id: 'confirm', label: 'Path A', title: 'Email customer', detail: 'Normal orders below the threshold.', tone: 'output' },
-      { id: 'escalate', label: 'Path B', title: 'Alert staff', detail: 'High-risk orders are flagged for a call.', tone: 'escalation' },
-      { id: 'record', label: 'Record', title: 'Write to Airtable', detail: 'Status, rule, timestamp.', tone: 'record' },
+      { id: 'trigger', label: 'Trigger', title: 'Order arrives', detail: 'A customer places a cash-on-delivery order online.', tone: 'trigger' },
+      { id: 'check', label: 'Step 1', title: 'Check and record', detail: 'The workflow checks for duplicates and records order information in Airtable.', tone: 'record' },
+      { id: 'risk', label: 'Decision', title: 'Route the order', detail: 'The order is assessed against a set amount.', tone: 'decision' },
+      { id: 'confirm', label: 'Path A', title: 'Email the customer', detail: 'Routine orders below the set amount receive confirm or cancel options.', tone: 'output' },
+      { id: 'remind', label: 'Follow-up', title: 'Send a reminder', detail: 'Customers who have not responded receive a reminder after a set period.', tone: 'output' },
+      { id: 'escalate', label: 'Path B', title: 'Bring in staff', detail: 'High-value orders are flagged for a call; other situations beyond the system are escalated for review.', tone: 'escalation' },
     ],
     result: {
       summary:
-        'Normal orders below the configured amount receive customer emails. High-risk orders are flagged and staff are emailed to follow up by phone. The earlier test notes below document the scenarios recorded so far; specific end-to-end coverage still needs confirmation.',
+        'The workflow is designed to help the business manage more orders without a manual call for every one. Customers can confirm or cancel by email, reminders follow up on unanswered orders, and staff can focus on high-value orders and exceptions.',
       points: [
-        { text: 'Single line item priced and confirmed: verified.', state: 'verified' },
-        { text: 'Multiple line items with mixed quantities: verified.', state: 'verified' },
-        { text: 'High-risk orders trigger a staff email requesting a call: end-to-end test coverage to be confirmed.', state: 'partial' },
-        { text: 'Non-numeric quantity rejected and recorded: implemented, not yet verified.', state: 'partial' },
-        { text: 'Duplicate submission detection: not started.', state: 'planned' },
-        { text: 'Failed-send automated retry: not started.', state: 'planned' },
+        { text: 'Duplicate detection has been tested and works.', state: 'verified' },
+        { text: 'Reminders are sent after a set period when customers have not responded. Detailed test coverage is not documented here.', state: 'partial' },
+        { text: 'High-value orders are flagged for staff follow-up. Detailed test coverage is not documented here.', state: 'partial' },
       ],
       disclaimer:
-        'These are test-run results against a controlled set of orders, not production telemetry. They demonstrate that the logic executes; they are not evidence of business impact.',
+        'The system is live and tested. No measured business results are available yet, and individual test scenarios are not fully documented here.',
     },
     technical: {
       summary:
-        'n8n workflow triggered by a Tally webhook. Normalisation code nodes coerce fields to numbers and trim strings before any calculation. Every branch writes to Airtable before exiting, so there is no "happy-path-only" record. Decision rules are explicit expressions, not AI calls.',
+        'The n8n workflow connects order intake, duplicate checking, customer email, staff alerts and Airtable records. The workflow canvas also shows confirmation, cancellation, reminder and availability paths.',
       dataFlow: [
-        'Tally webhook POSTs JSON payload to n8n.',
-        'Code nodes normalise fields (trim strings, coerce quantities to numbers).',
-        'Pricing node computes total = Σ(qty × price) + delivery_fee.',
-        'The order is assessed against the configured amount threshold.',
-        'Normal orders below the threshold receive a customer email; high-risk orders trigger a staff email prompting a call.',
-        'Airtable node upserts the order record with status, rule and timestamp.',
+        'An online cash-on-delivery order enters the workflow.',
+        'Orders are checked for duplicates and order information is recorded in Airtable.',
+        'Routine orders below the set amount receive a customer email with confirm or cancel options.',
+        'Customers who have not responded receive a reminder after a set period.',
+        'High-value orders trigger a staff email prompting a call; situations beyond the system are escalated for human review.',
       ],
       decisionLogic: [
-        'Pricing is arithmetic; no model is involved.',
-        'The configured amount threshold helps determine the order route.',
-        'The rule applied is written back to the record for re-checkability.',
-      ],
-      validation: [
-        'Required-field check runs before pricing.',
-        'Quantities must be positive numbers; non-numeric stops the run.',
-        'Missing delivery fee is treated as an input problem, not silently zero.',
-      ],
-      exceptions: [
-        'A failed email send is recorded on the order for manual retry.',
-        'Missing or invalid inputs are flagged; no customer message is sent.',
-        'No duplicate detection yet (known limitation).',
+        'The configured amount helps route routine and high-value orders.',
+        'Staff handle high-value orders and situations that need escalation.',
       ],
       testing: [
-        'Clean orders have been verified; high-risk and invalid-input paths still need end-to-end verification.',
-        'Staff-alert and failed-send end-to-end test coverage still needs confirmation.',
+        'Duplicate detection has been tested and works.',
+        'Detailed path-by-path test coverage has not yet been documented here.',
       ],
       limitations: [
-        'No duplicate-order detection; two identical submissions produce two runs.',
-        'Reminder and escalation paths appear on the workflow canvas; end-to-end testing is not documented here.',
-        'Binary branch only - no "needs more info" escalation tier beyond invalid-input rejection.',
-        'Single currency, single delivery-fee model.',
-        'No monitoring or failure alerting on the workflow.',
+        'No measured business outcomes are available yet.',
       ],
-      examplePayload: `{
-  "customer_name": "Amaka Okafor",
-  "address": "14 Allen Avenue, Ikeja, Lagos",
-  "phone": "+234 803 123 4567",
-  "delivery_fee": 2500,
-  "line_items": [
-    { "product": "Vitamin C Serum", "quantity": 1, "unit_price": 14500 },
-    { "product": "Cleanser",       "quantity": 2, "unit_price":  8500 }
-  ]
-}`,
     },
   },
 
