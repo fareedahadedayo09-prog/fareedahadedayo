@@ -244,10 +244,10 @@ export function ProjectCaseStudy() {
             {project.workflowScreenshot ? (
               <figure style={{ margin: '2rem 0 0' }}>
                 <a href={project.workflowScreenshot} target="_blank" rel="noreferrer" aria-label={`Open the ${project.name} n8n workflow screenshot in a new tab`}>
-                  <img src={project.workflowScreenshot} alt="n8n canvas showing the COD order intake, confirmation, reminder and escalation workflows" loading="lazy" style={{ display: 'block', width: '100%', height: 'auto', borderRadius: '12px', border: '1px solid var(--border)' }} />
+                  <img src={project.workflowScreenshot} alt={project.workflowScreenshotAlt ?? `${project.name} n8n workflow canvas`} loading="lazy" style={{ display: 'block', width: '100%', height: 'auto', borderRadius: '12px', border: '1px solid var(--border)' }} />
                 </a>
                 <figcaption className="muted" style={{ fontSize: '0.85rem', marginTop: '0.7rem' }}>
-                  The actual n8n workflow canvas. Open the image to see it in full size. Nodes shown do not by themselves establish that every path was tested.
+                  The n8n workflow canvas for {project.name}. Open the image to see it in full size. Nodes shown do not by themselves establish that every path was tested.
                 </figcaption>
               </figure>
             ) : (

@@ -73,6 +73,7 @@ export type Project = {
   hasSimulator?: boolean
   /** Original n8n canvas screenshot, when available. */
   workflowScreenshot?: string
+  workflowScreenshotAlt?: string
   // 6-part body
   problem: {
     summary: string
@@ -126,7 +127,8 @@ export const projects: Project[] = [
   // ─────────────────── 1. COD ORDER CONFIRMATION ───────────────────
   {
     slug: 'order-confirmation-risk-check',
-    workflowScreenshot: '/screenshots/05-workflow-overview.png',
+    workflowScreenshot: '/screenshots/cod-order-confirmation.png',
+    workflowScreenshotAlt: 'n8n canvas for the COD order confirmation system, showing order intake, duplicate checks, confirmation and cancellation, reminders, and availability handling',
     name: 'COD Order Confirmation & Risk Assessment',
     tagline:
       'Automated pricing, risk checking and confirmation-link dispatch for cash-on-delivery orders.',
@@ -241,6 +243,8 @@ export const projects: Project[] = [
   // ─────────────────── 2. RETURNS & REFUNDS ───────────────────
   {
     slug: 'returns-refunds-handler',
+    workflowScreenshot: '/screenshots/returns-refunds.png',
+    workflowScreenshotAlt: 'n8n canvas for the returns and refunds workflow, showing order lookup, policy checks, reply drafting, and human alerts',
     name: 'Returns & Refunds Policy Handler',
     tagline:
       'Consistent policy evaluation for return requests, with explicit human escalation.',
@@ -348,7 +352,9 @@ export const projects: Project[] = [
   // ─────────────────── 3. LEAD QUALIFICATION ───────────────────
   {
     slug: 'lead-qualification',
-    name: 'AI-Assisted Lead Qualification & Routing',
+    workflowScreenshot: '/screenshots/brightsun-lead-system.png',
+    workflowScreenshotAlt: 'n8n canvas for the BrightSun Solar lead system, showing lead intake, duplicate checks, scoring, routing, and follow-up',
+    name: 'BrightSun Solar: AI-Assisted Lead Qualification & Routing',
     tagline:
       'Structuring and classifying incoming enquiries so follow-up decisions are consistent and auditable.',
     status: 'done',
