@@ -1,85 +1,127 @@
 /**
  * ──────────────────────────────────────────────────────────────────────────
- *  TOOL STACK
+ *  TOOLS & TECHNOLOGIES, visual logo grid data
  * ──────────────────────────────────────────────────────────────────────────
- *  Audited and rewritten. Four categories, and every entry is a tool used in
- *  a project on this site. Nothing is listed that has not been used.
- *
- *  There are no proficiency levels, no percentages and no skill bars. The
- *  description says what the tool is used for, which is what a visitor
- *  actually needs to know.
- *
- *  If a future project introduces a tool, add it under the matching category.
+ *  Ordered list of groups, each with a set of tools. Logos come from the
+ *  official Simple Icons CDN for recognised brands. For concepts with no
+ *  single-brand logo (REST APIs, Webhooks, pgvector, Airtable Interfaces)
+ *  we render a minimal custom mark defined in ToolCustomMarks.tsx, never
+ *  an invented brand logo.
  * ──────────────────────────────────────────────────────────────────────────
  */
 
-export type Tool = {
+export type ToolLogo =
+  | { kind: 'simple-icons'; slug: string; hex?: string }
+  | { kind: 'custom'; id: 'rest-apis' | 'webhooks' | 'pgvector' | 'airtable-interfaces' }
+
+export type ToolEntry = {
   name: string
-  description: string
+  logo: ToolLogo
 }
 
-export type ToolCategory = {
+export type ToolGroup = {
   title: string
-  purpose: string
-  tools: Tool[]
+  tools: ToolEntry[]
 }
 
-export const toolStack: ToolCategory[] = [
+export const toolStack: ToolGroup[] = [
   {
     title: 'Workflow Automation',
-    purpose: 'The platform used to build, orchestrate and debug workflows.',
     tools: [
-      {
-        name: 'n8n',
-        description:
-          'The workflow engine behind every project on this site. Nodes handle the connections between systems, expressions and code nodes carry the decision logic, and the workflow canvas itself is the documentation.',
-      },
+      { name: 'n8n', logo: { kind: 'simple-icons', slug: 'n8n', hex: 'EA4B71' } },
+      { name: 'Make', logo: { kind: 'simple-icons', slug: 'make', hex: '0D00D0' } },
+      { name: 'Zapier', logo: { kind: 'simple-icons', slug: 'zapier', hex: 'FF4A00' } },
     ],
   },
   {
-    title: 'AI and Data Processing',
-    purpose: 'Model capability, applied only where a deterministic rule cannot do the job.',
+    title: 'E-commerce &amp; Customer Lifecycle',
     tools: [
-      {
-        name: 'Claude API',
-        description:
-          'Used for text classification, field extraction and rewriting. Deployed behind a rule check rather than trusted directly, so its output is validated before it reaches a customer.',
-      },
-      {
-        name: 'OpenAI API',
-        description:
-          'The alternative provider, compared against Claude on the same task before either is relied on. Selection is made from measured quality, not preference.',
-      },
+      { name: 'Shopify', logo: { kind: 'simple-icons', slug: 'shopify', hex: '96BF48' } },
+      { name: 'Klaviyo', logo: { kind: 'simple-icons', slug: 'klaviyo', hex: '4A37E8' } },
+      { name: 'ManyChat', logo: { kind: 'simple-icons', slug: 'manychat', hex: '0084FF' } },
     ],
   },
   {
-    title: 'Data Storage and Business Systems',
-    purpose: 'Where the structured records, statuses and audit trail live.',
+    title: 'AI &amp; Conversational Systems',
     tools: [
-      {
-        name: 'Airtable',
-        description:
-          'The system of record across the projects: order records, lead records, return requests and their outcomes. Also used as the review queue where a case needs a person.',
-      },
+      { name: 'OpenAI', logo: { kind: 'simple-icons', slug: 'openai', hex: 'FFFFFF' } },
+      { name: 'Anthropic', logo: { kind: 'simple-icons', slug: 'anthropic', hex: 'D97757' } },
+      { name: 'Google Gemini', logo: { kind: 'simple-icons', slug: 'googlegemini', hex: '8E75B2' } },
+      { name: 'Botpress', logo: { kind: 'simple-icons', slug: 'botpress', hex: 'F77026' } },
     ],
   },
   {
-    title: 'Integrations and Communication',
-    purpose: 'The intake and delivery surfaces the workflows connect to.',
+    title: 'Databases &amp; Data Management',
     tools: [
-      {
-        name: 'Tally',
-        description:
-          'The form intake for orders, returns and leads. Webhooks trigger the workflow on submission.',
-      },
-      {
-        name: 'Gmail',
-        description:
-          'The delivery channel for customer-facing confirmation and cancellation messages, and the inbox where replies are read.',
-      },
+      { name: 'Airtable', logo: { kind: 'simple-icons', slug: 'airtable', hex: 'FCB400' } },
+      { name: 'Supabase', logo: { kind: 'simple-icons', slug: 'supabase', hex: '3ECF8E' } },
+      { name: 'PostgreSQL', logo: { kind: 'simple-icons', slug: 'postgresql', hex: '4169E1' } },
+      { name: 'Google Sheets', logo: { kind: 'simple-icons', slug: 'googlesheets', hex: '34A853' } },
+      { name: 'pgvector', logo: { kind: 'custom', id: 'pgvector' } },
+    ],
+  },
+  {
+    title: 'Communication &amp; Productivity',
+    tools: [
+      { name: 'Gmail', logo: { kind: 'simple-icons', slug: 'gmail', hex: 'EA4335' } },
+      { name: 'Google Workspace', logo: { kind: 'simple-icons', slug: 'googleworkspace', hex: '4285F4' } },
+      { name: 'Google Calendar', logo: { kind: 'simple-icons', slug: 'googlecalendar', hex: '4285F4' } },
+      { name: 'Zoho', logo: { kind: 'simple-icons', slug: 'zoho', hex: 'E42528' } },
+      { name: 'WhatsApp', logo: { kind: 'simple-icons', slug: 'whatsapp', hex: '25D366' } },
+    ],
+  },
+  {
+    title: 'Development &amp; Integrations',
+    tools: [
+      { name: 'REST APIs', logo: { kind: 'custom', id: 'rest-apis' } },
+      { name: 'Webhooks', logo: { kind: 'custom', id: 'webhooks' } },
+      { name: 'React', logo: { kind: 'simple-icons', slug: 'react', hex: '61DAFB' } },
+      { name: 'Vercel', logo: { kind: 'simple-icons', slug: 'vercel', hex: 'FFFFFF' } },
+      { name: 'JavaScript', logo: { kind: 'simple-icons', slug: 'javascript', hex: 'F7DF1E' } },
+    ],
+  },
+  {
+    title: 'Analytics &amp; Process Design',
+    tools: [
+      { name: 'Looker Studio', logo: { kind: 'simple-icons', slug: 'looker', hex: '4285F4' } },
+      { name: 'Miro', logo: { kind: 'simple-icons', slug: 'miro', hex: 'FFD02F' } },
+      { name: 'Airtable Interfaces', logo: { kind: 'custom', id: 'airtable-interfaces' } },
     ],
   },
 ]
 
-/** Everything shown on the site, for reference. */
-export const allToolNames = toolStack.flatMap((c) => c.tools.map((t) => t.name))
+/* Flattened backwards-compatible list for helpers and string matching. */
+export type ToolStub = {
+  id: string
+  name: string
+  hex?: string
+  simpleIconSlug?: string
+}
+
+function flatten(): ToolStub[] {
+  const out: ToolStub[] = []
+  for (const g of toolStack) {
+    for (const t of g.tools) {
+      out.push({
+        id: t.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        name: t.name,
+        hex: t.logo.kind === 'simple-icons' ? t.logo.hex : undefined,
+        simpleIconSlug: t.logo.kind === 'simple-icons' ? t.logo.slug : undefined,
+      })
+    }
+  }
+  return out
+}
+
+export const tools = flatten()
+
+/** Flat list of ToolEntry entries for the homepage marquee. */
+export const allTools: ToolEntry[] = toolStack.flatMap((g) => g.tools)
+
+export const toolCategories = toolStack.map((g, i) => ({
+  id: g.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+  title: g.title,
+  order: i,
+}))
+
+export default toolStack

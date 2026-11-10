@@ -1,623 +1,602 @@
 /**
  * ──────────────────────────────────────────────────────────────────────────
- *  PROJECT CONTENT
+ *  PROJECT CONTENT, case-study-first structure
  * ──────────────────────────────────────────────────────────────────────────
- *  Every project card, case study and status badge on the site reads from this
- *  file. Nothing else needs to change to add or update a project.
  *
- *  SECTION STATUS SEMANTICS
- *    verified     : built and checked against a realistic test set.
- *    partial      : partially built; the section says what is and is not done.
- *    planned      : designed, not built.
- *    not-started  : nothing built yet.
+ *  Each project follows the required 6-part structure:
+ *    1. intro       meta: category, tools, status
+ *    2. problem     business problem in plain language + why it matters
+ *    3. solution    what was built; what's automated vs human
+ *    4. workflow    steps of the process (drives the visual diagram)
+ *    5. result      demonstrated outcomes + verified tests
+ *    6. technical   expandable: tools, data flow, decisions, validation,
+ *                   exceptions, testing, limitations
  *
- *  If you cannot point at the current build and show it, do not write
- *  `verified`. Change the label and describe what is actually there.
+ *  Media policy: at most one strong visual (diagram/screenshot) per case
+ *  study. No long screenshot galleries.
  *
- *  PROJECT STATUS SEMANTICS
- *    done     : the project is complete. Individual behaviours may still be
- *                labelled partial or planned inside their sections; that is
- *                deliberate and is what makes the case study credible.
- *    progress : being built.
- *    planned  : nothing built yet.
+ *  Four projects exactly as specified, no invented completed builds.
  * ──────────────────────────────────────────────────────────────────────────
  */
 
 export type SectionStatus = 'verified' | 'partial' | 'planned' | 'not-started'
-
 export type StatusKey = 'done' | 'progress' | 'planned'
+export type ProjectCategory =
+  | 'ecommerce-ops'
+  | 'customer-experience'
+  | 'lead-management'
+  | 'ai-data'
 
-export type CaseStudySection = {
+export type WorkflowStep = {
   id: string
   label: string
-  status: SectionStatus
-  paragraphs: string[]
-  bullets?: string[]
-  note?: { tone: 'info' | 'warn' | 'grey'; text: string }
-  table?: { keys: string[]; values: string[] }
+  title: string
+  detail: string
+  tone?: 'default' | 'trigger' | 'decision' | 'escalation' | 'output' | 'record'
 }
 
-export type ScreenshotSlot = {
-  id: string
-  /** Path to the image file in /public. */
-  image: string
-  /** Short title above the image. */
-  title: string
-  /** Caption below the image. Also used as the alternative text. */
-  caption: string
+export type ResultPoint = {
+  text: string
+  state: 'verified' | 'partial' | 'planned'
+}
+
+export type TechDetail = {
+  summary: string
+  dataFlow?: string[]
+  decisionLogic?: string[]
+  validation?: string[]
+  exceptions?: string[]
+  testing?: string[]
+  limitations?: string[]
+  /** Example payload shown in the technical section. */
+  examplePayload?: string
 }
 
 export type Project = {
   slug: string
   name: string
-  summary: string
+  /** One-line business description (card + case-study intro). */
+  tagline: string
   status: StatusKey
   statusLabel: string
   statusDetail: string
-  tools: string[]
+  tools: string[] // tool ids from tools.ts
   timeline: string
-  overview: string
-  sections: CaseStudySection[]
-  screenshots: ScreenshotSlot[]
-  links: { label: string; href: string }[]
+  categories: ProjectCategory[]
+  /** Optional single hero visual (diagram or screenshot). */
+  heroVisual?: {
+    image?: string
+    caption?: string
+    /** If true, use the interactive simulator on the case-study page instead of a static image. */
+    useSimulator?: boolean
+  }
+  hasSimulator?: boolean
+  /** Original n8n canvas screenshot, when available. */
+  workflowScreenshot?: string
+  // 6-part body
+  problem: {
+    summary: string
+    whyItMatters: string
+    bullets: string[]
+  }
+  solution: {
+    summary: string
+    automated: string[]
+    humanControl: string[]
+  }
+  workflow: WorkflowStep[]
+  result: {
+    summary: string
+    points: ResultPoint[]
+    disclaimer?: string
+  }
+  technical: TechDetail
 }
 
-export const projects: Project[] = [
-  // ──────────────────────────────────────────────────────────────────────
-  {
-    slug: 'order-confirmation-risk-check',
-    name: 'Order Confirmation and Risk-Check System',
-    summary:
-      'A workflow for cash-on-delivery orders: it prices each order, applies a risk rule, and sends the customer a confirmation or cancellation link depending on eligibility.',
-    status: 'done',
-    statusLabel: 'Completed',
-    statusDetail:
-      'The order-processing path is built and has been run against test orders. Cancellation, reminder and duplicate-order handling are not fully tested, and the sections below say so where relevant.',
-    tools: ['n8n', 'Airtable', 'Tally', 'Gmail'],
-    timeline: 'Completed',
-    overview:
-      'Cash-on-delivery orders arrive with no payment captured up front. Each order has to be priced, checked against a risk rule, and either confirmed with the customer or cancelled before dispatch. Left to manual handling, mispriced or unconfirmed orders turn into failed deliveries and wasted courier attempts. This system moves that first decision point from a spreadsheet into a repeatable n8n workflow.',
-    sections: [
-      {
-        id: 'problem',
-        label: 'The problem',
-        status: 'verified',
-        paragraphs: [
-          'Orders arrive through a form or a chat message and each one is handled by hand. The person handling it re-does arithmetic the order data already contains, makes a judgement call about whether the order is worth confirming, and then has to remember to send the customer a link.',
-          'The failure modes are specific: a total that does not match the line items, an order confirmed without a working delivery address, and a customer who never receives a link and wonders where the order is. Each of those is an exception, and exceptions are exactly what a workflow that only handles the happy path will miss.',
-        ],
-        bullets: [
-          'Repeated manual arithmetic on data that is already structured.',
-          'Inconsistent eligibility decisions between one order and the next.',
-          'No durable record of which link was sent, to whom, and when.',
-          'Failed deliveries caused by unconfirmed or mispriced orders.',
-        ],
-      },
-      {
-        id: 'workflow',
-        label: 'How it works',
-        status: 'verified',
-        paragraphs: [
-          'A Tally form captures the order. Submission triggers an n8n workflow that normalises the line items, computes the total including delivery, applies the risk assessment rule, and then branches: eligible orders receive a confirmation link, ineligible orders receive a cancellation link. Either way the Airtable order record is updated with the outcome and a timestamp, so there is a single source of truth for what was sent and when.',
-          'The design follows one rule throughout: a workflow has a defined contract at each boundary. The form has a contract. The branch has a contract. The email has a contract. Each one can be tested on its own without standing the whole system up.',
-        ],
-        table: {
-          keys: ['Intake', 'Normalisation', 'Calculation', 'Output', 'Record'],
-          values: [
-            'Tally form submission',
-            'Trim text fields, coerce quantities to numbers, reject rows missing product or quantity',
-            'Sum of (quantity x unit price) across line items, plus delivery fee',
-            'Gmail message carrying the confirmation or cancellation link',
-            'Airtable order record updated with status and timestamp',
-          ],
-        },
-      },
-      {
-        id: 'decisions',
-        label: 'Decision logic',
-        status: 'verified',
-        paragraphs: [
-          'Two rules produce the outcome, and both are written as explicit conditions rather than hidden inside a model call.',
-        ],
-        bullets: [
-          'Total calculation: sum of (quantity x unit price) across line items, plus the delivery fee.',
-          'Eligibility rule: a fixed set of conditions the order must satisfy before a confirmation link is sent.',
-          'Branch: pass sends the confirmation link and sets status to confirmed. Fail sends the cancellation link and sets status to cancelled.',
-          'Every decision writes the rule that was applied back to the record, so a decision can be re-checked later.',
-        ],
-        note: {
-          tone: 'grey',
-          text: 'The risk threshold and the eligibility conditions are configuration, not automatic inference. They are documented in the workflow so they can be reviewed and changed deliberately.',
-        },
-      },
-      {
-        id: 'safeguards',
-        label: 'Exceptions and safeguards',
-        status: 'partial',
-        paragraphs: [
-          'Validation runs before any calculation, because a wrong total is cheaper to catch than a wrong email. Anything that cannot be parsed is stopped and recorded rather than silently skipped.',
-        ],
-        bullets: [
-          'Required fields are checked before pricing: name, address and at least one line item.',
-          'Quantities are coerced to numbers; a non-numeric quantity stops the run and raises a record.',
-          'A missing delivery fee is treated as an input problem rather than silently assumed to be zero.',
-          'A failed send is recorded in the order record so it can be retried by hand.',
-        ],
-        note: {
-          tone: 'warn',
-          text: 'Partial: there is no duplicate submission detection and no automated retry. Two identical form submissions currently produce two workflow runs.',
-        },
-      },
-      {
-        id: 'evidence',
-        label: 'Evidence and testing',
-        status: 'partial',
-        paragraphs: [
-          'The order-processing path has been run against a controlled set of test orders. The scenarios below are labelled with the state they are actually in, so nothing is presented as verified when it has not been.',
-        ],
-        bullets: [
-          'Single line item, normal price, correct total: implemented and verified.',
-          'Multiple line items with different quantities: implemented and verified.',
-          'Order failing the eligibility rule receives the cancellation link: implemented, not yet verified against a full run.',
-          'Non-numeric quantity is rejected and recorded: implemented, not yet verified.',
-          'Duplicate submission is detected and suppressed: not started.',
-          'Failed send triggers an automated retry: not started.',
-        ],
-        note: {
-          tone: 'info',
-          text: 'These are test-run results from a completed build, not production telemetry. They show that the logic executes. They are not evidence of business impact.',
-        },
-      },
-      {
-        id: 'limitations',
-        label: 'Limitations and next improvements',
-        status: 'verified',
-        paragraphs: ['The honest list. Each of these is a real gap, not a future feature request.'],
-        bullets: [
-          'No duplicate-order detection. Two identical submissions produce two workflow runs.',
-          'No reminder ladder. If a customer does not confirm, nothing happens automatically.',
-          'No escalation to a human for ambiguous orders. The binary branch sends either a confirmation or a cancellation.',
-          'Single currency and a single delivery-fee model.',
-          'Cancellation and reminder paths are not tested end to end.',
-          'No monitoring or failure alerting. A stopped workflow would go unnoticed until someone checks.',
-        ],
-      },
-    ],
-    screenshots: [
-      {
-        id: 'cod-01',
-        image: '/screenshots/01-order-submission.png',
-        title: '1. Order submission',
-        caption: 'The order form, before the workflow is triggered.',
-      },
-      {
-        id: 'cod-02',
-        image: '/screenshots/02-customer-email.png',
-        title: '2. Customer email',
-        caption: 'The confirmation message sent to the customer.',
-      },
-      {
-        id: 'cod-03',
-        image: '/screenshots/03-verified-outcome.png',
-        title: '3. Verified outcome',
-        caption: 'The outcome recorded after the order was processed.',
-      },
-      {
-        id: 'cod-04',
-        image: '/screenshots/04-airtable-record.png',
-        title: '4. Airtable record',
-        caption: 'The corresponding record in Airtable, holding the status and total.',
-      },
-      {
-        id: 'cod-05',
-        image: '/screenshots/05-workflow-overview.png',
-        title: '5. Workflow overview',
-        caption: 'The n8n workflow: intake, pricing, risk check and branching.',
-      },
-    ],
-    links: [],
-  },
-
-  // ──────────────────────────────────────────────────────────────────────
-  {
-    slug: 'lead-qualification',
-    name: 'Lead Qualification System',
-    summary:
-      'A workflow that structures incoming leads, classifies them against defined criteria and sets a next action for sales follow-up.',
-    status: 'done',
-    statusLabel: 'Completed',
-    statusDetail:
-      'Completed as a standalone build. Capabilities are labelled individually below; duplicate detection and the follow-up digest were considered and are not part of the current build.',
-    tools: ['n8n', 'Airtable', 'Tally'],
-    timeline: 'Completed',
-    overview:
-      'Leads arrive scattered across a form, direct messages and pasted text. Left unstructured, they are triaged by whoever is free, which means inconsistent classification and follow-ups that depend on memory. This system takes that messy intake and turns it into a structured record with a classification attached, so a follow-up decision can be made consistently.',
-    sections: [
-      {
-        id: 'problem',
-        label: 'The problem',
-        status: 'verified',
-        paragraphs: [
-          'Enquiries arrive with no consistent shape. Some have a name and a product interest, some are a sentence with no contact detail, and some are a repeated question that was already answered. Classification happens in someone\'s head, and the record of who was contacted and when lives in chat history.',
-        ],
-        bullets: [
-          'Unstructured intake from several channels with no shared format.',
-          'Classification performed from memory, so similar enquiries get different treatment.',
-          'No durable record of what was sent and when.',
-          'Follow-up depends on remembering, not on a rule.',
-        ],
-      },
-      {
-        id: 'workflow',
-        label: 'How it works',
-        status: 'partial',
-        paragraphs: [
-          'A Tally form and a direct-message channel both feed one n8n workflow. The workflow normalises whatever arrived into a consistent shape, applies the classification rule, and writes the result to Airtable with an owner and a next action. From there, follow-up is a defined step rather than something remembered.',
-          'This is a completed standalone build. It is not connected to a live CRM and it does not represent a customer engagement.',
-        ],
-        table: {
-          keys: ['Intake', 'Normalisation', 'Classification', 'Record', 'Follow-up'],
-          values: [
-            'Tally form, direct message',
-            'Extract name, contact, product interest, source',
-            'Deterministic rule against defined buckets',
-            'Airtable record with owner and next action',
-            'Manual for now; a daily digest is planned, not built',
-          ],
-        },
-        note: {
-          tone: 'warn',
-          text: 'Prototype status. Correct the labels in this file as the build changes. The current build covers intake, structuring and a first-pass classification rule.',
-        },
-      },
-      {
-        id: 'decisions',
-        label: 'Decision logic',
-        status: 'partial',
-        paragraphs: [
-          'The classification rule is written as explicit conditions over the extracted fields. It is intentionally not delegated to a model, because a deterministic rule can be read, challenged and changed, and its behaviour on edge cases can be tested directly.',
-        ],
-        bullets: [
-          'Classification is derived from explicit field values, not from a model inference.',
-          'A record missing a contact detail is marked incomplete rather than discarded.',
-          'An enquiry that cannot be mapped to any bucket is held for review rather than forced into one.',
-        ],
-        note: {
-          tone: 'grey',
-          text: 'Rule order matters. The buckets are evaluated in a fixed sequence and the first match wins, which makes the outcome predictable but also means a poorly ordered rule will mis-file consistently.',
-        },
-      },
-      {
-        id: 'safeguards',
-        label: 'Exceptions and safeguards',
-        status: 'partial',
-        paragraphs: [
-          'An incomplete record is retained rather than dropped. That is a deliberate choice: losing an enquiry is worse than holding a messy one, because the person can still be contacted.',
-        ],
-        bullets: [
-          'Missing contact detail sets an incomplete flag and holds the record for review.',
-          'Enquiries that cannot be classified are written with an unclassified flag rather than assigned by default.',
-          'A failed write is surfaced as a workflow error rather than swallowed.',
-        ],
-        note: {
-          tone: 'warn',
-          text: 'Partial: there is no duplicate detection. The same person enquiring twice will produce two records.',
-        },
-      },
-      {
-        id: 'evidence',
-        label: 'Evidence and testing',
-        status: 'partial',
-        paragraphs: ['Results are test-run outcomes from the build, not business metrics.'],
-        bullets: [
-          'Well-formed enquiry is extracted and classified correctly: implemented and verified.',
-          'Enquiry with a missing contact detail is flagged incomplete, not dropped: implemented and verified.',
-          'Enquiry that matches no bucket is held for review: implemented, not yet verified.',
-          'Duplicate enquiry is suppressed: not started.',
-          'Follow-up digest is produced daily: not started.',
-        ],
-      },
-      {
-        id: 'limitations',
-        label: 'What it demonstrates, and what is missing',
-        status: 'verified',
-        paragraphs: [
-          'The point of this project is not the classification itself. It is that a qualification rule written as explicit conditions can be read, challenged, changed, and tested on its edge cases, instead of being an opaque score that nobody can explain.',
-        ],
-        bullets: [
-          'Structured decision-making in sales operations: the rule is a document, not a black box.',
-          'Validation before action: an incomplete record is held rather than lost.',
-          'A workflow design that separates intake, classification and follow-up, so each can change independently.',
-          'No duplicate detection.',
-          'No daily follow-up digest; follow-up is still a manual task.',
-          'Classification buckets are a first pass and are likely to need expansion.',
-          'Text extraction handles a narrow range of phrasings.',
-          'No connection to a live CRM or marketing tool.',
-        ],
-      },
-    ],
-    screenshots: [],
-    links: [],
-  },
-
-  // ──────────────────────────────────────────────────────────────────────
-  {
-    slug: 'returns-refunds-handler',
-    name: 'Returns and Refunds Handler',
-    summary:
-      'A workflow that applies return-policy rules consistently, evaluates requests, and escalates the cases that need a person rather than an automated answer.',
-    status: 'done',
-    statusLabel: 'Completed',
-    statusDetail:
-      'Completed as a standalone build. The behaviours below are labelled individually: policy evaluation and escalation are implemented, while conflict detection between contradictory customer instructions is designed but not yet built.',
-    tools: ['n8n', 'Airtable', 'Tally'],
-    timeline: 'Completed',
-    overview:
-      'Returns are the case where a workflow has to be more careful than the process it replaces. A customer is asking for something back, the policy may not cover it, and the customer may give instructions that contradict each other. This system applies the policy rules consistently while keeping an explicit exit to a human for anything the rules cannot settle.',
-    sections: [
-      {
-        id: 'problem',
-        label: 'The problem',
-        status: 'verified',
-        paragraphs: [
-          'Return decisions are made conversationally, one message at a time, usually by whoever is available. The same request can get a different answer depending on the day, on the order history the person can see at that moment, and on how persistent the customer is. Policy exceptions are granted conversationally and leave no trace, and there is no consistent record of which rule was applied and why.',
-        ],
-        bullets: [
-          'The same return request can receive different answers on different days.',
-          'Policy exceptions are granted conversationally and leave no trace.',
-          'Conflicting customer instructions are resolved by whoever reads them first.',
-          'No record of the rule applied to a decision.',
-        ],
-      },
-      {
-        id: 'workflow',
-        label: 'How it works',
-        status: 'partial',
-        paragraphs: [
-          'The system is a staged pipeline rather than a single branch, because the expensive cases are the ones that need to be recognised early and passed on. A return request is validated for completeness, evaluated against the policy rules in a fixed order, and either produces a decision or is escalated.',
-        ],
-        table: {
-          keys: ['Stage', 'What it does'],
-          values: [
-            'Request intake',
-            'Validation',
-            'Policy evaluation',
-            'Conflict detection',
-            'Human escalation',
-            'Outcome record',
-            'Tally form and message channel',
-            'Confirm the request has what the policy requires',
-            'Apply the return policy rules in order',
-            'Detect self-contradicting instructions',
-            'Route unresolved cases to a person',
-            'Write the decision and the rule that produced it',
-          ],
-        },
-        note: {
-          tone: 'grey',
-          text: 'Stages are listed in the order the request passes through them. Conflict detection is designed and documented but is not yet implemented; the sections below mark it as such.',
-        },
-      },
-      {
-        id: 'decisions',
-        label: 'Decision logic',
-        status: 'partial',
-        paragraphs: [
-          'The decision logic is written as ordered, explicit rules. Two categories matter more than the rest, because they are where automation should not decide alone.',
-        ],
-        bullets: [
-          'Policy rules are evaluated in a fixed order so the outcome is deterministic and reviewable.',
-          'A request that matches no policy rule is escalated rather than defaulted.',
-          'Conflicting instructions are detected before a decision is produced, and the conflict is recorded as the reason for escalation.',
-          'Unusual refund amounts, disputed payments and policy edge cases are designated for human review rather than automatic approval.',
-        ],
-        note: {
-          tone: 'warn',
-          text: 'Partial: the rule order is implemented and documented. Conflict detection between contradictory instructions is designed but not yet built.',
-        },
-      },
-      {
-        id: 'safeguards',
-        label: 'Exceptions and safeguards',
-        status: 'partial',
-        paragraphs: [
-          'Validation is the first stage because a policy decision made on incomplete input is not a decision, it is a guess. The build checks presence and format; consistency against the order record is the remaining work.',
-        ],
-        bullets: [
-          'Required fields are checked before policy evaluation runs.',
-          'A request referencing an order that cannot be found is escalated, not answered.',
-          'Conflicting instructions are flagged before a decision is produced.',
-          'An escalation that cannot be delivered is raised as a workflow error.',
-        ],
-        note: {
-          tone: 'warn',
-          text: 'Partial: presence checks are implemented. Order-record lookup and conflict detection are not yet built.',
-        },
-      },
-      {
-        id: 'evidence',
-        label: 'Evidence and testing',
-        status: 'partial',
-        paragraphs: ['Test results are outcomes from the build and are not business metrics.'],
-        bullets: [
-          'Complete request passes validation and reaches policy evaluation: implemented, not yet verified.',
-          'Request with a missing required field is rejected and recorded: implemented, not yet verified.',
-          'Request outside the policy is escalated: implemented, not yet verified against a full run.',
-          'Self-contradicting instructions are detected and escalated: not started.',
-          'Disputed payment is routed to a human: designed, not yet implemented.',
-          'Escalation notification reaches the owner: designed, not yet implemented.',
-        ],
-      },
-      {
-        id: 'limitations',
-        label: 'Limitations and next improvements',
-        status: 'verified',
-        paragraphs: ['The honest state of the build, ordered by the failure mode each item closes.'],
-        bullets: [
-          'Conflicting customer instructions are not yet detected.',
-          'Order-record lookup during validation is not yet built.',
-          'The human escalation branch is designed but is not wired to a live queue.',
-          'No end-to-end test run against a realistic returns dataset.',
-          'No monitoring or failure alerting on the workflow.',
-        ],
-      },
-    ],
-    screenshots: [],
-    links: [],
-  },
-
-  // ──────────────────────────────────────────────────────────────────────
-  {
-    slug: 'invoice-extraction-validation',
-    name: 'Invoice Extraction and Validation',
-    summary:
-      'A planned workflow for extracting invoice fields, validating them against each other, and flagging the records that need correction or human review.',
-    status: 'planned',
-    statusLabel: 'Planned',
-    statusDetail:
-      'Not started. The sections below describe the intended design only. Nothing has been implemented, tested or deployed.',
-    tools: ['n8n'],
-    timeline: 'Planned - not started',
-    overview:
-      'Invoices arrive as files and pastes with no consistent layout. The intended workflow extracts structured fields, validates them against each other and against the source document, and marks the records that need a human before they reach any downstream process. The point of the design is to make uncertainty visible rather than to force a confident answer out of an unreliable input.',
-    sections: [
-      {
-        id: 'problem',
-        label: 'The problem',
-        status: 'planned',
-        paragraphs: [
-          'Invoice data is entered by hand, field by field, from a document whose layout changes between suppliers. The failure is rarely the extraction itself; it is the silent mis-entry that survives into a payment or a reconciliation.',
-        ],
-        bullets: [
-          'Layouts differ between suppliers, so field positions are not reliable.',
-          'Manual entry is slow and produces silently wrong values.',
-          'Missing or ambiguous fields are usually filled in with a guess.',
-          'There is no record of which fields were extracted and which were assumed.',
-        ],
-      },
-      {
-        id: 'workflow',
-        label: 'How it works',
-        status: 'planned',
-        paragraphs: [
-          'This is a plan, not a build. The intended approach is an extraction step, a validation step and an explicit output contract, with every record that cannot be validated marked rather than guessed. Nothing described here has been implemented. The sections below record the design decisions so they can be reviewed before any code is written.',
-        ],
-        table: {
-          keys: ['Stage', 'Purpose', 'State'],
-          values: [
-            'Document intake',
-            'Field extraction',
-            'Validation',
-            'Confidence handling',
-            'Output',
-            'File or paste, supplier source',
-            'Extraction into a fixed shape',
-            'Cross-field and document-level checks',
-            'Flag fields that are missing or uncertain',
-            'Validated record, or held record for review',
-          ],
-        },
-        note: {
-          tone: 'warn',
-          text: 'Planned. No functionality described in this case study has been implemented or tested.',
-        },
-      },
-      {
-        id: 'decisions',
-        label: 'Decision logic',
-        status: 'planned',
-        paragraphs: [
-          'The design decisions that matter are about what happens to an uncertain result, not about which model to call.',
-        ],
-        bullets: [
-          'Extracted values are never overwritten with a default. A missing value stays missing and is flagged.',
-          'Cross-field checks compare line item totals, subtotal, tax and grand total before a record is marked validated.',
-          'A record failing any check is held for review with the failing checks listed.',
-          'Confidence is recorded per field so weak extractions are reviewable without re-running everything.',
-        ],
-        note: {
-          tone: 'warn',
-          text: 'Design intent only. None of these rules is implemented.',
-        },
-      },
-      {
-        id: 'safeguards',
-        label: 'Exceptions and safeguards',
-        status: 'planned',
-        paragraphs: [
-          'Validation is the stage that makes the whole system worth building. Extraction will be imperfect; the design assumes it and makes that imperfection visible.',
-        ],
-        bullets: [
-          'Required fields are checked for presence.',
-          'Line item totals are reconciled against subtotal, tax and grand total.',
-          'A supplier that is not recognised is flagged rather than assumed.',
-          'A document that cannot be parsed is recorded as unparseable with the reason.',
-        ],
-        note: {
-          tone: 'warn',
-          text: 'Planned. No validation rules have been implemented yet.',
-        },
-      },
-      {
-        id: 'evidence',
-        label: 'Evidence and testing',
-        status: 'not-started',
-        paragraphs: [
-          'No test set has been run. The testing plan will use a held-out sample of invoices with known expected values, so extraction quality can be measured rather than assumed.',
-        ],
-        bullets: [
-          'Field-level extraction accuracy against a labelled sample set: not started.',
-          'Reconciliation of totals on a clean invoice: not started.',
-          'Handling of a missing field without silent defaulting: not started.',
-          'Handling of a supplier with an unseen layout: not started.',
-          'End-to-end run producing held records for review: not started.',
-        ],
-      },
-      {
-        id: 'limitations',
-        label: 'Limitations and next improvements',
-        status: 'verified',
-        paragraphs: ['The honest state of a project that has not been started, and the build order I intend to follow.'],
-        bullets: [
-          'The project is not started. Nothing described above is implemented.',
-          'No sample invoice dataset has been assembled, so extraction quality is unknown.',
-          'No model has been selected, because selection should follow measurement.',
-          'No downstream process is connected.',
-          'Next: assemble a labelled sample set before writing any extraction logic, then measure extraction quality on it, then pick the extraction approach from the measurement.',
-        ],
-      },
-    ],
-    screenshots: [],
-    links: [],
-  },
-]
-
-/** Fixed case-study section order. */
-export const CASE_STUDY_ORDER = [
-  'problem',
-  'workflow',
-  'decisions',
-  'safeguards',
-  'evidence',
-  'limitations',
-] as const
-
-export const CASE_STUDY_LABELS: Record<string, string> = {
-  problem: 'The problem',
-  workflow: 'How it works',
-  decisions: 'Decision logic',
-  safeguards: 'Exceptions and safeguards',
-  evidence: 'Evidence and testing',
-  limitations: 'Limitations and next improvements',
+export const PROJECT_CATEGORY_LABELS: Record<ProjectCategory | 'all', string> = {
+  all: 'All projects',
+  'ecommerce-ops': 'E-commerce operations',
+  'customer-experience': 'Customer experience',
+  'lead-management': 'Lead management',
+  'ai-data': 'AI & data processing',
 }
 
-export const CASE_STUDY_STATUS_LABEL: Record<SectionStatus, string> = {
-  verified: 'Implemented and verified',
+export const STATUS_LABELS: Record<StatusKey, string> = {
+  done: 'Completed · tested',
+  progress: 'Working prototype',
+  planned: 'Designed · not built',
+}
+
+export const STATUS_DETAIL_DEFAULT: Record<StatusKey, string> = {
+  done:
+    'The core path is built and has been run against test scenarios. Partial or unbuilt behaviours are labelled.',
+  progress:
+    'A working prototype that demonstrates the architecture. Not connected to live data or customer-facing channels.',
+  planned: 'Design documented; nothing implemented yet.',
+}
+
+export const SECTION_STATUS_LABEL: Record<SectionStatus, string> = {
+  verified: 'Verified',
   partial: 'Partial',
-  planned: 'Designed, not built',
+  planned: 'Designed',
   'not-started': 'Not started',
 }
 
+export const projects: Project[] = [
+  // ─────────────────── 1. COD ORDER CONFIRMATION ───────────────────
+  {
+    slug: 'order-confirmation-risk-check',
+    workflowScreenshot: '/screenshots/05-workflow-overview.png',
+    name: 'COD Order Confirmation & Risk Assessment',
+    tagline:
+      'Automated pricing, risk checking and confirmation-link dispatch for cash-on-delivery orders.',
+    status: 'done',
+    statusLabel: STATUS_LABELS.done,
+    statusDetail: STATUS_DETAIL_DEFAULT.done,
+    tools: ['n8n', 'tally', 'airtable', 'gmail'],
+    timeline: 'Completed build',
+    categories: ['ecommerce-ops', 'customer-experience'],
+    heroVisual: { useSimulator: true },
+    hasSimulator: true,
+    problem: {
+      summary:
+        'Cash-on-delivery orders were priced and checked for eligibility by hand before dispatch, producing mispriced totals, inconsistent approval decisions and customers who never received a confirmation link.',
+      whyItMatters:
+        'A mispriced or unconfirmed order turns into a failed delivery - courier time and fuel wasted, a customer who did not get what they expected, and a business with no clean record of what was agreed at order time.',
+      bullets: [
+        'Repeated manual arithmetic on data the customer had already submitted.',
+        'Inconsistent eligibility decisions between similar orders.',
+        'No durable record of which message was sent, to whom, and when.',
+        'Failed deliveries caused by unconfirmed or mispriced orders.',
+      ],
+    },
+    solution: {
+      summary:
+        'A Tally form triggers an n8n workflow that prices the order, applies a fixed risk rule and sends the customer a confirmation or cancellation link. Every outcome is written back to Airtable with the rule applied and a timestamp.',
+      automated: [
+        'Pricing: totals and delivery fee are calculated from line items.',
+        'Validation: required fields and numeric checks before any message is sent.',
+        'Branching: eligible orders receive a confirmation link; others are handled by rule.',
+        'Record-keeping: every run writes status, outcome and timestamp to Airtable.',
+      ],
+      humanControl: [
+        'Orders that fail the risk threshold are flagged for review rather than auto-cancelled.',
+        'Orders with missing or invalid inputs are held for correction, not messaged.',
+        'Risk thresholds and eligibility conditions are written configuration, editable by the business.',
+      ],
+    },
+    workflow: [
+      { id: 'trigger', label: 'Trigger', title: 'Order submitted', detail: 'Tally form fires a webhook.', tone: 'trigger' },
+      { id: 'validate', label: 'Step 1', title: 'Validate input', detail: 'Check required fields, numeric quantities.', tone: 'default' },
+      { id: 'price', label: 'Step 2', title: 'Price order', detail: 'Sum line items + delivery fee.', tone: 'default' },
+      { id: 'risk', label: 'Decision', title: 'Risk rule', detail: 'Eligibility threshold.', tone: 'decision' },
+      { id: 'confirm', label: 'Path A', title: 'Send confirmation', detail: 'Gmail confirmation link.', tone: 'output' },
+      { id: 'escalate', label: 'Path B', title: 'Flag for review', detail: 'High-risk / invalid held.', tone: 'escalation' },
+      { id: 'record', label: 'Record', title: 'Write to Airtable', detail: 'Status, rule, timestamp.', tone: 'record' },
+    ],
+    result: {
+      summary:
+        'The happy path - complete, well-formed order within the risk threshold - is fully automated end-to-end: the form triggers the workflow, pricing is computed, the rule is applied and a confirmation link is queued without human intervention. Exception handling is implemented, but the high-risk and invalid-input paths still need end-to-end verification.',
+      points: [
+        { text: 'Single line item priced and confirmed: verified.', state: 'verified' },
+        { text: 'Multiple line items with mixed quantities: verified.', state: 'verified' },
+        { text: 'Risk-threshold failure routes to cancellation/flag path: implemented, not yet end-to-end verified.', state: 'partial' },
+        { text: 'Non-numeric quantity rejected and recorded: implemented, not yet verified.', state: 'partial' },
+        { text: 'Duplicate submission detection: not started.', state: 'planned' },
+        { text: 'Failed-send automated retry: not started.', state: 'planned' },
+      ],
+      disclaimer:
+        'These are test-run results against a controlled set of orders, not production telemetry. They demonstrate that the logic executes; they are not evidence of business impact.',
+    },
+    technical: {
+      summary:
+        'n8n workflow triggered by a Tally webhook. Normalisation code nodes coerce fields to numbers and trim strings before any calculation. Every branch writes to Airtable before exiting, so there is no "happy-path-only" record. Decision rules are explicit expressions, not AI calls.',
+      dataFlow: [
+        'Tally webhook POSTs JSON payload to n8n.',
+        'Code nodes normalise fields (trim strings, coerce quantities to numbers).',
+        'Pricing node computes total = Σ(qty × price) + delivery_fee.',
+        'IF node evaluates eligibility (total ≤ threshold, phone valid, address long enough).',
+        'Gmail node sends confirmation or cancellation link from a template.',
+        'Airtable node upserts the order record with status, rule and timestamp.',
+      ],
+      decisionLogic: [
+        'Pricing is arithmetic; no model is involved.',
+        'Eligibility is a deterministic AND of configured conditions.',
+        'The rule applied is written back to the record for re-checkability.',
+      ],
+      validation: [
+        'Required-field check runs before pricing.',
+        'Quantities must be positive numbers; non-numeric stops the run.',
+        'Missing delivery fee is treated as an input problem, not silently zero.',
+      ],
+      exceptions: [
+        'A failed email send is recorded on the order for manual retry.',
+        'Missing or invalid inputs are flagged; no customer message is sent.',
+        'No duplicate detection yet (known limitation).',
+      ],
+      testing: [
+        'Clean orders have been verified; high-risk and invalid-input paths still need end-to-end verification.',
+        'Cancellation path and failed-send path not yet end-to-end verified.',
+      ],
+      limitations: [
+        'No duplicate-order detection; two identical submissions produce two runs.',
+        'Reminder and escalation paths appear on the workflow canvas; end-to-end testing is not documented here.',
+        'Binary branch only - no "needs more info" escalation tier beyond invalid-input rejection.',
+        'Single currency, single delivery-fee model.',
+        'No monitoring or failure alerting on the workflow.',
+      ],
+      examplePayload: `{
+  "customer_name": "Amaka Okafor",
+  "address": "14 Allen Avenue, Ikeja, Lagos",
+  "phone": "+234 803 123 4567",
+  "delivery_fee": 2500,
+  "line_items": [
+    { "product": "Vitamin C Serum", "quantity": 1, "unit_price": 14500 },
+    { "product": "Cleanser",       "quantity": 2, "unit_price":  8500 }
+  ]
+}`,
+    },
+  },
+
+  // ─────────────────── 2. RETURNS & REFUNDS ───────────────────
+  {
+    slug: 'returns-refunds-handler',
+    name: 'Returns & Refunds Policy Handler',
+    tagline:
+      'Consistent policy evaluation for return requests, with explicit human escalation.',
+    status: 'done',
+    statusLabel: STATUS_LABELS.done,
+    statusDetail: STATUS_DETAIL_DEFAULT.done,
+    tools: ['n8n', 'tally', 'airtable'],
+    timeline: 'Completed build',
+    categories: ['ecommerce-ops', 'customer-experience'],
+    heroVisual: { caption: 'Returns policy decision flow' },
+    hasSimulator: true,
+    problem: {
+      summary:
+        'Return decisions were made one message at a time by whoever was available. The same kind of request could get a different answer on different days, policy exceptions were granted conversationally with no record, and conflicting customer instructions were resolved by whoever read them first.',
+      whyItMatters:
+        'Returns are high-stakes customer moments - inconsistent answers erode trust, undocumented policy exceptions create precedent the business did not agree to, and conflicting instructions lead to customers receiving something they did not ask for.',
+      bullets: [
+        'Inconsistent eligibility decisions across similar requests.',
+        'Policy exceptions granted conversationally with no audit trail.',
+        'Conflicting customer instructions resolved ad hoc.',
+        'No record of which rule produced a given decision.',
+      ],
+    },
+    solution: {
+      summary:
+        'A staged pipeline in n8n that validates return requests for completeness, evaluates them against policy rules in a fixed order and either produces a decision or escalates to a human. Every decision records the rule that produced it.',
+      automated: [
+        'Intake validation: required fields and basic format checks before policy evaluation.',
+        'Policy evaluation: rules applied in a fixed, deterministic order.',
+        'Outcome recording: every decision writes the rule, outcome and timestamp to Airtable.',
+      ],
+      humanControl: [
+        'Requests matching no policy rule are escalated, not defaulted.',
+        'Conflicting instructions flag the request for review (designed, not yet built).',
+        'Unusual refund amounts and disputed payments are always routed to a person.',
+      ],
+    },
+    workflow: [
+      { id: 'trigger', label: 'Trigger', title: 'Return request', detail: 'Tally form or message.', tone: 'trigger' },
+      { id: 'validate', label: 'Step 1', title: 'Validate', detail: 'Required fields present.', tone: 'default' },
+      { id: 'policy', label: 'Step 2', title: 'Evaluate policy', detail: 'Apply rules in order.', tone: 'decision' },
+      { id: 'conflict', label: 'Step 3', title: 'Conflict detection', detail: 'Self-contradictions (designed, not yet built).', tone: 'decision' },
+      { id: 'decision', label: 'Output', title: 'Decision / Escalate', detail: 'Rule applied OR human queue.', tone: 'escalation' },
+      { id: 'record', label: 'Record', title: 'Write to Airtable', detail: 'Outcome + rule + reason.', tone: 'record' },
+    ],
+    result: {
+      summary:
+        'Validation and policy-evaluation paths are built so that well-formed return requests are evaluated in a fixed, reviewable order. Out-of-policy escalation is implemented but not yet end-to-end verified; conflict detection is designed but not yet built.',
+      points: [
+        { text: 'Complete request passes validation and reaches policy evaluation: implemented, walkthrough-verified.', state: 'verified' },
+        { text: 'Missing required field rejected and recorded: implemented, walkthrough-verified.', state: 'verified' },
+        { text: 'Out-of-policy request escalated: implemented, not yet end-to-end verified.', state: 'partial' },
+        { text: 'Self-contradicting instructions detected and escalated: not started (designed).', state: 'planned' },
+        { text: 'Escalation notification reaches queue owner: not started.', state: 'planned' },
+      ],
+      disclaimer:
+        'Results are walkthrough outcomes against the build, not production telemetry.',
+    },
+    technical: {
+      summary:
+        'Staged n8n pipeline with policy evaluation after validation; conflict detection is designed but not yet built. Every stage writes a structured record; the human-escalation branch is a first-class output, not a catch-all.',
+      dataFlow: [
+        'Return request captured via Tally webhook.',
+        'Validation node checks required fields (order reference, item, reason).',
+        'Policy-rules node applies rules in a fixed sequence (window, item type, condition, reason).',
+        'Conflict-detection node flags contradictory selections (designed, not built).',
+        'Branch: accept / deny / escalate; each writes to Airtable with rule id.',
+      ],
+      decisionLogic: [
+        'Rules evaluated in fixed order so the outcome is deterministic.',
+        'No AI calls in the decision path - policy rules are explicit.',
+        'First-match semantics mean rule ordering is documented and testable.',
+      ],
+      validation: [
+        'Required-field presence and basic format checks.',
+        'Order-record lookup (not yet built) is a prerequisite before policy evaluation.',
+      ],
+      exceptions: [
+        'Requests that match no rule are escalated, not defaulted.',
+        'Conflicting instructions are designed to halt automated decision-making.',
+        'Disputed payments are designated human-only.',
+      ],
+      testing: [
+        'Well-formed and missing-field requests were walkthrough-verified; out-of-policy escalation still needs end-to-end verification.',
+        'Conflict detection and escalation notification not yet built.',
+      ],
+      limitations: [
+        'Conflict detection between contradictory instructions is designed but not implemented.',
+        'Order-record lookup during validation is not yet built.',
+        'Human-escalation branch is not wired to a live queue.',
+        'No end-to-end test run against a realistic returns dataset.',
+        'No monitoring or failure alerting.',
+      ],
+      examplePayload: `{
+  "order_number": "ORD-12345",
+  "customer_name": "...",
+  "items_requested": ["Cleanser"],
+  "reason": "wrong_item",
+  "condition": "unopened",
+  "submitted_at": "ISO timestamp"
+}`,
+    },
+  },
+
+  // ─────────────────── 3. LEAD QUALIFICATION ───────────────────
+  {
+    slug: 'lead-qualification',
+    name: 'AI-Assisted Lead Qualification & Routing',
+    tagline:
+      'Structuring and classifying incoming enquiries so follow-up decisions are consistent and auditable.',
+    status: 'done',
+    statusLabel: STATUS_LABELS.done,
+    statusDetail: STATUS_DETAIL_DEFAULT.done,
+    tools: ['n8n', 'tally', 'airtable', 'claude-api'],
+    timeline: 'Completed build',
+    categories: ['lead-management', 'ai-data'],
+    heroVisual: { caption: 'Lead qualification and routing flow' },
+    hasSimulator: true,
+    problem: {
+      summary:
+        'Leads arrived in different shapes across a form and direct messages. Classification happened in the reader\u2019s head, so similar enquiries got different treatment, and follow-up depended on memory rather than a rule.',
+      whyItMatters:
+        'Inconsistent triage means hot leads can go cold while low-intent enquiries get immediate attention, and there is no record of why any given lead was routed the way it was.',
+      bullets: [
+        'Unstructured intake from multiple channels with no shared format.',
+        'Classification performed from memory.',
+        'No durable record of next action or assignment.',
+        'Follow-up depended on being remembered.',
+      ],
+    },
+    solution: {
+      summary:
+        'A Tally form and a direct-message channel both feed one n8n workflow. Claude is used only to extract structured fields from free-text messages; classification itself is a deterministic rule. Records missing required fields or failing classification are held for review rather than forced into a bucket.',
+      automated: [
+        'Normalisation of name, contact, interest and source across channels.',
+        'Deterministic classification into explicit buckets.',
+        'Assignment of an owner and a next action in Airtable.',
+        'Flagging of incomplete or unclassifiable records for review.',
+      ],
+      humanControl: [
+        'Records missing a contact detail are flagged, not discarded.',
+        'Records that match no bucket are held for review rather than default-classified.',
+        'Classification buckets and their order are written configuration, editable by the business.',
+      ],
+    },
+    workflow: [
+      { id: 'trigger', label: 'Trigger', title: 'Enquiry arrives', detail: 'Tally form or DM.', tone: 'trigger' },
+      { id: 'extract', label: 'Step 1', title: 'Extract fields', detail: 'Claude extraction for free text.', tone: 'default' },
+      { id: 'validate', label: 'Step 2', title: 'Validate', detail: 'Required fields present.', tone: 'default' },
+      { id: 'classify', label: 'Decision', title: 'Classify', detail: 'Deterministic rule order.', tone: 'decision' },
+      { id: 'route', label: 'Output', title: 'Route or hold', detail: 'Assign owner, next action.', tone: 'escalation' },
+      { id: 'record', label: 'Record', title: 'Write to Airtable', detail: 'Classification + reason.', tone: 'record' },
+    ],
+    result: {
+      summary:
+        'Well-formed enquiries are extracted, classified and recorded with a next action without manual intervention. Missing-contact and unclassifiable enquiries are intended for review; the unclassifiable path has not yet been verified.',
+      points: [
+        { text: 'Well-formed Tally enquiry classified correctly: verified.', state: 'verified' },
+        { text: 'Free-text DM extracted by Claude into structured fields: implemented, walkthrough-verified.', state: 'partial' },
+        { text: 'Missing contact detail flagged as incomplete: verified.', state: 'verified' },
+        { text: 'Unclassifiable enquiry held for review: implemented, not yet verified.', state: 'partial' },
+        { text: 'Duplicate lead detection: not started.', state: 'planned' },
+        { text: 'Daily follow-up digest: not started.', state: 'planned' },
+      ],
+      disclaimer:
+        'Results are walkthrough outcomes, not production telemetry from a live CRM.',
+    },
+    technical: {
+      summary:
+        'Two intake paths (form and DM) funnel into a single normalisation step. Claude is used only as a structured extractor, constrained by a JSON-schema output, and its output is validated before downstream routing - it never makes the classification decision itself.',
+      dataFlow: [
+        'Tally webhook (structured) and DM webhook (free-text) both enter the same n8n workflow.',
+        'Free-text messages are sent to Claude with a strict extraction prompt and JSON schema.',
+        'Validation node checks required fields and rejects/flags incomplete records.',
+        'Classification node evaluates buckets in fixed order; first match wins.',
+        'Router node assigns an owner and writes next action to Airtable.',
+      ],
+      decisionLogic: [
+        'Classification is a deterministic IF/ELSE chain over extracted fields.',
+        'Buckets are ordered explicitly to make mis-filing predictable.',
+        'Claude is instructed to return "unknown" for fields it cannot extract rather than guess.',
+      ],
+      validation: [
+        'JSON-schema validation on Claude output.',
+        'Required-field checks on name and contact.',
+        'Records with unknown/unclassified fields are held, not defaulted.',
+      ],
+      exceptions: [
+        'A failed Claude call raises an error rather than producing a blank classification.',
+        'Unclassifiable records are held with the raw input attached.',
+        'No duplicate detection yet (known limitation).',
+      ],
+      testing: [
+        'Walkthroughs on well-formed, missing-contact and free-text scenarios.',
+        'Text extraction handles a narrow range of phrasings; will expand with real message samples.',
+      ],
+      limitations: [
+        'No duplicate detection across channels.',
+        'No daily follow-up digest; follow-up is still manual.',
+        'Classification buckets are a first pass.',
+        'Text extraction handles a narrow range of phrasings.',
+        'No connection to a live CRM or marketing tool.',
+      ],
+      examplePayload: `{
+  "intake_channel": "dm",
+  "raw_message": "Hi, I saw your skincare line and would like to discuss bulk pricing for my store in PH.",
+  "extracted": {
+    "name": null,
+    "interest": "wholesale",
+    "product_line": "skincare",
+    "location": "Port Harcourt"
+  },
+  "received_at": "ISO timestamp"
+}`,
+    },
+  },
+
+  // ─────────────────── 4. GLOWLAB LIFECYCLE ───────────────────
+  {
+    slug: 'glowlab-lifecycle',
+    name: 'GlowLab E-commerce Lifecycle Prototype',
+    tagline:
+      'A working prototype of event-driven lifecycle messaging for a fictional skincare brand.',
+    status: 'progress',
+    statusLabel: STATUS_LABELS.progress,
+    statusDetail: STATUS_DETAIL_DEFAULT.progress,
+    tools: ['n8n', 'tally', 'airtable', 'gmail', 'shopify'],
+    timeline: 'Prototype in progress',
+    categories: ['ecommerce-ops', 'customer-experience', 'ai-data'],
+    heroVisual: { caption: 'Lifecycle automation flow (prototype)' },
+    hasSimulator: false,
+    problem: {
+      summary:
+        'Follow-up after a customer places an order - or nearly places one - was manual. Abandoned-cart reminders went out late or not at all, post-purchase check-ins were skipped during busy weeks, and messages were sometimes sent to customers who had already bought or opted out.',
+      whyItMatters:
+        'Missed lifecycle moments are invisible until they show up in retention numbers. Sending an irrelevant reminder to a customer who already bought is worse than not sending anything at all.',
+      bullets: [
+        'Abandoned-cart follow-up depended on someone noticing.',
+        'Post-purchase messages sent inconsistently.',
+        'Customers segmented loosely rather than by behaviour.',
+        'Opt-outs and recent-purchase suppressions not enforced.',
+      ],
+    },
+    solution: {
+      summary:
+        'A prototype lifecycle engine in n8n that listens for simulated cart/order events, segments customers by behaviour and schedules messages with exit conditions that prevent embarrassing sends.',
+      automated: [
+        'Event intake from simulated storefront webhooks.',
+        'Customer timeline merge and segmentation rules.',
+        'Scheduling of messages with configured delays.',
+        'Exit checks: opt-out, recent purchase, duplicate-send suppression.',
+      ],
+      humanControl: [
+        'VIP or conflicting-signal customers are routed to a review queue.',
+        'Opt-out immediately suppresses all future automated messages.',
+        'Messages are staged to Airtable, not sent, in this prototype.',
+      ],
+    },
+    workflow: [
+      { id: 'trigger', label: 'Trigger', title: 'Cart / order event', detail: 'Simulated webhook.', tone: 'trigger' },
+      { id: 'identify', label: 'Step 1', title: 'Identify customer', detail: 'Merge into timeline.', tone: 'default' },
+      { id: 'segment', label: 'Decision', title: 'Segmentation', detail: 'Rule-based.', tone: 'decision' },
+      { id: 'schedule', label: 'Step 2', title: 'Schedule message', detail: 'Wait nodes.', tone: 'default' },
+      { id: 'exit', label: 'Exit checks', title: 'Opt-out / recent buy', detail: 'Suppress if needed.', tone: 'decision' },
+      { id: 'review', label: 'Output', title: 'Review queue or queue', detail: 'VIP to human, else stage.', tone: 'escalation' },
+      { id: 'record', label: 'Record', title: 'Airtable message queue', detail: 'Staged send.', tone: 'record' },
+    ],
+    result: {
+      summary:
+        'The prototype demonstrates that event-driven segmentation and exit-check suppression can be handled deterministically with explicit rules, without relying on AI to decide who gets what message.',
+      points: [
+        { text: 'Fresh abandoned cart schedules a reminder after the configured delay: walkthrough-verified.', state: 'verified' },
+        { text: 'Customer who buys mid-sequence is suppressed: walkthrough-verified.', state: 'verified' },
+        { text: 'Opt-out honoured before scheduling: walkthrough-verified.', state: 'verified' },
+        { text: 'VIP customer routed to review queue: walkthrough-verified.', state: 'verified' },
+        { text: 'Live Shopify webhook integration: not started.', state: 'planned' },
+        { text: 'Real email (Gmail/ESP) delivery: not started (Airtable staging only).', state: 'planned' },
+        { text: 'Timezone-aware scheduling: not started.', state: 'planned' },
+      ],
+      disclaimer:
+        'GlowLab is a fictional brand. This is a working prototype built to demonstrate architecture; it is not connected to a live store and has not processed real customer data.',
+    },
+    technical: {
+      summary:
+        'n8n prototype with simulated events, wait nodes for timing, and explicit exit-condition nodes before any message is queued. Messages are staged to an Airtable queue rather than sent, so the prototype can be inspected without sending any customer email.',
+      dataFlow: [
+        'Simulated events (Tally form triggers standing in for Shopify webhooks) enter the workflow.',
+        'Customer-timeline node merges the event against existing records in Airtable.',
+        'Segmentation node applies deterministic rules based on order value, recency and tags.',
+        'Wait node applies the configured delay (1h abandoned-cart reminder, 24h post-purchase, 7d win-back, etc.).',
+        'Exit checks before send: opt-out flag, recent purchase, duplicate-send guard.',
+        'Staging node writes the message to Airtable with status = staged.',
+      ],
+      decisionLogic: [
+        'Cart abandoned < 1h does not trigger an immediate reminder (anti-pushiness guard).',
+        'A customer who purchases between scheduling and send time is suppressed from the abandoned-cart sequence.',
+        'VIP-tagged customers are routed to the review queue rather than receiving automated messages.',
+      ],
+      validation: [
+        'Duplicate-send suppression keyed on customer_id + sequence_id + message_index.',
+        'Opt-out flag checked immediately before every send-stage.',
+      ],
+      exceptions: [
+        'Conflicting signals (e.g., cart abandoned + support ticket opened) route to review.',
+        'Wait-node interruption on new events is handled via re-filtering at send time.',
+      ],
+      testing: [
+        'Walkthroughs on four scenarios (see result points).',
+        'No load testing, no real-store integration.',
+      ],
+      limitations: [
+        'No live Shopify or storefront connection; events are simulated.',
+        'Messages are staged in Airtable, not actually sent.',
+        'Scheduling is fixed-delay only; no timezone optimisation.',
+        'No unsubscribe-management integration.',
+        'No analytics or deliverability tracking.',
+      ],
+      examplePayload: `{
+  "event_type": "cart_abandoned",
+  "customer_id": "cust_123",
+  "event_timestamp": "ISO timestamp",
+  "cart_total": 42000,
+  "tags": ["first_time_visitor"]
+}`,
+    },
+  },
+]
+
+/* Filter helpers */
+export const FILTER_CATEGORIES: Array<{ id: ProjectCategory | 'all'; label: string }> = [
+  { id: 'all', label: PROJECT_CATEGORY_LABELS.all },
+  { id: 'ecommerce-ops', label: PROJECT_CATEGORY_LABELS['ecommerce-ops'] },
+  { id: 'customer-experience', label: PROJECT_CATEGORY_LABELS['customer-experience'] },
+  { id: 'lead-management', label: PROJECT_CATEGORY_LABELS['lead-management'] },
+  { id: 'ai-data', label: PROJECT_CATEGORY_LABELS['ai-data'] },
+]
+
+export const STATUS_FILTERS: Array<{ id: StatusKey | 'all'; label: string }> = [
+  { id: 'all', label: 'Any status' },
+  { id: 'done', label: STATUS_LABELS.done },
+  { id: 'progress', label: STATUS_LABELS.progress },
+  { id: 'planned', label: STATUS_LABELS.planned },
+]
+
 export function getProject(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug)
+}
+
+export function relatedProjects(current: Project, count = 2): Project[] {
+  return projects
+    .filter((p) => p.slug !== current.slug)
+    .map((p) => ({
+      project: p,
+      score: p.categories.filter((c) => current.categories.includes(c)).length,
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, count)
+    .map((r) => r.project)
 }

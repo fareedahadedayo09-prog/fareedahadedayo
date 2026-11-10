@@ -1,114 +1,109 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import {
-  CASE_STUDY_LABELS,
-  CASE_STUDY_STATUS_LABEL,
-  getProject,
-} from '../data/projects'
-import type { CaseStudySection, Project } from '../data/projects'
+import type { Project } from '../data/projects'
+import { PROJECT_CATEGORY_LABELS, SECTION_STATUS_LABEL, getProject, relatedProjects } from '../data/projects'
 import { StatusBadge } from '../components/StatusBadge'
-import { ArrowRight } from '../components/Icons'
+import { ArrowRight, CheckIcon, AlertIcon } from '../components/Icons'
+import { ProjectCard } from '../components/ProjectCard'
 
-function Note({ section }: { section: CaseStudySection }) {
-  if (!section.note) return null
-  const tone =
-    section.note.tone === 'warn' ? 'notice notice--warn' : section.note.tone === 'grey' ? 'notice notice--grey' : 'notice'
+function TechnicalExpander({ project }: { project: Project }) {
+  const [open, setOpen] = useState(false)
+  const t = project.technical
   return (
-    <div className={tone} style={{ marginTop: '1.1rem' }}>
-      {section.note.text}
-    </div>
-  )
-}
-
-function Table({ section }: { section: CaseStudySection }) {
-  if (!section.table) return null
-  const { keys, values } = section.table
-  return (
-    <div className="table-wrap" style={{ marginTop: '1.1rem' }}>
-      <table className="data">
-        <thead>
-          <tr>
-            <th scope="col">Step</th>
-            <th scope="col">Detail</th>
-          </tr>
-        </thead>
-        <tbody>
-          {keys.map((key, i) => (
-            <tr key={key}>
-              <td>{key}</td>
-              <td>{values[i] ?? 'Not specified'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
-}
-
-function Screenshots({ project }: { project: Project }) {
-  if (project.screenshots.length === 0) return null
-  return (
-    <div style={{ marginTop: '1.6rem' }}>
-      <h3 style={{ fontSize: '0.82rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-faint)', fontFamily: 'var(--font-mono)', fontWeight: 500 }}>
-        Recorded evidence
-      </h3>
-      <div className="grid-2" style={{ gap: '1.3rem', marginTop: '1rem' }}>
-        {project.screenshots.map((shot) => (
-          <figure key={shot.id} style={{ margin: 0 }}>
-            <div style={{ overflow: 'hidden', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--bg-raised)' }}>
-              <img
-                src={shot.image}
-                alt={shot.caption}
-                loading="lazy"
-                decoding="async"
-                style={{ width: '100%', height: 'auto', display: 'block' }}
-              />
-            </div>
-            <figcaption style={{ marginTop: '0.7rem' }}>
-              <div style={{ fontWeight: 600, fontSize: '0.86rem' }}>{shot.title}</div>
-              <div className="muted" style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>{shot.caption}</div>
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function Section({ section, project, index }: { section: CaseStudySection; project: Project; index: number }) {
-  const isEvidence = section.id === 'evidence'
-  const bullets = section.bullets ?? []
-
-  return (
-    <section className="cs-section" id={section.id} aria-labelledby={`${section.id}-title`}>
-      <div className="cs-section__head">
-        <div className="cluster" style={{ gap: '0.7rem' }}>
-          <span className="cs-section__num">
-            {String(index + 1).padStart(2, '0')} / {String(project.sections.length).padStart(2, '0')}
+    <div className={`expander ${open ? 'is-open' : ''}`}>
+      <button type="button" className="expander__btn" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+        <span className="expander__title">
+          <span className="mono" style={{ color: 'var(--text-faint)', fontSize: '0.72rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginRight: '0.8rem' }}>
+            For technical visitors
           </span>
-          <span className="badge badge--illustrative">{CASE_STUDY_STATUS_LABEL[section.status]}</span>
+          <span style={{ fontWeight: 600 }}>Technical implementation, testing &amp; limitations</span>
+        </span>
+        <span className="expander__chevron" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      </button>
+      <div className="expander__body">
+        <div style={{ paddingTop: '1.2rem' }}>
+          <p className="muted" style={{ marginTop: 0 }}>{t.summary}</p>
+
+          {t.dataFlow && t.dataFlow.length > 0 ? (
+            <div style={{ marginTop: '1.1rem' }}>
+              <h4 style={{ fontSize: '0.84rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--text-faint)', fontFamily: 'var(--font-mono)', fontWeight: 500, margin: '0 0 0.6rem' }}>
+                Data flow
+              </h4>
+              <ul className="bullets">
+                {t.dataFlow.map((s, i) => <li key={i}>{s}</li>)}
+              </ul>
+            </div>
+          ) : null}
+
+          {t.decisionLogic && t.decisionLogic.length > 0 ? (
+            <div style={{ marginTop: '1.1rem' }}>
+              <h4 style={{ fontSize: '0.84rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--text-faint)', fontFamily: 'var(--font-mono)', fontWeight: 500, margin: '0 0 0.6rem' }}>
+                Decision logic
+              </h4>
+              <ul className="bullets">
+                {t.decisionLogic.map((s, i) => <li key={i}>{s}</li>)}
+              </ul>
+            </div>
+          ) : null}
+
+          {t.validation && t.validation.length > 0 ? (
+            <div style={{ marginTop: '1.1rem' }}>
+              <h4 style={{ fontSize: '0.84rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--text-faint)', fontFamily: 'var(--font-mono)', fontWeight: 500, margin: '0 0 0.6rem' }}>
+                Validation
+              </h4>
+              <ul className="bullets">
+                {t.validation.map((s, i) => <li key={i}>{s}</li>)}
+              </ul>
+            </div>
+          ) : null}
+
+          {t.exceptions && t.exceptions.length > 0 ? (
+            <div style={{ marginTop: '1.1rem' }}>
+              <h4 style={{ fontSize: '0.84rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--text-faint)', fontFamily: 'var(--font-mono)', fontWeight: 500, margin: '0 0 0.6rem' }}>
+                Exceptions &amp; error handling
+              </h4>
+              <ul className="bullets">
+                {t.exceptions.map((s, i) => <li key={i}>{s}</li>)}
+              </ul>
+            </div>
+          ) : null}
+
+          {t.testing && t.testing.length > 0 ? (
+            <div style={{ marginTop: '1.1rem' }}>
+              <h4 style={{ fontSize: '0.84rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--text-faint)', fontFamily: 'var(--font-mono)', fontWeight: 500, margin: '0 0 0.6rem' }}>
+                Testing
+              </h4>
+              <ul className="bullets">
+                {t.testing.map((s, i) => <li key={i}>{s}</li>)}
+              </ul>
+            </div>
+          ) : null}
+
+          {t.examplePayload ? (
+            <div className="tech-block" style={{ marginTop: '1.2rem' }}>
+              <div className="tech-block__title">Example inbound payload (illustrative)</div>
+              <pre className="code-block">{t.examplePayload}</pre>
+            </div>
+          ) : null}
+
+          {t.limitations && t.limitations.length > 0 ? (
+            <div style={{ marginTop: '1.3rem' }}>
+              <div className="cluster" style={{ gap: '0.4rem', marginBottom: '0.5rem' }}>
+                <AlertIcon width={14} height={14} style={{ color: 'var(--status-progress)' }} />
+                <h4 style={{ fontSize: '0.9rem', margin: 0 }}>Limitations &amp; next improvements</h4>
+              </div>
+              <ul className="bullets">
+                {t.limitations.map((s, i) => <li key={i}>{s}</li>)}
+              </ul>
+            </div>
+          ) : null}
         </div>
-        <h2 id={`${section.id}-title`} style={{ fontSize: 'clamp(1.35rem, 1.05rem + 1.4vw, 1.85rem)' }}>
-          {section.label}
-        </h2>
       </div>
-
-      {section.paragraphs.map((paragraph, i) => (
-        <p key={i}>{paragraph}</p>
-      ))}
-
-      {bullets.length > 0 ? (
-        <ul className="bullets" style={{ marginTop: section.paragraphs.length ? '1rem' : 0 }}>
-          {bullets.map((bullet, i) => (
-            <li key={i}>{bullet}</li>
-          ))}
-        </ul>
-      ) : null}
-
-      {!isEvidence && <Table section={section} />}
-      {!isEvidence && <Note section={section} />}
-
-      {isEvidence ? <Screenshots project={project} /> : null}
-    </section>
+    </div>
   )
 }
 
@@ -126,16 +121,19 @@ export function ProjectCaseStudy() {
             The project link is either out of date or the project has not been published yet.
           </p>
           <Link to="/projects" className="btn btn--secondary" style={{ marginTop: '1.6rem' }}>
-            <ArrowRight width={14} height={14} />
             Back to all projects
+            <ArrowRight width={14} height={14} />
           </Link>
         </div>
       </section>
     )
   }
 
+  const related = relatedProjects(project)
+
   return (
     <article>
+      {/* ─────── Intro / meta ─────── */}
       <section className="cs-hero">
         <div className="shell">
           <div className="cs-hero__top">
@@ -144,60 +142,166 @@ export function ProjectCaseStudy() {
               All projects
             </Link>
 
-            <div className="cluster" style={{ gap: '0.7rem', flexWrap: 'wrap' }}>
+            <div className="cluster" style={{ gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
               <StatusBadge tone={project.status} label={project.statusLabel} />
+              {project.categories.map((c) => (
+                <span key={c} className="badge badge--illustrative">
+                  {PROJECT_CATEGORY_LABELS[c]}
+                </span>
+              ))}
+              <span className="badge badge--illustrative">{project.timeline}</span>
             </div>
 
             <h1 className="cs-hero__title">{project.name}</h1>
-            <p className="lede" style={{ marginTop: '0.4rem' }}>{project.overview}</p>
+            <p className="lede" style={{ marginTop: '0.6rem' }}>{project.tagline}</p>
 
-            <div className="cs-hero__meta">
-              <span>{project.timeline}</span>
-              <span>Tools: {project.tools.join(' · ')}</span>
+            <div className="chip-row" style={{ marginTop: '0.3rem' }}>
+              {project.tools.map((t) => (
+                <span key={t} className="tag">{t}</span>
+              ))}
             </div>
 
             {project.statusDetail ? (
-              <div className="notice notice--warn" style={{ marginTop: '0.4rem' }}>
-                <strong>Read the status labels.</strong> {project.statusDetail}
+              <div className="notice notice--warn" style={{ marginTop: '1rem' }}>
+                <strong>Status.</strong> {project.statusDetail}
               </div>
             ) : null}
           </div>
 
-          <nav className="cs-nav" aria-label="Case study sections">
-            {project.sections.map((section) => (
-              <a key={section.id} href={`#${section.id}`}>
-                {CASE_STUDY_LABELS[section.id] ?? section.label}
-              </a>
-            ))}
+          <nav className="cs-nav" aria-label="Case study sections" style={{ marginTop: '1.2rem' }}>
+            <a href="#problem">The problem</a>
+            <a href="#solution">The solution</a>
+            <a href="#how">How it works</a>
+            <a href="#result">Testing &amp; results</a>
+            <a href="#technical">Technical detail</a>
           </nav>
         </div>
       </section>
 
-      <section style={{ paddingBottom: 'clamp(4rem, 3rem + 4vw, 7rem)' }}>
-        <div className="shell">
-          <div className="cs-body">
-            <aside className="cs-toc" aria-label="Case study contents">
-              <p className="cs-toc__title">Contents</p>
-              <ol>
-                {project.sections.map((section, i) => (
-                  <li key={section.id}>
-                    <a href={`#${section.id}`}>
-                      <span className="mono faint" style={{ marginRight: '0.4rem' }}>
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                      {CASE_STUDY_LABELS[section.id] ?? section.label}
-                    </a>
-                  </li>
-                ))}
-              </ol>
-            </aside>
-
-            <div>
-              {project.sections.map((section, i) => (
-                <Section key={section.id} section={section} project={project} index={i} />
-              ))}
+      <section style={{ paddingBottom: 'clamp(4rem, 3rem + 4vw, 6rem)' }}>
+        <div className="shell shell-narrow">
+          {/* ─────── 2. Problem ─────── */}
+          <section className="cs-section" id="problem">
+            <div className="cs-section__head">
+              <span className="cs-section__num">The problem</span>
+              <h2 style={{ fontSize: 'clamp(1.4rem, 1.05rem + 1.5vw, 2rem)' }}>
+                Why this system needed to exist
+              </h2>
             </div>
-          </div>
+            <p style={{ fontSize: '1.02rem' }}>{project.problem.summary}</p>
+            <p className="muted" style={{ fontSize: '0.95rem', lineHeight: 1.7 }}>
+              <strong style={{ color: 'var(--text)' }}>Why it matters to the business.</strong> {project.problem.whyItMatters}
+            </p>
+            <ul className="bullets" style={{ marginTop: '1rem' }}>
+              {project.problem.bullets.map((b, i) => <li key={i}>{b}</li>)}
+            </ul>
+          </section>
+
+          {/* ─────── 3. Solution ─────── */}
+          <section className="cs-section" id="solution">
+            <div className="cs-section__head">
+              <span className="cs-section__num">The solution</span>
+              <h2 style={{ fontSize: 'clamp(1.4rem, 1.05rem + 1.5vw, 2rem)' }}>
+                What I built
+              </h2>
+            </div>
+            <p style={{ fontSize: '1rem' }}>{project.solution.summary}</p>
+            <div className="grid-2" style={{ marginTop: '1.2rem', gap: '1.2rem' }}>
+              <div className="card" style={{ padding: '1.2rem 1.3rem' }}>
+                <div className="cluster" style={{ gap: '0.5rem', marginBottom: '0.6rem' }}>
+                  <CheckIcon width={15} height={15} style={{ color: 'var(--accent)', flex: 'none' }} />
+                  <h4 style={{ margin: 0, fontSize: '0.95rem' }}>What is automated</h4>
+                </div>
+                <ul className="bullets" style={{ fontSize: '0.88rem' }}>
+                  {project.solution.automated.map((b, i) => <li key={i}>{b}</li>)}
+                </ul>
+              </div>
+              <div className="card" style={{ padding: '1.2rem 1.3rem' }}>
+                <div className="cluster" style={{ gap: '0.5rem', marginBottom: '0.6rem' }}>
+                  <AlertIcon width={15} height={15} style={{ color: 'var(--status-progress)', flex: 'none' }} />
+                  <h4 style={{ margin: 0, fontSize: '0.95rem' }}>What stays with a person</h4>
+                </div>
+                <ul className="bullets" style={{ fontSize: '0.88rem' }}>
+                  {project.solution.humanControl.map((b, i) => <li key={i}>{b}</li>)}
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          {/* ─────── 4. How it works ─────── */}
+          <section className="cs-section" id="how">
+            <div className="cs-section__head">
+              <span className="cs-section__num">How it works</span>
+              <h2 style={{ fontSize: 'clamp(1.4rem, 1.05rem + 1.5vw, 2rem)' }}>
+                The process, step by step
+              </h2>
+            </div>
+            <ol className="bullets">
+              {project.workflow.map((step) => (
+                <li key={step.id}><strong>{step.title}.</strong> {step.detail}</li>
+              ))}
+            </ol>
+            {project.workflowScreenshot ? (
+              <figure style={{ margin: '2rem 0 0' }}>
+                <a href={project.workflowScreenshot} target="_blank" rel="noreferrer" aria-label={`Open the ${project.name} n8n workflow screenshot in a new tab`}>
+                  <img src={project.workflowScreenshot} alt="n8n canvas showing the COD order intake, confirmation, reminder and escalation workflows" loading="lazy" style={{ display: 'block', width: '100%', height: 'auto', borderRadius: '12px', border: '1px solid var(--border)' }} />
+                </a>
+                <figcaption className="muted" style={{ fontSize: '0.85rem', marginTop: '0.7rem' }}>
+                  The actual n8n workflow canvas. Open the image to see it in full size. Nodes shown do not by themselves establish that every path was tested.
+                </figcaption>
+              </figure>
+            ) : (
+              <p className="muted" style={{ marginTop: '1.5rem', fontSize: '0.9rem' }}>
+                The original n8n workflow screenshot is not available yet.
+              </p>
+            )}
+          </section>
+
+          {/* ─────── 5. Result ─────── */}
+          <section className="cs-section" id="result">
+            <div className="cs-section__head">
+              <span className="cs-section__num">Testing &amp; results</span>
+              <h2 style={{ fontSize: 'clamp(1.4rem, 1.05rem + 1.5vw, 2rem)' }}>
+                What was tested
+              </h2>
+            </div>
+            <p style={{ fontSize: '1rem' }}>{project.result.summary}</p>
+            <ul className="results-list" style={{ marginTop: '1.1rem' }}>
+              {project.result.points.map((p, i) => (
+                <li key={i}>
+                  <span className={`badge ${p.state === 'verified' ? 'badge--done' : p.state === 'partial' ? 'badge--progress' : 'badge--planned'}`}>
+                    {p.state === 'planned' ? 'Planned' : SECTION_STATUS_LABEL[p.state]}
+                  </span>
+                  <span>{p.text}</span>
+                </li>
+              ))}
+            </ul>
+            {project.result.disclaimer ? (
+              <div className="notice notice--warn" style={{ marginTop: '1.2rem' }}>
+                <strong>Note on evidence.</strong> {project.result.disclaimer}
+              </div>
+            ) : null}
+          </section>
+
+          {/* ─────── 6. Technical (expandable) ─────── */}
+          <section id="technical">
+            <TechnicalExpander project={project} />
+          </section>
+
+          {/* ─────── Related projects ─────── */}
+          {related.length > 0 ? (
+            <section style={{ marginTop: '2.8rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
+              <div className="section-head" style={{ marginBottom: '1.5rem' }}>
+                <span className="eyebrow">Related projects</span>
+                <h3 style={{ fontSize: '1.15rem', margin: 0 }}>You might also want to read</h3>
+              </div>
+              <div className="project-grid">
+                {related.map((r) => (
+                  <ProjectCard key={r.slug} project={r} />
+                ))}
+              </div>
+            </section>
+          ) : null}
         </div>
       </section>
     </article>

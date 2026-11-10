@@ -1,74 +1,39 @@
 /**
- * ──────────────────────────────────────────────────────────────────────────
- *  SITE CONFIG
- * ──────────────────────────────────────────────────────────────────────────
- *  Personal details and the destinations for every call to action.
- *  Everything else on the site is project or methodology content and lives in
- *  the other files under src/data/.
- * ──────────────────────────────────────────────────────────────────────────
+ * Site config.
  */
 
-export type ContactLink = {
-  label: string
-  /** Absolute URL, e.g. "mailto:you@example.com" or "https://linkedin.com/in/you". */
-  href: string
-  /** Short line rendered under the button, e.g. "you@example.com". */
-  detail?: string
-}
+export type ContactLink = { label: string; href: string; detail?: string }
+export type Cta = { label: string; href: string; detail?: string }
 
-export type Cta = {
-  label: string
-  /** Leave empty to omit the button entirely rather than show a dead one. */
-  href: string
-  detail?: string
-}
+export const CALENDLY_URL = 'https://calendly.com/reedahadedayo/30min'
 
 export const site = {
-  /** ── Personal brand ─────────────────────────────────────────────── */
-  name: 'Fareedah Sanusi Adedayo',
-  wordmark: 'Fareedah Sanusi Adedayo',
+  name: 'Fareedah Adedayo',
+  wordmark: 'Fareedah Adedayo',
   wordmarkShort: 'FA',
-  roleLabel: 'AI Automation Consultant and Systems Builder',
-  location: 'Abuja, Nigeria',
-  availability: ['Open to consulting engagements', 'Automation implementation projects', 'Corporate automation roles'],
+  roleLabel: 'AI Workflow Automation Builder',
+  location: 'Abuja, Nigeria · Remote',
+  availability: 'Available for remote projects.',
 
-  /** ── Hero ──────────────────────────────────────────────────────── */
-  headline: 'Automation systems built around real operational problems.',
+  headline: 'Automation for better\u2011run e\u2011commerce operations.',
   heroLead:
-    'I analyze business processes, identify opportunities to improve how work gets done, and build automation systems around defined requirements, decision logic and measurable outcomes.',
+    'I build workflows that handle order checks, customer replies and returns, so your team can focus on growing the business.',
 
-  /**
-   * ── Professional portrait ──────────────────────────────────────────────
-   * Drop your photo into /public and point `src` at it.
-   *   recommended: public/portrait.jpg  (4:5 or 1:1, ~400–800 KB)
-   *
-   * Falls back to a clean labelled placeholder if the file is missing, so the
-   * site never shows a broken image.
-   */
+  // Portrait shown only if public/portrait.jpg exists.
   portrait: {
-    src: '/portrait.svg',
-    alt: 'Professional portrait of Fareedah Sanusi Adedayo',
-    caption: 'Portrait',
+    src: '/portrait.jpg',
+    alt: 'Portrait of Fareedah Adedayo',
   },
 
-  /** ── Navigation ─────────────────────────────────────────────────── */
   nav: [
+    { label: 'Problems', href: '/#problems' },
+    { label: 'Services', href: '/#services' },
     { label: 'Projects', href: '/projects' },
-    { label: 'Approach', href: '/#approach' },
-    { label: 'Tools', href: '/#tools' },
-    { label: 'Operations Audit', href: '/audit' },
+    { label: 'Process', href: '/#process' },
     { label: 'About', href: '/#about' },
     { label: 'Contact', href: '/#contact' },
   ],
 
-  /** ── Resume / CV ────────────────────────────────────────────────── */
-  resume: {
-    label: 'Resume',
-    href: '',
-    detail: 'PDF',
-  },
-
-  /** ── Contact channels ───────────────────────────────────────────── */
   contact: {
     email: {
       label: 'Email',
@@ -80,41 +45,28 @@ export const site = {
       href: 'https://www.linkedin.com/in/fareedah-adedayo-8b7b1729a',
       detail: 'linkedin.com/in/fareedah-adedayo-8b7b1729a',
     } as ContactLink,
-    github: { label: 'GitHub', href: '', detail: 'Not linked yet' } as ContactLink,
   },
 
-  /**
-   * ── Calls to action ──────────────────────────────────────────────────
-   * Leave `href` empty and the button is omitted rather than shown as a
-   * nonfunctional control. Nothing on this site is ever a dead button.
-   */
   ctas: {
     primary: {
-      label: 'Request an AI Operations Audit',
-      href: '',
-      detail: '30 min · remote',
-    } as Cta,
+      label: 'Book a call',
+      href: CALENDLY_URL,
+      detail: 'Free 30-min call',
+      external: true,
+    } as Cta & { external?: boolean },
     secondary: {
-      label: 'Book a Discovery Call',
-      href: '',
-      detail: '20 min · remote',
+      label: 'Send an email',
+      href: 'mailto:fareedahadedayo08@gmail.com',
     } as Cta,
   },
 
-  /** ── Build in public ────────────────────────────────────────────── */
-  social: {
-    linkedin: 'https://www.linkedin.com/in/fareedah-adedayo-8b7b1729a',
-    x: '',
-    posts: [] as string[],
-  },
-
-  /** ── Social sharing metadata ────────────────────────────────────── */
   og: {
-    title: 'Fareedah Sanusi Adedayo: AI Automation Engineering',
+    title: 'Fareedah Adedayo, AI Workflow Automation Builder',
     description:
-      'Automation systems built around real operational problems. Workflows for order operations, lead qualification and business processes.',
+      'Automation for better-run e-commerce operations. Order checks, customer replies and returns handled by reliable workflows.',
     image: '/og-image.svg',
   },
+
 }
 
 export type SiteConfig = typeof site

@@ -1,15 +1,15 @@
 import { Link } from 'react-router-dom'
 import type { Project } from '../data/projects'
+import { PROJECT_CATEGORY_LABELS } from '../data/projects'
 import { ArrowRight } from './Icons'
 import { StatusBadge } from './StatusBadge'
 
 /**
- * Project card. The media area shows the first real screenshot when one
- * exists, otherwise a neutral panel carrying the tool stack. It never shows
- * a "coming soon" notice.
+ * Project card for the project library.
+ * Plain-English problem and system summary up front; one status badge; tags.
  */
 export function ProjectCard({ project }: { project: Project }) {
-  const cover = project.screenshots[0]?.image
+  const cover = project.heroVisual?.image
 
   return (
     <article className="project-card">
@@ -17,7 +17,7 @@ export function ProjectCard({ project }: { project: Project }) {
         {cover ? (
           <img
             src={cover}
-            alt={project.screenshots[0]?.caption ?? project.name}
+            alt={project.heroVisual?.caption ?? project.name}
             loading="lazy"
             decoding="async"
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
@@ -44,15 +44,22 @@ export function ProjectCard({ project }: { project: Project }) {
       </Link>
 
       <div className="project-card__body">
-        <div className="cluster" style={{ gap: '0.6rem', flexWrap: 'wrap' }}>
+        <div className="cluster" style={{ gap: '0.5rem', flexWrap: 'wrap' }}>
           <StatusBadge tone={project.status} label={project.statusLabel} />
+          {project.categories.slice(0, 2).map((cat) => (
+            <span key={cat} className="tag">
+              {PROJECT_CATEGORY_LABELS[cat]}
+            </span>
+          ))}
         </div>
 
         <h3 className="project-card__title">
           <Link to={`/projects/${project.slug}`}>{project.name}</Link>
         </h3>
 
-        <p className="project-card__desc">{project.summary}</p>
+        <p className="project-card__desc" style={{ margin: 0 }}>
+          {project.tagline}
+        </p>
 
         <div className="project-card__tags">
           {project.tools.map((tool) => (
@@ -70,8 +77,8 @@ export function ProjectCard({ project }: { project: Project }) {
             {project.timeline}
           </span>
           <Link to={`/projects/${project.slug}`} className="link-arrow">
-            View Case Study
-            <ArrowRight />
+            View case study
+            <ArrowRight width={12} height={12} />
           </Link>
         </div>
       </div>
