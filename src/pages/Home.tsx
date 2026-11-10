@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Portrait } from '../components/Portrait'
 import { ProjectCard } from '../components/ProjectCard'
-import { EnquiryForm } from '../components/EnquiryForm'
 import { ArrowRight, CheckIcon } from '../components/Icons'
+import { CalendlyEmbed, CALENDLY_LINK } from '../components/CalendlyEmbed'
 import { site } from '../data/site'
 import { projects } from '../data/projects'
 import { about, capabilities, faq, methodology, privacyFooter, privacyPrinciples } from '../data/content'
@@ -15,7 +15,6 @@ import { EXPERIENCE_META } from '../data/tools'
 const featured = projects.filter((p) => p.status !== 'planned').slice(0, 3)
 
 export function Home() {
-  // Tools preview: show 3 recently-used tools drawn from different categories.
   const previewTools = tools.filter((t) => t.experience === 'projects').slice(0, 6)
 
   return (
@@ -34,8 +33,13 @@ export function Home() {
                   Explore my work
                   <ArrowRight width={15} height={15} />
                 </Link>
-                <a href="#contact" className="btn btn--secondary">
-                  Discuss an automation project
+                <a
+                  href={CALENDLY_LINK}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn--secondary"
+                >
+                  Book a consultation
                 </a>
               </div>
 
@@ -127,7 +131,7 @@ export function Home() {
         <div className="shell">
           <div className="section-head section-head--row">
             <div className="section-head" style={{ marginBottom: 0, flex: '1 1 340px' }}>
-              <span className="eyebrow">Featured work</span>
+              <span className="eyebrow">Selected work</span>
               <h2>Projects you can inspect in detail</h2>
               <p className="lede">
                 Each case study explains the problem, what was automated vs kept human, shows the workflow
@@ -146,16 +150,41 @@ export function Home() {
               <ProjectCard key={project.slug} project={project} />
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="cluster" style={{ gap: '0.6rem', marginTop: '1.6rem', flexWrap: 'wrap' }}>
-            <Link to="/simulators" className="btn btn--ghost btn--small">
-              Try the interactive simulators
-              <ArrowRight width={12} height={12} />
-            </Link>
-            <Link to="/calculators" className="btn btn--ghost btn--small">
-              Estimate your process cost
-              <ArrowRight width={12} height={12} />
-            </Link>
+      {/* ─────── Consultation invitation after case studies ─────── */}
+      <section className="section" id="consultation-cta" style={{ paddingTop: 0 }}>
+        <div className="shell">
+          <div className="contact-surface" style={{ padding: 'clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem)' }}>
+            <div className="grid-2" style={{ alignItems: 'center', gap: '1.6rem' }}>
+              <div className="stack" style={{ gap: '0.7rem' }}>
+                <span className="eyebrow">Free 30-minute consultation</span>
+                <h2 style={{ fontSize: 'clamp(1.4rem, 1rem + 1.7vw, 2rem)', margin: 0 }}>
+                  Have an operational problem worth solving?
+                </h2>
+                <p className="muted" style={{ fontSize: '0.94rem', lineHeight: 1.7, margin: 0 }}>
+                  Tell me about the repetitive tasks, disconnected tools, or process bottlenecks slowing
+                  down your business. Let's explore whether AI or workflow automation could make a
+                  practical difference.
+                </p>
+              </div>
+              <div className="cluster" style={{ gap: '0.6rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                <a
+                  href={CALENDLY_LINK}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn--primary"
+                >
+                  Let's discuss your workflow
+                  <ArrowRight width={14} height={14} />
+                </a>
+                <Link to="/simulators" className="btn btn--ghost btn--small">
+                  See the simulators
+                  <ArrowRight width={12} height={12} />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -230,38 +259,6 @@ export function Home() {
                 <p className="tool-ecosystem-card__used">{t.usedFor}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────── Calculators & Simulators CTA (no decorative ROI card) ─────────────── */}
-      <section className="section">
-        <div className="shell">
-          <div className="grid-2" style={{ gap: '1.2rem' }}>
-            <Link to="/calculators" className="card" style={{ padding: '1.4rem 1.5rem', textDecoration: 'none', color: 'inherit', display: 'block' }}>
-              <span className="eyebrow" style={{ position: 'static' }}>Working calculator</span>
-              <h3 style={{ fontSize: '1.15rem', margin: '0.5rem 0' }}>Estimate the cost of a manual process</h3>
-              <p className="muted" style={{ fontSize: '0.88rem', margin: 0, lineHeight: 1.6 }}>
-                Two-step client-side tool: first size the cost of the process as it runs today (including
-                error rework), then estimate what automation could realistically recover.
-              </p>
-              <span className="link-arrow" style={{ marginTop: '1rem', display: 'inline-flex' }}>
-                Open the calculator
-                <ArrowRight width={12} height={12} />
-              </span>
-            </Link>
-            <Link to="/simulators" className="card" style={{ padding: '1.4rem 1.5rem', textDecoration: 'none', color: 'inherit', display: 'block' }}>
-              <span className="eyebrow" style={{ position: 'static' }}>Interactive demonstrations</span>
-              <h3 style={{ fontSize: '1.15rem', margin: '0.5rem 0' }}>Walk through the decision logic</h3>
-              <p className="muted" style={{ fontSize: '0.88rem', margin: 0, lineHeight: 1.6 }}>
-                Three working simulators mirror the actual decision rules for COD orders, returns, and lead
-                qualification. Pick a scenario to see every check run.
-              </p>
-              <span className="link-arrow" style={{ marginTop: '1rem', display: 'inline-flex' }}>
-                Open simulators
-                <ArrowRight width={12} height={12} />
-              </span>
-            </Link>
           </div>
         </div>
       </section>
@@ -360,20 +357,6 @@ export function Home() {
                   prototype or a planned build, it is labelled as one.
                 </p>
               </div>
-
-              <div className="card">
-                <div className="cluster" style={{ gap: '0.6rem', marginBottom: '0.6rem' }}>
-                  <span className="eyebrow" style={{ position: 'static' }}>Build journal</span>
-                </div>
-                <h3 style={{ fontSize: '1rem', margin: 0 }}>What I am building right now</h3>
-                <p className="muted" style={{ fontSize: '0.86rem', marginTop: '0.4rem', marginBottom: '0.8rem' }}>
-                  Short notes on new builds, integration lessons and testing discoveries, updated as I go.
-                </p>
-                <Link to="/journal" className="link-arrow">
-                  Read the journal
-                  <ArrowRight width={12} height={12} />
-                </Link>
-              </div>
             </div>
           </div>
         </div>
@@ -402,24 +385,38 @@ export function Home() {
         </div>
       </section>
 
-      {/* ───────────────────── Contact (functional enquiry form) ────────────────────── */}
+      {/* ───────────────────── Contact — inline Calendly booking ────────────────────── */}
       <section className="section" id="contact">
         <div className="shell">
           <div className="contact-surface">
             <div className="grid-2" style={{ alignItems: 'start', position: 'relative', zIndex: 1, gap: '2rem' }}>
               <div className="stack" style={{ gap: '1rem' }}>
-                <span className="eyebrow">Contact</span>
+                <span className="eyebrow">Book a consultation</span>
                 <h2 style={{ fontSize: 'clamp(1.55rem, 1.15rem + 1.9vw, 2.25rem)' }}>
-                  Have a repetitive process slowing your business down?
+                  Free 30-minute AI automation consultation
                 </h2>
                 <p className="lede" style={{ maxWidth: '58ch' }}>
-                  Tell me about it below. I will reply within two business days. There is no commitment
-                  from a first conversation.
+                  Pick a time that works for you. The call is held online via Google Meet and there is no
+                  obligation to proceed with a project afterwards.
                 </p>
+
+                <div className="card" style={{ marginTop: '0.4rem' }}>
+                  <h3 style={{ fontSize: '0.96rem', margin: '0 0 0.6rem' }}>During our conversation, we'll:</h3>
+                  <ul className="bullets" style={{ fontSize: '0.88rem', marginBottom: '0.8rem' }}>
+                    <li>Understand your business and current operational process.</li>
+                    <li>Identify repetitive tasks, bottlenecks, or workflow inefficiencies.</li>
+                    <li>Explore whether automation or AI could help.</li>
+                    <li>Discuss potential solutions and practical next steps.</li>
+                  </ul>
+                  <p className="faint" style={{ fontSize: '0.82rem', margin: 0, lineHeight: 1.6 }}>
+                    Meeting format: Online via Google Meet. No obligation to proceed with a project after
+                    the call.
+                  </p>
+                </div>
 
                 <div className="contact-channels" style={{ marginTop: '0.4rem' }}>
                   <div className="contact-channel">
-                    <span className="contact-channel__label">Email</span>
+                    <span className="contact-channel__label">Prefer email?</span>
                     <span className="contact-channel__value">
                       <a href={site.contact.email.href}>{site.contact.email.detail}</a>
                     </span>
@@ -440,7 +437,11 @@ export function Home() {
               </div>
 
               <div>
-                <EnquiryForm />
+                <CalendlyEmbed height={720} />
+                <p className="faint" style={{ fontSize: '0.78rem', marginTop: '0.7rem', lineHeight: 1.6 }}>
+                  Calendar provided by Calendly. Select a time that works for you — you'll receive a
+                  confirmation email with a Google Meet link immediately after booking.
+                </p>
               </div>
             </div>
           </div>

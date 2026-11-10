@@ -5,6 +5,8 @@
 export type ContactLink = { label: string; href: string; detail?: string }
 export type Cta = { label: string; href: string; detail?: string }
 
+export const CALENDLY_URL = 'https://calendly.com/reedahadedayo/30min'
+
 export const site = {
   name: 'Fareedah Sanusi Adedayo',
   wordmark: 'Fareedah Sanusi Adedayo',
@@ -32,10 +34,9 @@ export const site = {
     { label: 'Projects', href: '/projects' },
     { label: 'Tools', href: '/tools' },
     { label: 'How I work', href: '/#process' },
-    { label: 'Calculators', href: '/calculators' },
     { label: 'Simulators', href: '/simulators' },
-    { label: 'Journal', href: '/journal' },
     { label: 'About', href: '/#about' },
+    { label: 'Book a call', href: '/#contact' },
     { label: 'Contact', href: '/#contact' },
   ],
 
@@ -55,9 +56,9 @@ export const site = {
   ctas: {
     primary: { label: 'Explore my work', href: '/projects', detail: 'See case studies' } as Cta,
     secondary: {
-      label: 'Discuss a project',
-      href: '/#contact',
-      detail: 'Enquiry form',
+      label: 'Book a consultation',
+      href: CALENDLY_URL,
+      detail: '30-min free call',
     } as Cta,
   },
 
