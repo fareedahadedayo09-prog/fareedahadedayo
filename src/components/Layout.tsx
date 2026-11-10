@@ -4,7 +4,7 @@ import { site, CALENDLY_URL } from '../data/site'
 import { HashLink } from './HashLink'
 import { ArrowRight, CloseIcon, MenuIcon } from './Icons'
 
-const DESKTOP_BREAKPOINT = 1100
+const DESKTOP_BREAKPOINT = 1101
 
 function useScrolled(threshold = 12) {
   const [scrolled, setScrolled] = useState(false)
@@ -268,7 +268,7 @@ function Footer() {
           <hr className="divider" />
 
           <p className="faint mono" style={{ fontSize: '0.72rem', paddingTop: '1.6rem', paddingBottom: '0.5rem' }}>
-            {site.roleLabel} · {site.location} · Built with React, n8n and Vercel. Product logos belong to their respective owners.
+            {site.roleLabel} · {site.location}
           </p>
         </div>
       </div>
@@ -279,8 +279,20 @@ function Footer() {
 function ScrollManager() {
   const { pathname, hash } = useLocation()
   useEffect(() => {
-    if (hash) return
-    window.scrollTo({ top: 0 })
+    const scrollToHash = () => {
+      if (!window.location.hash) return
+      let id: string
+      try { id = decodeURIComponent(window.location.hash.slice(1)) } catch { return }
+      window.requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+
+    if (hash) scrollToHash()
+    else window.scrollTo({ top: 0 })
+
+    window.addEventListener('hashchange', scrollToHash)
+    return () => window.removeEventListener('hashchange', scrollToHash)
   }, [pathname, hash])
   return null
 }
