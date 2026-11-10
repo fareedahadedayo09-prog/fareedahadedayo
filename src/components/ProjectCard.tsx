@@ -20,7 +20,7 @@ export function ProjectCard({ project }: { project: Project }) {
             alt={project.heroVisual?.caption ?? project.name}
             loading="lazy"
             decoding="async"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
           />
         ) : (
           <span
