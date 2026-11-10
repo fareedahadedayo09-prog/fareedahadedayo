@@ -138,7 +138,7 @@ export const projects: Project[] = [
     tools: ['n8n', 'tally', 'airtable', 'gmail'],
     timeline: 'Completed build',
     categories: ['ecommerce-ops', 'customer-experience'],
-    heroVisual: { useSimulator: true },
+    heroVisual: { image: '/screenshots/cod-order-confirmation-workflow.png', caption: 'Cash-on-delivery order confirmation workflow overview' },
     hasSimulator: true,
     problem: {
       summary:
@@ -254,7 +254,7 @@ export const projects: Project[] = [
     tools: ['n8n', 'tally', 'airtable'],
     timeline: 'Completed build',
     categories: ['ecommerce-ops', 'customer-experience'],
-    heroVisual: { caption: 'Returns policy decision flow' },
+    heroVisual: { image: '/screenshots/returns-refund-handler-workflow.png', caption: 'Returns and refund handler workflow overview' },
     hasSimulator: true,
     problem: {
       summary:
@@ -363,7 +363,7 @@ export const projects: Project[] = [
     tools: ['n8n', 'tally', 'airtable', 'claude-api'],
     timeline: 'Completed build',
     categories: ['lead-management', 'ai-data'],
-    heroVisual: { caption: 'Lead qualification and routing flow' },
+    heroVisual: { image: '/screenshots/ai-lead-qualification-workflow.png', caption: 'BrightSun Solar AI lead qualification workflow overview' },
     hasSimulator: true,
     problem: {
       summary:
