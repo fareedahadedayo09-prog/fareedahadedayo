@@ -8,6 +8,7 @@ import { ArchitectureExplorer } from '../components/ArchitectureExplorer'
 import { Simulator } from '../components/Simulator'
 import { SIMULATORS } from '../data/simulators'
 import { ProjectCard } from '../components/ProjectCard'
+import { N8nDiagram } from '../components/N8nDiagram'
 
 function TechnicalExpander({ project }: { project: Project }) {
   const [open, setOpen] = useState(false)
@@ -244,6 +245,8 @@ export function ProjectCaseStudy() {
                 arrow keys.
               </p>
             </div>
+            <N8nDiagram steps={project.workflow} caption="n8n workflow for this project. The nodes show the trigger, each processing stage, any decisions or human-escalation branches, and the final output/record." />
+            <div style={{ height: '1.4rem' }} />
             <ArchitectureExplorer steps={project.workflow} />
 
             {sim ? (

@@ -73,9 +73,6 @@ function Header() {
       <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
         <div className="shell site-header__inner">
           <Link to="/" className="wordmark" aria-label={`${site.wordmark}: home`}>
-            <span className="wordmark__mark" aria-hidden="true">
-              {site.wordmarkShort}
-            </span>
             <span className="wordmark__name">{site.wordmark}</span>
           </Link>
 
@@ -212,7 +209,7 @@ function Footer() {
           <hr className="divider" />
 
           <div
-            className="grid-3"
+            className="grid-2"
             style={{ paddingTop: '2.2rem', paddingBottom: '2.4rem' }}
           >
             <div className="stack-sm">
@@ -244,19 +241,12 @@ function Footer() {
                 <Link to="/simulators" className="faint">Lab</Link>
               </div>
             </div>
-
-            <div className="stack-sm">
-              <span className="eyebrow">About this site</span>
-              <p className="faint" style={{ fontSize: '0.78rem', lineHeight: 1.6, maxWidth: '36ch' }}>
-                {site.footerAttribution}
-              </p>
-            </div>
           </div>
 
           <hr className="divider" />
 
           <p className="faint mono" style={{ fontSize: '0.72rem', paddingTop: '1.6rem', paddingBottom: '0.5rem' }}>
-            {site.roleLabel} · {site.location} · Built with React, n8n and Vercel.
+            {site.roleLabel} · {site.location} · Built with React, n8n and Vercel. Product logos belong to their respective owners.
           </p>
         </div>
       </div>

@@ -364,13 +364,6 @@ export function Home() {
                     ))}
                   </ul>
                 </div>
-
-                <div className="card">
-                  <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>No fake claims</h3>
-                  <p className="muted" style={{ fontSize: '0.86rem', lineHeight: 1.65 }}>
-                    Everything here is real. Prototypes and planned builds are labelled as such.
-                  </p>
-                </div>
               </div>
             </div>
           </Reveal>

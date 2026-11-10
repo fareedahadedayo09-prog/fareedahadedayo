@@ -67,8 +67,6 @@ export const site = {
     image: '/og-image.svg',
   },
 
-  footerAttribution:
-    'Product logos belong to their respective owners and are used only to identify the tools I work with.',
 }
 
 export type SiteConfig = typeof site
