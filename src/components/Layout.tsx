@@ -44,18 +44,7 @@ function Header() {
     if (isDesktop) setOpen(false)
   }, [isDesktop])
 
-  // Lock body scroll when overlay is open.
-  useEffect(() => {
-    if (open) {
-      const prev = document.body.style.overflow
-      document.body.style.overflow = 'hidden'
-      return () => {
-        document.body.style.overflow = prev
-      }
-    }
-  }, [open])
-
-  // Escape closes the overlay.
+  // Escape closes the panel.
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
@@ -67,6 +56,12 @@ function Header() {
 
   const cta = site.ctas.primary as { label: string; href: string; external?: boolean }
   const closeMenu = () => setOpen(false)
+
+  // Always show the six section links. On non-home pages, prepend a "Home" link.
+  const isHome = location.pathname === '/'
+  const mobileLinks = isHome
+    ? site.nav
+    : [{ label: 'Home', href: '/' }, ...site.nav]
 
   return (
     <>
@@ -126,74 +121,81 @@ function Header() {
             type="button"
             className="nav-toggle"
             aria-expanded={open}
-            aria-controls="mobile-nav-overlay"
+            aria-controls="mobile-nav-panel"
             aria-label={open ? 'Close menu' : 'Open menu'}
-            onClick={() => setOpen((v) => !v)}
+            onClick={(e) => { e.stopPropagation(); setOpen((v) => !v) }}
           >
             {open ? <CloseIcon width={22} height={22} /> : <MenuIcon width={22} height={22} />}
           </button>
         </div>
-      </header>
 
-      {/* Full-screen mobile overlay */}
-      <div
-        id="mobile-nav-overlay"
-        className={`mobile-nav ${open ? 'mobile-nav--open' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Site navigation"
-        hidden={!open}
-      >
-        <nav aria-label="Mobile" className="mobile-nav__inner">
-          <ul className="mobile-nav__list">
-            {site.nav.map((item, i) => {
-              const isAnchor = item.href.startsWith('/#') || item.href.startsWith('#')
-              const style = { '--i': i } as React.CSSProperties
-              if (isAnchor) {
+        {/* Compact dropdown aligned under the hamburger. */}
+        <div
+          id="mobile-nav-panel"
+          className={`mobile-nav ${open ? 'mobile-nav--open' : ''}`}
+          role="dialog"
+          aria-modal={false}
+          aria-label="Site navigation"
+          hidden={!open}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <nav aria-label="Mobile">
+            <ul className="mobile-nav__list">
+              {mobileLinks.map((item, i) => {
+                const isAnchor = item.href.startsWith('/#') || item.href.startsWith('#')
+                const isHomeLink = item.href === '/'
+                const style = { '--i': i } as React.CSSProperties
+                const num = String(i + (isHome ? 1 : 0)).padStart(2, '0')
+                if (isAnchor) {
+                  return (
+                    <li key={item.label} style={style}>
+                      <HashLink to={item.href} className="mobile-nav__link" onClick={closeMenu}>
+                        <span className="mobile-nav__num">{num}</span>
+                        <span>{item.label}</span>
+                      </HashLink>
+                    </li>
+                  )
+                }
                 return (
                   <li key={item.label} style={style}>
-                    <HashLink to={item.href} className="mobile-nav__link" onClick={closeMenu}>
-                      {item.label}
-                    </HashLink>
+                    <NavLink
+                      to={item.href}
+                      end={isHomeLink}
+                      className="mobile-nav__link"
+                      onClick={closeMenu}
+                    >
+                      <span className="mobile-nav__num">{isHomeLink ? '00' : num}</span>
+                      <span>{item.label}</span>
+                    </NavLink>
                   </li>
                 )
-              }
-              return (
-                <li key={item.label} style={style}>
-                  <NavLink
-                    to={item.href}
-                    end={item.href === '/projects' ? false : true}
-                    className="mobile-nav__link"
-                    onClick={closeMenu}
-                  >
-                    {item.label}
-                  </NavLink>
-                </li>
-              )
-            })}
-          </ul>
-          <div className="mobile-nav__cta">
-            {cta.external ? (
-              <a
-                className="btn btn--primary"
-                href={cta.href}
-                target="_blank"
-                rel="noreferrer"
-                style={{ padding: '0.9rem 1.6rem', fontSize: '0.95rem' }}
-                onClick={closeMenu}
-              >
-                {cta.label}
-                <ArrowRight width={14} height={14} />
-              </a>
-            ) : (
-              <Link className="btn btn--primary" to={cta.href} onClick={closeMenu}>
-                {cta.label}
-                <ArrowRight width={14} height={14} />
-              </Link>
-            )}
-          </div>
-        </nav>
-      </div>
+              })}
+            </ul>
+            <div className="mobile-nav__cta">
+              {cta.external ? (
+                <a
+                  className="btn btn--primary btn--block"
+                  href={cta.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={closeMenu}
+                >
+                  {cta.label}
+                  <ArrowRight width={14} height={14} />
+                </a>
+              ) : (
+                <Link className="btn btn--primary btn--block" to={cta.href} onClick={closeMenu}>
+                  {cta.label}
+                  <ArrowRight width={14} height={14} />
+                </Link>
+              )}
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      {/* Backdrop to catch outside clicks. */}
+      {open ? <div className="mobile-nav-backdrop" onClick={closeMenu} aria-hidden="true" /> : null}
     </>
   )
 }
