@@ -74,6 +74,8 @@ export type Project = {
   /** Original n8n canvas screenshot, when available. */
   workflowScreenshot?: string
   workflowScreenshotAlt?: string
+  /** Optional supporting evidence, shown separately from workflow diagrams. */
+  evidence?: { image: string; title: string; description: string; alt: string }[]
   // 6-part body
   problem: {
     summary: string
@@ -140,6 +142,32 @@ export const projects: Project[] = [
     categories: ['ecommerce-ops', 'customer-experience'],
     heroVisual: { image: '/screenshots/cod-order-confirmation-workflow.png', caption: 'Cash-on-delivery order confirmation workflow overview' },
     hasSimulator: true,
+    evidence: [
+      {
+        image: '/screenshots/cod-evidence/staff-alert.png',
+        title: 'High-value order alert',
+        description: 'A staff email flags an order for a call before dispatch and shows why it was marked high risk. In this example, the alert lists the order value, quantity and short address as risk factors.',
+        alt: 'Staff email alert showing why a test order was flagged as high risk and requesting a call before dispatch',
+      },
+      {
+        image: '/screenshots/cod-evidence/order-records.png',
+        title: 'Order records in Airtable',
+        description: 'The order record view shows confirmed, cancelled and call-required statuses, giving staff a place to track outcomes and identify orders needing attention.',
+        alt: 'Airtable test order records showing confirmed, cancelled and call required statuses',
+      },
+      {
+        image: '/screenshots/cod-evidence/confirmation-email.png',
+        title: 'Customer confirmation email',
+        description: 'The customer receives an order email asking them to confirm their purchase.',
+        alt: 'Customer order confirmation email for a test order',
+      },
+      {
+        image: '/screenshots/cod-evidence/confirmation-options.png',
+        title: 'Confirm or cancel',
+        description: 'The email gives the customer a choice to confirm or cancel. On confirmation, they are directed to an n8n form to select their availability, which is recorded in Airtable.',
+        alt: 'Test order email showing order details and confirm and cancel options',
+      },
+    ],
     problem: {
       summary:
         'Every cash-on-delivery order required a staff member to call the customer, confirm they still wanted the product and check their availability for delivery. As orders increased, so did the workload. Some customers had changed their minds by the time staff called.',
@@ -153,10 +181,11 @@ export const projects: Project[] = [
     },
     solution: {
       summary:
-        'I built a cash-on-delivery order confirmation workflow that handles routine orders and brings staff in when needed. The system checks for duplicates and records orders in Airtable. Customers with normal orders below a set amount receive an email with options to confirm or cancel, and a reminder if they do not respond. High-value orders are flagged for staff to call, while other situations beyond the system are escalated for human review.',
+        'I built a cash-on-delivery order confirmation workflow that handles routine orders and brings staff in when needed. The system checks for duplicates and records orders in Airtable. Customers with normal orders below a set amount receive an email with options to confirm or cancel, and a reminder if they do not respond. Customers who confirm select their availability in an n8n form, and it is recorded immediately in Airtable. High-value orders are flagged for staff to call, while other situations beyond the system are escalated for human review.',
       automated: [
         'Check incoming orders for duplicates and record order information in Airtable.',
         'Email customers with routine orders below the set amount, with options to confirm or cancel.',
+        'Record availability in Airtable as soon as a customer submits the n8n form after confirming.',
         'Send a reminder after a set period when a customer has not responded.',
         'Flag high-value orders and email staff to prompt a follow-up call.',
       ],
@@ -170,6 +199,7 @@ export const projects: Project[] = [
       { id: 'check', label: 'Step 1', title: 'Check and record', detail: 'The workflow checks for duplicates and records order information in Airtable.', tone: 'record' },
       { id: 'risk', label: 'Decision', title: 'Route the order', detail: 'The order is assessed against a set amount.', tone: 'decision' },
       { id: 'confirm', label: 'Path A', title: 'Email the customer', detail: 'Routine orders below the set amount receive confirm or cancel options.', tone: 'output' },
+      { id: 'availability', label: 'Confirmation', title: 'Capture availability', detail: 'Customers who confirm choose availability in an n8n form, which is logged immediately in Airtable.', tone: 'record' },
       { id: 'remind', label: 'Follow-up', title: 'Send a reminder', detail: 'Customers who have not responded receive a reminder after a set period.', tone: 'output' },
       { id: 'escalate', label: 'Path B', title: 'Bring in staff', detail: 'High-value orders are flagged for a call; other situations beyond the system are escalated for review.', tone: 'escalation' },
     ],
@@ -191,6 +221,7 @@ export const projects: Project[] = [
         'An online cash-on-delivery order enters the workflow.',
         'Orders are checked for duplicates and order information is recorded in Airtable.',
         'Routine orders below the set amount receive a customer email with confirm or cancel options.',
+        'Customers who confirm select availability in an n8n form; their response is recorded immediately in Airtable.',
         'Customers who have not responded receive a reminder after a set period.',
         'High-value orders trigger a staff email prompting a call; situations beyond the system are escalated for human review.',
       ],

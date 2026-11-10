@@ -173,6 +173,7 @@ export function ProjectCaseStudy() {
             <a href="#solution">The solution</a>
             <a href="#how">How it works</a>
             <a href="#result">Testing &amp; results</a>
+            {project.evidence?.length ? <a href="#evidence">Evidence</a> : null}
             <a href="#technical">Technical detail</a>
           </nav>
         </div>
@@ -292,6 +293,31 @@ export function ProjectCaseStudy() {
               </div>
             ) : null}
           </section>
+
+          {project.evidence?.length ? (
+            <section id="evidence" className="evidence-section">
+              <details className="evidence-details">
+                <summary className="evidence-summary">
+                  <span><span className="mono evidence-label">Evidence</span><strong>View supporting screenshots</strong></span>
+                  <span className="evidence-toggle" aria-hidden="true">+</span>
+                </summary>
+                <div className="evidence-body">
+                  <p className="muted">These screenshots show test orders, not real customer orders. Select an image to view it at full size.</p>
+                  {project.evidence.map((item) => (
+                    <figure className="evidence-figure" key={item.image}>
+                      <figcaption>
+                        <h3>{item.title}</h3>
+                        <p className="muted">{item.description}</p>
+                      </figcaption>
+                      <a href={item.image} target="_blank" rel="noreferrer" aria-label={`Open ${item.title} screenshot in a new tab`}>
+                        <img src={item.image} alt={item.alt} loading="lazy" decoding="async" />
+                      </a>
+                    </figure>
+                  ))}
+                </div>
+              </details>
+            </section>
+          ) : null}
 
           {/* ─────── 6. Technical (expandable) ─────── */}
           <section id="technical">
