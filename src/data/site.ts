@@ -28,15 +28,13 @@ export const site = {
     caption: 'Portrait placeholder — drop a 4:5 photo into public/portrait.jpg',
   },
 
+  // 6 links max; single-line; CTA button is separate.
   nav: [
     { label: 'Problems', href: '/#problems' },
     { label: 'Services', href: '/#services' },
     { label: 'Projects', href: '/projects' },
-    { label: 'Tools', href: '/tools' },
-    { label: 'How I work', href: '/#process' },
-    { label: 'Simulators', href: '/simulators' },
+    { label: 'Process', href: '/#process' },
     { label: 'About', href: '/#about' },
-    { label: 'Book a call', href: '/#contact' },
     { label: 'Contact', href: '/#contact' },
   ],
 
@@ -54,11 +52,17 @@ export const site = {
   },
 
   ctas: {
-    primary: { label: 'Explore my work', href: '/projects', detail: 'See case studies' } as Cta,
-    secondary: {
-      label: 'Book a consultation',
+    // Primary CTA (nav button) says "Book a call" — single nav button.
+    primary: {
+      label: 'Book a call',
       href: CALENDLY_URL,
-      detail: '30-min free call',
+      detail: 'Free 30-min consultation',
+      external: true,
+    } as Cta & { external?: boolean },
+    // Footer secondary CTA for "Send an email".
+    secondary: {
+      label: 'Send an email',
+      href: 'mailto:fareedahadedayo08@gmail.com',
     } as Cta,
   },
 

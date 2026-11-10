@@ -1,26 +1,112 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
-import { site } from '../data/site'
+import { site, CALENDLY_URL } from '../data/site'
 import { HashLink } from './HashLink'
 import { ArrowRight, CloseIcon, MenuIcon } from './Icons'
+
+const DESKTOP_BREAKPOINT = 1100
+
+function useScrolled(threshold = 12) {
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > threshold)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [threshold])
+  return scrolled
+}
+
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth >= DESKTOP_BREAKPOINT : true,
+  )
+  useEffect(() => {
+    const onResize = () => setIsDesktop(window.innerWidth >= DESKTOP_BREAKPOINT)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+  return isDesktop
+}
 
 function Header() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
+  const scrolled = useScrolled()
+  const isDesktop = useIsDesktop()
 
   useEffect(() => {
     setOpen(false)
   }, [location.pathname, location.hash])
 
+  // Close mobile menu when crossing back above the desktop breakpoint.
+  useEffect(() => {
+    if (isDesktop) setOpen(false)
+  }, [isDesktop])
+
+  const cta = site.ctas.primary as { label: string; href: string; external?: boolean }
+
   return (
-    <header className="site-header">
+    <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="shell site-header__inner">
         <Link to="/" className="wordmark" aria-label={`${site.wordmark}: home`}>
           <span className="wordmark__mark" aria-hidden="true">
             {site.wordmarkShort}
           </span>
-          <span>{site.wordmark}</span>
+          <span className="wordmark__name">{site.wordmark}</span>
         </Link>
+
+        <nav
+          id="primary-nav"
+          className={`nav ${open ? 'is-open' : 'is-closed'}`}
+          aria-label="Primary"
+        >
+          {site.nav.map((item) => {
+            const isAnchor = item.href.startsWith('/#') || item.href.startsWith('#')
+            if (isAnchor) {
+              return (
+                <HashLink
+                  key={item.label}
+                  to={item.href}
+                  className="nav__link"
+                  onClick={() => setOpen(false)}
+                >
+                  {item.label}
+                </HashLink>
+              )
+            }
+            return (
+              <NavLink
+                key={item.label}
+                to={item.href}
+                end={item.href === '/projects' ? false : true}
+                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
+                onClick={() => setOpen(false)}
+              >
+                {item.label}
+              </NavLink>
+            )
+          })}
+        </nav>
+
+        <div className="nav__cta">
+          {cta.external ? (
+            <a
+              className="btn btn--primary btn--small nav-cta-btn"
+              href={cta.href}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {cta.label}
+              <ArrowRight width={12} height={12} />
+            </a>
+          ) : (
+            <Link className="btn btn--primary btn--small nav-cta-btn" to={cta.href}>
+              {cta.label}
+              <ArrowRight width={12} height={12} />
+            </Link>
+          )}
+        </div>
 
         <button
           type="button"
@@ -32,37 +118,6 @@ function Header() {
         >
           {open ? <CloseIcon /> : <MenuIcon />}
         </button>
-
-        <nav
-          id="primary-nav"
-          className={`nav ${open ? 'is-open' : 'is-closed'}`}
-          aria-label="Primary"
-        >
-          {site.nav.map((item) =>
-            item.href.startsWith('/#') ? (
-              <HashLink key={item.label} to={item.href} className="nav__link" onClick={() => setOpen(false)}>
-                {item.label}
-              </HashLink>
-            ) : (
-              <NavLink
-                key={item.label}
-                to={item.href}
-                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </NavLink>
-            ),
-          )}
-          <div className="nav__cta">
-            {site.ctas.primary.href ? (
-              <Link className="btn btn--primary btn--small" to={site.ctas.primary.href}>
-                {site.ctas.primary.label}
-                <ArrowRight width={12} height={12} />
-              </Link>
-            ) : null}
-          </div>
-        </nav>
       </div>
     </header>
   )
@@ -89,20 +144,13 @@ function Footer() {
             </div>
 
             <div className="cluster" style={{ gap: '0.6rem', flexWrap: 'wrap' }}>
-              <Link to="/projects" className="btn btn--primary">
-                {site.ctas.primary.label}
+              <a href={CALENDLY_URL} target="_blank" rel="noreferrer" className="btn btn--primary">
+                Book a call
                 <ArrowRight width={14} height={14} />
-              </Link>
-              {site.ctas.secondary.href ? (
-                <a
-                  className="btn btn--secondary"
-                  href={site.ctas.secondary.href}
-                  target={/^https?:\/\//i.test(site.ctas.secondary.href) ? '_blank' : undefined}
-                  rel="noreferrer"
-                >
-                  {site.ctas.secondary.label}
-                </a>
-              ) : null}
+              </a>
+              <a href={contact.email.href} className="btn btn--secondary">
+                Send an email
+              </a>
             </div>
           </div>
 
@@ -131,11 +179,14 @@ function Footer() {
             <div className="stack-sm">
               <span className="eyebrow">Explore</span>
               <div className="stack-sm">
-                {site.nav.map((item) => (
-                  <HashLink key={item.label} to={item.href} className="faint">
-                    {item.label}
-                  </HashLink>
-                ))}
+                <HashLink to="/#problems" className="faint">Problems</HashLink>
+                <HashLink to="/#services" className="faint">Services</HashLink>
+                <Link to="/projects" className="faint">Projects</Link>
+                <HashLink to="/#process" className="faint">Process</HashLink>
+                <HashLink to="/#about" className="faint">About</HashLink>
+                <HashLink to="/#contact" className="faint">Contact</HashLink>
+                <Link to="/tools" className="faint">Tools</Link>
+                <Link to="/simulators" className="faint">Lab</Link>
               </div>
             </div>
 

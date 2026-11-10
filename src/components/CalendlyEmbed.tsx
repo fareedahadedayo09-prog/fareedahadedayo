@@ -27,7 +27,7 @@ export function CalendlyEmbed({
 
   useEffect(() => {
     const existing = document.getElementById(CALENDLY_SCRIPT_ID) as HTMLScriptElement | null
-    const url = `${CALENDLY_URL}?hide_gdpr_banner=1&background_color=1a1a1a&text_color=e9e7e0&primary_color=b6ff3d`
+    const url = `${CALENDLY_URL}?hide_gdpr_banner=1&background_color=101211&text_color=f6f5f0&primary_color=c4f03d`
 
     const init = () => {
       const w = window as any
@@ -74,9 +74,9 @@ export function CalendlyEmbed({
         width: '100%',
         height: `${height}px`,
         maxHeight: '80vh',
-        borderRadius: 'var(--radius)',
+        borderRadius: 'var(--radius-lg)',
         border: '1px solid var(--border)',
-        background: 'var(--bg-raised)',
+        background: '#101211',
         overflow: 'hidden',
       }}
     >
