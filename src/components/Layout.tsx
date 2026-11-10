@@ -172,6 +172,26 @@ function Header() {
               )
             })}
           </ul>
+          <div className="mobile-nav__cta">
+            {cta.external ? (
+              <a
+                className="btn btn--primary"
+                href={cta.href}
+                target="_blank"
+                rel="noreferrer"
+                style={{ padding: '0.9rem 1.6rem', fontSize: '0.95rem' }}
+                onClick={closeMenu}
+              >
+                {cta.label}
+                <ArrowRight width={14} height={14} />
+              </a>
+            ) : (
+              <Link className="btn btn--primary" to={cta.href} onClick={closeMenu}>
+                {cta.label}
+                <ArrowRight width={14} height={14} />
+              </Link>
+            )}
+          </div>
         </nav>
       </div>
     </>

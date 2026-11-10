@@ -115,6 +115,9 @@ function flatten(): ToolStub[] {
 
 export const tools = flatten()
 
+/** Flat list of ToolEntry entries for the homepage marquee. */
+export const allTools: ToolEntry[] = toolStack.flatMap((g) => g.tools)
+
 export const toolCategories = toolStack.map((g, i) => ({
   id: g.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
   title: g.title,

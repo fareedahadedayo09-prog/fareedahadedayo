@@ -11,7 +11,7 @@ import { projects } from '../data/projects'
 import { about, capabilities, faq, methodology, privacyFooter, privacyPrinciples } from '../data/content'
 import { problemCategories } from '../data/problems'
 import { services } from '../data/services'
-import toolStack from '../data/tools'
+import { allTools } from '../data/tools'
 
 const featured = projects.filter((p) => p.status !== 'planned').slice(0, 3)
 
@@ -64,7 +64,7 @@ export function Home() {
         <div className="shell">
           <Reveal>
             <div className="section-head" style={{ maxWidth: '60ch' }}>
-              <span className="eyebrow">Problems</span>
+              <span className="eyebrow"><span className="eyebrow__num">01</span>Problems</span>
               <h2>Where manual work costs you time and money</h2>
               <p className="lede">
                 These are the everyday tasks where automation removes errors and delays.
@@ -101,7 +101,7 @@ export function Home() {
           <Reveal>
             <div className="section-head section-head--row">
               <div className="section-head" style={{ marginBottom: 0, flex: '1 1 360px' }}>
-                <span className="eyebrow">Services</span>
+                <span className="eyebrow"><span className="eyebrow__num">02</span>Services</span>
                 <h2>Types of systems I design and implement</h2>
                 <p className="lede">
                   These are the kinds of workflows I build. Every offering here is grounded in at least one
@@ -131,7 +131,7 @@ export function Home() {
           <Reveal>
             <div className="section-head section-head--row">
               <div className="section-head" style={{ marginBottom: 0, flex: '1 1 340px' }}>
-                <span className="eyebrow">Selected work</span>
+                <span className="eyebrow"><span className="eyebrow__num">03</span>Projects</span>
                 <h2>Projects you can inspect in detail</h2>
                 <p className="lede">
                   Each case study explains the problem, what was automated vs kept human, shows the workflow
@@ -162,7 +162,7 @@ export function Home() {
             <div className="contact-surface card--featured" style={{ padding: 'clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem)' }}>
               <div className="grid-2" style={{ alignItems: 'center', gap: '1.6rem' }}>
                 <div className="stack" style={{ gap: '0.7rem' }}>
-                  <span className="eyebrow">Free 30-minute call</span>
+                  <span className="eyebrow"><span className="eyebrow__num">04</span>Consultation</span>
                   <h2 style={{ fontSize: 'clamp(1.4rem, 1rem + 1.7vw, 2rem)', margin: 0 }}>
                     Have an operational problem worth solving?
                   </h2>
@@ -192,7 +192,7 @@ export function Home() {
         <div className="shell">
           <Reveal>
             <div className="section-head">
-              <span className="eyebrow">Process</span>
+              <span className="eyebrow"><span className="eyebrow__num">05</span>Process</span>
               <h2>Diagnose before you build</h2>
               <p className="lede">
                 Automation should solve a genuine business problem. Every engagement follows the same five steps.
@@ -231,7 +231,7 @@ export function Home() {
           <Reveal>
             <div className="section-head section-head--row">
               <div className="section-head" style={{ marginBottom: 0, flex: '1 1 360px' }}>
-                <span className="eyebrow">Tools &amp; Technologies</span>
+                <span className="eyebrow"><span className="eyebrow__num">06</span>Tools &amp; Technologies</span>
                 <h2>The stack I build with</h2>
                 <p className="lede">
                   The technologies I use to design, build and connect automation systems.
@@ -245,30 +245,24 @@ export function Home() {
           </Reveal>
 
           <Reveal delay={120}>
-            <div className="stack" style={{ gap: 'clamp(1.4rem, 1rem + 1.2vw, 2rem)' }}>
-              {toolStack.slice(0, 4).map((group) => (
-                <div key={group.title} className="toolgroup">
-                  <div className="toolgroup__head" style={{ marginBottom: '0.6rem' }}>
-                    <h3 className="toolgroup__title" style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-faint)' }} dangerouslySetInnerHTML={{ __html: group.title }} />
-                    <span className="toolgroup__rule" />
-                  </div>
-                  <ul className="toollogogrid" role="list">
-                    {group.tools.map((tool) => (
-                      <li key={tool.name} className="toollogo">
-                        <ToolLogo logo={tool.logo} name={tool.name} size={56} />
-                        <span className="toollogo__name">{tool.name}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-              <p style={{ marginTop: '0.4rem' }}>
-                <Link to="/tools" className="link-arrow">
-                  See every tool in the stack
-                  <ArrowRight width={12} height={12} />
-                </Link>
-              </p>
+            <div className="tools-marquee" aria-label="Tools I work with">
+              <ul className="tools-marquee__track" role="list">
+                {[...allTools, ...allTools].map((tool, i) => (
+                  <li key={`${tool.name}-${i}`} className="tools-marquee__tile">
+                    <span className="tools-marquee__plate">
+                      <ToolLogo logo={tool.logo} name={tool.name} size={38} />
+                    </span>
+                    <span className="tools-marquee__name">{tool.name}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
+            <p style={{ marginTop: '1.2rem' }}>
+              <Link to="/tools" className="link-arrow">
+                See every tool in the stack
+                <ArrowRight width={12} height={12} />
+              </Link>
+            </p>
           </Reveal>
         </div>
       </section>
@@ -278,7 +272,7 @@ export function Home() {
         <div className="shell">
           <Reveal>
             <div className="section-head">
-              <span className="eyebrow">Judgement</span>
+              <span className="eyebrow"><span className="eyebrow__num">07</span>Judgement</span>
               <h2>Where automation stops and a person decides</h2>
               <p className="lede">
                 Some decisions require a person. These principles apply to every workflow I build.
@@ -311,7 +305,7 @@ export function Home() {
             <div className="grid-2" style={{ alignItems: 'start' }}>
               <div className="stack" style={{ gap: '1.3rem' }}>
                 <div>
-                  <span className="eyebrow">{about.eyebrow}</span>
+                  <span className="eyebrow"><span className="eyebrow__num">08</span>{about.eyebrow}</span>
                   <h2 style={{ marginTop: '0.8rem' }}>Law student, self-taught builder</h2>
                 </div>
 
@@ -375,7 +369,7 @@ export function Home() {
         <div className="shell">
           <Reveal>
             <div className="section-head">
-              <span className="eyebrow">Questions</span>
+              <span className="eyebrow"><span className="eyebrow__num">09</span>Questions</span>
               <h2>Answers for prospective clients</h2>
               <p className="lede">
                 If you are a business owner trying to decide whether it is worth talking to me, these are the
@@ -396,7 +390,7 @@ export function Home() {
             <div className="contact-surface">
               <div className="grid-2" style={{ alignItems: 'start', position: 'relative', zIndex: 1, gap: '2rem' }}>
                 <div className="stack" style={{ gap: '1rem' }}>
-                  <span className="eyebrow">Book a call</span>
+                  <span className="eyebrow"><span className="eyebrow__num">10</span>Book a call</span>
                   <h2 style={{ fontSize: 'clamp(1.55rem, 1.15rem + 1.9vw, 2.25rem)' }}>
                     Book a free 30-minute call
                   </h2>
