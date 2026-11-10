@@ -2652,6 +2652,161 @@ pre.code-block .c {
   }
 }
 
+/* ─────────────── Tools logo grid (premium stack view) ─────────────────── */
+
+.toolgrou {
+  /* spacer block — see below */
+}
+
+.toolgrou__head { margin-top: 0; }
+
+.toolgrou__head { display: none; } /* placeholder – real styling below */
+
+.toolgroup {
+  position: relative;
+}
+
+.toolgroup__head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.toolgroup__title {
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin: 0;
+  color: var(--text);
+  flex: none;
+  white-space: nowrap;
+}
+
+.toolgroup__rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    var(--border-strong) 0%,
+    transparent 100%
+  );
+}
+
+.toollogogrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(0.7rem, 0.5rem + 0.6vw, 1.2rem) clamp(0.6rem, 0.4rem + 0.8vw, 1.1rem);
+}
+
+@media (max-width: 960px) {
+  .toollogogrid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .toollogogrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .toollogogrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem 0.45rem;
+  }
+}
+
+.toollogo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.65rem;
+  padding: clamp(0.9rem, 0.7rem + 0.5vw, 1.2rem) 0.4rem;
+  border-radius: var(--radius);
+  background: transparent;
+  text-align: center;
+  transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.2, 1),
+              background-color 0.28s ease,
+              border-color 0.28s ease,
+              box-shadow 0.28s ease;
+  border: 1px solid transparent;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: toollogo-in 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+.toollogogrid .toollogo:nth-child(1)  { animation-delay: 40ms; }
+.toollogogrid .toollogo:nth-child(2)  { animation-delay: 80ms; }
+.toollogogrid .toollogo:nth-child(3)  { animation-delay: 120ms; }
+.toollogogrid .toollogo:nth-child(4)  { animation-delay: 160ms; }
+.toollogogrid .toollogo:nth-child(5)  { animation-delay: 200ms; }
+.toollogogrid .toollogo:nth-child(6)  { animation-delay: 240ms; }
+.toollogogrid .toollogo:nth-child(n+7) { animation-delay: 280ms; }
+
+.toollogo:hover,
+.toollogo:focus-visible {
+  transform: translateY(-4px);
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow:
+    0 10px 30px -12px rgba(182, 255, 61, 0.18),
+    0 2px 8px -4px rgba(0, 0, 0, 0.35);
+}
+
+.toollogo:hover .toollogo__mark img,
+.toollogo:focus-visible .toollogo__mark img {
+  transform: scale(1.08);
+  filter: drop-shadow(0 4px 14px rgba(255, 255, 255, 0.08));
+}
+
+.toollogo__mark {
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  transition: border-color 0.28s ease, background-color 0.28s ease,
+              box-shadow 0.28s ease;
+}
+
+.toollogo:hover .toollogo__mark,
+.toollogo:focus-visible .toollogo__mark {
+  border-color: var(--accent-line);
+  background: var(--surface-2);
+  box-shadow: 0 10px 26px -14px rgba(182, 255, 61, 0.45),
+              0 0 0 3px var(--accent-soft);
+}
+
+.toollogo__mark--custom {
+  color: var(--text-muted);
+}
+
+.toollogo__mark svg {
+  width: 60%;
+  height: 60%;
+}
+
+.toollogo__name {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  transition: color 0.25s ease;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toollogo:hover .toollogo__name,
+.toollogo:focus-visible .toollogo__name {
+  color: var(--text);
+}
+
+@keyframes toollogo-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ─────────────── Results/Points lists ─────────────────── */
 
 .results-list {

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Portrait } from '../components/Portrait'
 import { ProjectCard } from '../components/ProjectCard'
+import { ToolLogo } from '../components/ToolLogo'
 import { ArrowRight, CheckIcon } from '../components/Icons'
 import { CalendlyEmbed, CALENDLY_LINK } from '../components/CalendlyEmbed'
 import { site } from '../data/site'
@@ -8,15 +9,12 @@ import { projects } from '../data/projects'
 import { about, capabilities, faq, methodology, privacyFooter, privacyPrinciples } from '../data/content'
 import { problemCategories } from '../data/problems'
 import { services } from '../data/services'
+import toolStack from '../data/tools'
 import { getProject } from '../data/projects'
-import { toolCategories, tools } from '../data/tools'
-import { EXPERIENCE_META } from '../data/tools'
 
 const featured = projects.filter((p) => p.status !== 'planned').slice(0, 3)
 
 export function Home() {
-  const previewTools = tools.filter((t) => t.experience === 'projects').slice(0, 6)
-
   return (
     <>
       {/* ─────────────────────────── Hero ───────────────────────────── */}
@@ -222,43 +220,46 @@ export function Home() {
         </div>
       </section>
 
-      {/* ─────────────────────── Tools (preview) ─────────────────────── */}
+      {/* ─────────────────────── Tools (logo stack) ─────────────────────── */}
       <section className="section" id="tools">
         <div className="shell">
           <div className="section-head section-head--row">
             <div className="section-head" style={{ marginBottom: 0, flex: '1 1 360px' }}>
-              <span className="eyebrow">Tools</span>
-              <h2>Tools organised by what they are used for</h2>
+              <span className="eyebrow">Tools &amp; Technologies</span>
+              <h2>The stack I build with</h2>
               <p className="lede">
-                I do not use tool logos as a substitute for explaining what I can do with them. Each tool
-                is grouped by practical purpose and carries an honest experience label. The full ecosystem
-                is searchable and filterable.
+                The technologies I use to design, build and connect automation systems.
               </p>
             </div>
             <Link to="/tools" className="btn btn--secondary">
-              Full tool ecosystem
+              All tools
               <ArrowRight width={14} height={14} />
             </Link>
           </div>
 
-          <div className="tools-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
-            {previewTools.map((t) => (
-              <div key={t.id} className="tool-ecosystem-card" style={{ cursor: 'default' }}>
-                <div className="tool-ecosystem-card__head">
-                  <span className="tool-monogram">{t.monogram}</span>
-                  <span className="tool-ecosystem-card__name">{t.name}</span>
+          <div className="stack" style={{ gap: 'clamp(1.4rem, 1rem + 1.2vw, 2rem)' }}>
+            {toolStack.slice(0, 4).map((group) => (
+              <div key={group.title} className="toolgroup">
+                <div className="toolgroup__head" style={{ marginBottom: '0.6rem' }}>
+                  <h3 className="toolgroup__title" style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-faint)' }} dangerouslySetInnerHTML={{ __html: group.title }} />
+                  <span className="toolgroup__rule" />
                 </div>
-                <div className="tool-ecosystem-card__meta">
-                  <span className={`badge ${EXPERIENCE_META[t.experience].tone === 'done' ? 'badge--done' : EXPERIENCE_META[t.experience].tone === 'progress' ? 'badge--progress' : 'badge--planned'}`}>
-                    {EXPERIENCE_META[t.experience].label}
-                  </span>
-                  <span className="badge badge--illustrative">
-                    {toolCategories.find((c) => c.id === t.category)?.title}
-                  </span>
-                </div>
-                <p className="tool-ecosystem-card__used">{t.usedFor}</p>
+                <ul className="toollogogrid" role="list">
+                  {group.tools.map((tool) => (
+                    <li key={tool.name} className="toollogo">
+                      <ToolLogo logo={tool.logo} name={tool.name} size={56} />
+                      <span className="toollogo__name">{tool.name}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
+            <p style={{ marginTop: '0.4rem' }}>
+              <Link to="/tools" className="link-arrow">
+                See every tool in the stack
+                <ArrowRight width={12} height={12} />
+              </Link>
+            </p>
           </div>
         </div>
       </section>
