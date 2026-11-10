@@ -75,6 +75,7 @@ export type Project = {
   workflowScreenshot?: string
   workflowScreenshotAlt?: string
   /** Optional supporting evidence, shown separately from workflow diagrams. */
+  evidenceIntro?: string
   evidence?: { image: string; title: string; description: string; alt: string }[]
   // 6-part body
   problem: {
@@ -142,6 +143,7 @@ export const projects: Project[] = [
     categories: ['ecommerce-ops', 'customer-experience'],
     heroVisual: { image: '/screenshots/cod-order-confirmation-workflow.png', caption: 'Cash-on-delivery order confirmation workflow overview' },
     hasSimulator: true,
+    evidenceIntro: 'These screenshots show test orders, not real customer orders. Select an image to view it at full size.',
     evidence: [
       {
         image: '/screenshots/cod-evidence/staff-alert.png',
@@ -364,6 +366,33 @@ export const projects: Project[] = [
     categories: ['lead-management', 'ai-data'],
     heroVisual: { image: '/screenshots/ai-lead-qualification-workflow.png', caption: 'BrightSun Solar AI lead qualification workflow overview' },
     hasSimulator: true,
+    evidenceIntro: 'These screenshots show a test lead, not a real customer enquiry. Select an image to view it at full size.',
+    evidence: [
+      {
+        image: '/screenshots/brightsun-evidence/acknowledgement-email.png',
+        title: 'Lead acknowledgement email',
+        description: 'A BrightSun Solar email acknowledges the enquiry, giving the lead a response after reaching out.',
+        alt: 'BrightSun Solar acknowledgement email for a test lead',
+      },
+      {
+        image: '/screenshots/brightsun-evidence/acknowledgement-detail.png',
+        title: 'A response tailored to the enquiry',
+        description: 'The message asks the lead to clarify their electricity cost after noting a possible mismatch with the information provided. This shows how the response can request details needed for follow-up.',
+        alt: 'Acknowledgement email asking a test lead to clarify electricity costs',
+      },
+      {
+        image: '/screenshots/brightsun-evidence/warm-lead-email.png',
+        title: 'Warm lead notification',
+        description: 'A staff email labels the enquiry as a warm lead and presents a qualification result, helping the sales team identify an enquiry to monitor.',
+        alt: 'BrightSun Solar warm test lead notification and qualification result',
+      },
+      {
+        image: '/screenshots/brightsun-evidence/warm-lead-details.png',
+        title: 'Staff follow-up details',
+        description: 'The alert states that a personalised AI response was sent and asks staff to monitor the conversation, review the qualification details and follow up when appropriate.',
+        alt: 'Warm test lead staff alert with follow-up guidance and contact details',
+      },
+    ],
     problem: {
       summary:
         'Incoming enquiries need a consistent way to be captured and qualified so the team can decide how to follow up.',
