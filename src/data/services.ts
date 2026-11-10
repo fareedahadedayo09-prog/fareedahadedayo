@@ -23,7 +23,7 @@ export const services: Service[] = [
     summary:
       'Automated checks, confirmations and exception handling for incoming orders, especially cash-on-delivery and manual-confirmation flows.',
     detail:
-      'From intake to dispatch, the system prices orders, applies configured risk rules, sends confirmations, and records the outcome in one place. Orders that fail checks are flagged rather than processed blind.',
+      'Bring pricing, configured checks, confirmations and record-keeping into one workflow, with a clear path for orders that need attention.',
     projectRef: 'order-confirmation-risk-check',
   },
   {
@@ -32,7 +32,7 @@ export const services: Service[] = [
     summary:
       'Structuring incoming enquiries so they can be categorised, prioritised and routed without being lost.',
     detail:
-      'Rather than every message starting from zero, the system captures the relevant details up front, sorts enquiries by type, and makes sure anything needing a person gets to the right place.',
+      'Capture relevant details up front, sort enquiries by type and design a clear handoff for cases that need a person.',
   },
   {
     id: 'returns',
@@ -40,7 +40,7 @@ export const services: Service[] = [
     summary:
       'Consistent application of return-policy rules, with explicit escalation for anything the policy does not cover cleanly.',
     detail:
-      'The workflow validates return requests, evaluates them against policy in a fixed order, and escalates conflicting instructions, unusual amounts or disputed cases to a person rather than guessing.',
+      'Design a workflow to validate requests, apply policy rules and identify unusual or disputed cases for human review.',
     projectRef: 'returns-refunds-handler',
   },
   {
@@ -58,7 +58,7 @@ export const services: Service[] = [
     summary:
       'Structuring and classifying incoming leads against explicit criteria so follow-up decisions are consistent.',
     detail:
-      'The workflow normalises enquiries from forms and messages, classifies them against deterministic qualification rules, and records a next action. Cases it cannot classify are held for review rather than forced into a bucket.',
+      'Normalise enquiries, apply explicit qualification rules and record a next action, with a review path for uncertain cases.',
     projectRef: 'lead-qualification',
   },
   {

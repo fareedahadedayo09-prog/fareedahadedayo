@@ -12,26 +12,26 @@ export const problemCategories: ProblemCategory[] = [
   {
     id: 'orders',
     title: 'Order operations',
-    line: 'Orders checked, confirmed and flagged without manual work.',
+    line: 'Reduce repetitive checks and make order exceptions easier to review.',
   },
   {
     id: 'customer-experience',
     title: 'Customer experience',
-    line: 'Common questions answered fast and consistently.',
+    line: 'Organise enquiries and make customer replies more consistent.',
   },
   {
     id: 'returns',
     title: 'Returns and refunds',
-    line: 'Policy applied the same way every time, with exceptions sent to a person.',
+    line: 'Apply clear policy rules and identify requests that need review.',
   },
   {
     id: 'lifecycle',
     title: 'Customer lifecycle',
-    line: 'Follow-ups, reminders and win-back messages that send themselves.',
+    line: 'Plan timely follow-ups, reminders and lifecycle messages.',
   },
   {
     id: 'leads',
     title: 'Lead and enquiry management',
-    line: 'Every enquiry captured, sorted and answered quickly.',
+    line: 'Capture and sort enquiries so follow-up is easier to manage.',
   },
 ]

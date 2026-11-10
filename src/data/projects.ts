@@ -131,7 +131,7 @@ export const projects: Project[] = [
     workflowScreenshotAlt: 'n8n canvas for the COD order confirmation system, showing order intake, duplicate checks, confirmation and cancellation, reminders, and availability handling',
     name: 'COD Order Confirmation & Risk Assessment',
     tagline:
-      'Automated pricing, risk checking and confirmation-link dispatch for cash-on-delivery orders.',
+      'Cash-on-delivery orders are checked against a threshold, with customer emails for normal orders and staff alerts for high-risk orders.',
     status: 'done',
     statusLabel: STATUS_LABELS.done,
     statusDetail: STATUS_DETAIL_DEFAULT.done,
@@ -154,15 +154,15 @@ export const projects: Project[] = [
     },
     solution: {
       summary:
-        'A Tally form triggers an n8n workflow that prices the order, applies a fixed risk rule and sends the customer a confirmation or cancellation link. Every outcome is written back to Airtable with the rule applied and a timestamp.',
+        'A Tally form triggers an n8n workflow that checks cash-on-delivery orders against a configured amount. Customers with normal orders below the threshold receive an email; high-risk orders are flagged and staff receive an email prompting them to call the customer.',
       automated: [
         'Pricing: totals and delivery fee are calculated from line items.',
         'Validation: required fields and numeric checks before any message is sent.',
-        'Branching: eligible orders receive a confirmation link; others are handled by rule.',
+        'Routing: customers with normal orders below the amount threshold receive an email; high-risk orders trigger a staff alert.',
         'Record-keeping: every run writes status, outcome and timestamp to Airtable.',
       ],
       humanControl: [
-        'Orders that fail the risk threshold are flagged for review rather than auto-cancelled.',
+        'High-risk orders are flagged, and staff receive an email prompting them to call the customer.',
         'Orders with missing or invalid inputs are held for correction, not messaged.',
         'Risk thresholds and eligibility conditions are written configuration, editable by the business.',
       ],
@@ -171,18 +171,18 @@ export const projects: Project[] = [
       { id: 'trigger', label: 'Trigger', title: 'Order submitted', detail: 'Tally form fires a webhook.', tone: 'trigger' },
       { id: 'validate', label: 'Step 1', title: 'Validate input', detail: 'Check required fields, numeric quantities.', tone: 'default' },
       { id: 'price', label: 'Step 2', title: 'Price order', detail: 'Sum line items + delivery fee.', tone: 'default' },
-      { id: 'risk', label: 'Decision', title: 'Risk rule', detail: 'Eligibility threshold.', tone: 'decision' },
-      { id: 'confirm', label: 'Path A', title: 'Send confirmation', detail: 'Gmail confirmation link.', tone: 'output' },
-      { id: 'escalate', label: 'Path B', title: 'Flag for review', detail: 'High-risk / invalid held.', tone: 'escalation' },
+      { id: 'risk', label: 'Decision', title: 'Risk rule', detail: 'Check the configured amount threshold.', tone: 'decision' },
+      { id: 'confirm', label: 'Path A', title: 'Email customer', detail: 'Normal orders below the threshold.', tone: 'output' },
+      { id: 'escalate', label: 'Path B', title: 'Alert staff', detail: 'High-risk orders are flagged for a call.', tone: 'escalation' },
       { id: 'record', label: 'Record', title: 'Write to Airtable', detail: 'Status, rule, timestamp.', tone: 'record' },
     ],
     result: {
       summary:
-        'The happy path - complete, well-formed order within the risk threshold - is fully automated end-to-end: the form triggers the workflow, pricing is computed, the rule is applied and a confirmation link is queued without human intervention. Exception handling is implemented, but the high-risk and invalid-input paths still need end-to-end verification.',
+        'Normal orders below the configured amount receive customer emails. High-risk orders are flagged and staff are emailed to follow up by phone. The earlier test notes below document the scenarios recorded so far; specific end-to-end coverage still needs confirmation.',
       points: [
         { text: 'Single line item priced and confirmed: verified.', state: 'verified' },
         { text: 'Multiple line items with mixed quantities: verified.', state: 'verified' },
-        { text: 'Risk-threshold failure routes to cancellation/flag path: implemented, not yet end-to-end verified.', state: 'partial' },
+        { text: 'High-risk orders trigger a staff email requesting a call: end-to-end test coverage to be confirmed.', state: 'partial' },
         { text: 'Non-numeric quantity rejected and recorded: implemented, not yet verified.', state: 'partial' },
         { text: 'Duplicate submission detection: not started.', state: 'planned' },
         { text: 'Failed-send automated retry: not started.', state: 'planned' },
@@ -197,13 +197,13 @@ export const projects: Project[] = [
         'Tally webhook POSTs JSON payload to n8n.',
         'Code nodes normalise fields (trim strings, coerce quantities to numbers).',
         'Pricing node computes total = Σ(qty × price) + delivery_fee.',
-        'IF node evaluates eligibility (total ≤ threshold, phone valid, address long enough).',
-        'Gmail node sends confirmation or cancellation link from a template.',
+        'The order is assessed against the configured amount threshold.',
+        'Normal orders below the threshold receive a customer email; high-risk orders trigger a staff email prompting a call.',
         'Airtable node upserts the order record with status, rule and timestamp.',
       ],
       decisionLogic: [
         'Pricing is arithmetic; no model is involved.',
-        'Eligibility is a deterministic AND of configured conditions.',
+        'The configured amount threshold helps determine the order route.',
         'The rule applied is written back to the record for re-checkability.',
       ],
       validation: [
@@ -218,7 +218,7 @@ export const projects: Project[] = [
       ],
       testing: [
         'Clean orders have been verified; high-risk and invalid-input paths still need end-to-end verification.',
-        'Cancellation path and failed-send path not yet end-to-end verified.',
+        'Staff-alert and failed-send end-to-end test coverage still needs confirmation.',
       ],
       limitations: [
         'No duplicate-order detection; two identical submissions produce two runs.',
@@ -359,19 +359,19 @@ export const projects: Project[] = [
       'Structuring and classifying incoming enquiries so follow-up decisions are consistent and auditable.',
     status: 'done',
     statusLabel: STATUS_LABELS.done,
-    statusDetail: STATUS_DETAIL_DEFAULT.done,
-    tools: ['n8n', 'tally', 'airtable', 'claude-api'],
+    statusDetail: 'Connected to an Airtable base, with an Airtable form embedded on the company website. Detailed path-by-path test coverage is being confirmed.',
+    tools: ['n8n', 'airtable'],
     timeline: 'Completed build',
     categories: ['lead-management', 'ai-data'],
     heroVisual: { image: '/screenshots/ai-lead-qualification-workflow.png', caption: 'BrightSun Solar AI lead qualification workflow overview' },
     hasSimulator: true,
     problem: {
       summary:
-        'Leads arrived in different shapes across a form and direct messages. Classification happened in the reader\u2019s head, so similar enquiries got different treatment, and follow-up depended on memory rather than a rule.',
+        'Incoming enquiries need a consistent way to be captured and qualified so the team can decide how to follow up.',
       whyItMatters:
         'Inconsistent triage means hot leads can go cold while low-intent enquiries get immediate attention, and there is no record of why any given lead was routed the way it was.',
       bullets: [
-        'Unstructured intake from multiple channels with no shared format.',
+        'Enquiries need a shared place to be captured and reviewed.',
         'Classification performed from memory.',
         'No durable record of next action or assignment.',
         'Follow-up depended on being remembered.',
@@ -379,88 +379,44 @@ export const projects: Project[] = [
     },
     solution: {
       summary:
-        'A Tally form and a direct-message channel both feed one n8n workflow. Claude is used only to extract structured fields from free-text messages; classification itself is a deterministic rule. Records missing required fields or failing classification are held for review rather than forced into a bucket.',
+        'An Airtable form embedded on the company website captures enquiries in a connected Airtable base. The n8n workflow supports lead qualification and routing.',
       automated: [
-        'Normalisation of name, contact, interest and source across channels.',
-        'Deterministic classification into explicit buckets.',
-        'Assignment of an owner and a next action in Airtable.',
-        'Flagging of incomplete or unclassifiable records for review.',
+        'Enquiry intake through the embedded Airtable form.',
+        'Lead information captured in the connected Airtable base.',
+        'Workflow support for qualification and routing.',
       ],
       humanControl: [
-        'Records missing a contact detail are flagged, not discarded.',
-        'Records that match no bucket are held for review rather than default-classified.',
-        'Classification buckets and their order are written configuration, editable by the business.',
+        'Team members can use the lead information in Airtable for follow-up.',
       ],
     },
     workflow: [
-      { id: 'trigger', label: 'Trigger', title: 'Enquiry arrives', detail: 'Tally form or DM.', tone: 'trigger' },
-      { id: 'extract', label: 'Step 1', title: 'Extract fields', detail: 'Claude extraction for free text.', tone: 'default' },
-      { id: 'validate', label: 'Step 2', title: 'Validate', detail: 'Required fields present.', tone: 'default' },
-      { id: 'classify', label: 'Decision', title: 'Classify', detail: 'Deterministic rule order.', tone: 'decision' },
-      { id: 'route', label: 'Output', title: 'Route or hold', detail: 'Assign owner, next action.', tone: 'escalation' },
-      { id: 'record', label: 'Record', title: 'Write to Airtable', detail: 'Classification + reason.', tone: 'record' },
+      { id: 'trigger', label: 'Trigger', title: 'Enquiry arrives', detail: 'Airtable form embedded on the company website.', tone: 'trigger' },
+      { id: 'record', label: 'Record', title: 'Capture the lead', detail: 'The form is connected to an Airtable base.', tone: 'record' },
+      { id: 'qualify', label: 'Decision', title: 'Qualify and route', detail: 'The n8n workflow supports lead qualification and routing.', tone: 'decision' },
+      { id: 'followup', label: 'Handoff', title: 'Follow up', detail: 'The team can use the recorded lead information.', tone: 'escalation' },
     ],
     result: {
       summary:
-        'Well-formed enquiries are extracted, classified and recorded with a next action without manual intervention. Missing-contact and unclassifiable enquiries are intended for review; the unclassifiable path has not yet been verified.',
-      points: [
-        { text: 'Well-formed Tally enquiry classified correctly: verified.', state: 'verified' },
-        { text: 'Free-text DM extracted by Claude into structured fields: implemented, walkthrough-verified.', state: 'partial' },
-        { text: 'Missing contact detail flagged as incomplete: verified.', state: 'verified' },
-        { text: 'Unclassifiable enquiry held for review: implemented, not yet verified.', state: 'partial' },
-        { text: 'Duplicate lead detection: not started.', state: 'planned' },
-        { text: 'Daily follow-up digest: not started.', state: 'planned' },
-      ],
+        'The system is connected to an Airtable base and the company website uses an embedded Airtable form. Detailed test coverage for individual paths is being confirmed.',
+      points: [],
       disclaimer:
-        'Results are walkthrough outcomes, not production telemetry from a live CRM.',
+        'No measured business results are available yet.',
     },
     technical: {
       summary:
-        'Two intake paths (form and DM) funnel into a single normalisation step. Claude is used only as a structured extractor, constrained by a JSON-schema output, and its output is validated before downstream routing - it never makes the classification decision itself.',
+        'The lead system uses n8n and an Airtable base, with an Airtable form embedded on the company website.',
       dataFlow: [
-        'Tally webhook (structured) and DM webhook (free-text) both enter the same n8n workflow.',
-        'Free-text messages are sent to Claude with a strict extraction prompt and JSON schema.',
-        'Validation node checks required fields and rejects/flags incomplete records.',
-        'Classification node evaluates buckets in fixed order; first match wins.',
-        'Router node assigns an owner and writes next action to Airtable.',
-      ],
-      decisionLogic: [
-        'Classification is a deterministic IF/ELSE chain over extracted fields.',
-        'Buckets are ordered explicitly to make mis-filing predictable.',
-        'Claude is instructed to return "unknown" for fields it cannot extract rather than guess.',
-      ],
-      validation: [
-        'JSON-schema validation on Claude output.',
-        'Required-field checks on name and contact.',
-        'Records with unknown/unclassified fields are held, not defaulted.',
-      ],
-      exceptions: [
-        'A failed Claude call raises an error rather than producing a blank classification.',
-        'Unclassifiable records are held with the raw input attached.',
-        'No duplicate detection yet (known limitation).',
+        'A visitor submits the embedded Airtable form.',
+        'Lead information is captured in the connected Airtable base.',
+        'The n8n workflow supports qualification and routing.',
       ],
       testing: [
-        'Walkthroughs on well-formed, missing-contact and free-text scenarios.',
-        'Text extraction handles a narrow range of phrasings; will expand with real message samples.',
+        'Detailed path-by-path test coverage is being confirmed.',
       ],
       limitations: [
-        'No duplicate detection across channels.',
-        'No daily follow-up digest; follow-up is still manual.',
-        'Classification buckets are a first pass.',
-        'Text extraction handles a narrow range of phrasings.',
-        'No connection to a live CRM or marketing tool.',
+        'The details of any direct-message or Claude extraction path are being confirmed.',
+        'Measured business results are not yet available.',
       ],
-      examplePayload: `{
-  "intake_channel": "dm",
-  "raw_message": "Hi, I saw your skincare line and would like to discuss bulk pricing for my store in PH.",
-  "extracted": {
-    "name": null,
-    "interest": "wholesale",
-    "product_line": "skincare",
-    "location": "Port Harcourt"
-  },
-  "received_at": "ISO timestamp"
-}`,
     },
   },
 
@@ -472,7 +428,7 @@ export const projects: Project[] = [
       'A working prototype of event-driven lifecycle messaging for a fictional skincare brand.',
     status: 'progress',
     statusLabel: STATUS_LABELS.progress,
-    statusDetail: STATUS_DETAIL_DEFAULT.progress,
+    statusDetail: 'An ongoing prototype in progress. The documented walkthrough uses simulated events and stages messages in Airtable rather than sending them.',
     tools: ['n8n', 'tally', 'airtable', 'gmail', 'shopify'],
     timeline: 'Prototype in progress',
     categories: ['ecommerce-ops', 'customer-experience', 'ai-data'],

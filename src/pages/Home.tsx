@@ -59,15 +59,45 @@ export function Home() {
         </div>
       </section>
 
+      {/* ─────────────────── Projects ─────────────────────── */}
+      <section className="section" id="projects">
+        <div className="shell">
+          <Reveal>
+            <div className="section-head section-head--row">
+              <div className="section-head" style={{ marginBottom: 0, flex: '1 1 340px' }}>
+                <span className="eyebrow"><span className="eyebrow__num">01</span>Projects</span>
+                <h2>Projects you can inspect in detail</h2>
+                <p className="lede">
+                  Explore how the workflows handle orders, returns and leads. Each case study includes the process,
+                  human handoffs, testing and limitations.
+                </p>
+              </div>
+              <Link to="/projects" className="btn btn--secondary">
+                All projects
+                <ArrowRight width={14} height={14} />
+              </Link>
+            </div>
+          </Reveal>
+
+          <div className="project-grid">
+            {featured.map((project, i) => (
+              <Reveal key={project.slug} delay={i * 80} y={16}>
+                <ProjectCard project={project} />
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─────────── Problems ─────────────── */}
       <section className="section" id="problems">
         <div className="shell">
           <Reveal>
             <div className="section-head" style={{ maxWidth: '60ch' }}>
-              <span className="eyebrow"><span className="eyebrow__num">01</span>Problems</span>
+              <span className="eyebrow"><span className="eyebrow__num">02</span>Problems</span>
               <h2>Where manual work costs you time and money</h2>
               <p className="lede">
-                These are the everyday tasks where automation removes errors and delays.
+                These are everyday tasks where well-designed automation can reduce repetitive work and delays.
               </p>
             </div>
           </Reveal>
@@ -101,11 +131,10 @@ export function Home() {
           <Reveal>
             <div className="section-head section-head--row">
               <div className="section-head" style={{ marginBottom: 0, flex: '1 1 360px' }}>
-                <span className="eyebrow"><span className="eyebrow__num">02</span>Services</span>
+                <span className="eyebrow"><span className="eyebrow__num">03</span>Services</span>
                 <h2>Types of systems I design and implement</h2>
                 <p className="lede">
-                  These are the kinds of workflows I build. Every offering here is grounded in at least one
-                  project on this site.
+                  Explore the kinds of workflows I build, with project examples where available.
                 </p>
               </div>
             </div>
@@ -118,37 +147,12 @@ export function Home() {
                   <h3 className="service-card__title">{svc.title}</h3>
                   <p className="service-card__summary">{svc.summary}</p>
                   <p className="service-card__detail">{svc.detail}</p>
+                  {svc.projectRef ? (
+                    <Link to={`/projects/${svc.projectRef}`} className="link-arrow" style={{ marginTop: '1rem' }}>
+                      View project <ArrowRight width={12} height={12} />
+                    </Link>
+                  ) : null}
                 </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────── Projects ─────────────────────── */}
-      <section className="section" id="projects">
-        <div className="shell">
-          <Reveal>
-            <div className="section-head section-head--row">
-              <div className="section-head" style={{ marginBottom: 0, flex: '1 1 340px' }}>
-                <span className="eyebrow"><span className="eyebrow__num">03</span>Projects</span>
-                <h2>Projects you can inspect in detail</h2>
-                <p className="lede">
-                  Each case study explains the problem, what was automated vs kept human, shows the workflow
-                  step-by-step, and labels every result as verified, partial or designed.
-                </p>
-              </div>
-              <Link to="/projects" className="btn btn--secondary">
-                All projects
-                <ArrowRight width={14} height={14} />
-              </Link>
-            </div>
-          </Reveal>
-
-          <div className="project-grid">
-            {featured.map((project, i) => (
-              <Reveal key={project.slug} delay={i * 80} y={16}>
-                <ProjectCard project={project} />
               </Reveal>
             ))}
           </div>
@@ -176,10 +180,6 @@ export function Home() {
                     Book a free call
                     <ArrowRight width={14} height={14} />
                   </a>
-                  <Link to="/simulators" className="btn btn--ghost btn--small">
-                    See the simulators
-                    <ArrowRight width={12} height={12} />
-                  </Link>
                 </div>
               </div>
             </div>
@@ -372,8 +372,7 @@ export function Home() {
               <span className="eyebrow"><span className="eyebrow__num">09</span>Questions</span>
               <h2>Answers for prospective clients</h2>
               <p className="lede">
-                If you are a business owner trying to decide whether it is worth talking to me, these are the
-                questions I get most often.
+                A few practical answers to help you decide whether automation is right for your business.
               </p>
             </div>
           </Reveal>
