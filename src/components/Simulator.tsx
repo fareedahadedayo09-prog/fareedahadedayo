@@ -17,7 +17,7 @@ function ScenarioInputSummary({ input }: { input: Record<string, unknown> }) {
   }
   return (
     <div className="sim-order">
-      <div className="sim-order__title">Incoming record</div>
+      <div className="sim-order__title">Selected example</div>
       <dl>
         {Object.entries(input).map(([k, v]) => (
           <div className="sim-order__line" key={k}>
@@ -64,7 +64,7 @@ export function Simulator({ simulatorId }: { simulatorId: SimulatorId }) {
       </div>
 
       <div className="simulator__body">
-        <div className="simulator__scenarios" role="tablist" aria-label="Sample scenarios">
+        <div className="simulator__scenarios" role="group" aria-label="Sample scenarios">
           <span className="mono" style={{ fontSize: '0.66rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-faint)', marginBottom: '0.35rem', paddingLeft: '0.3rem' }}>
             Scenarios
           </span>
@@ -72,8 +72,7 @@ export function Simulator({ simulatorId }: { simulatorId: SimulatorId }) {
             <button
               key={s.id}
               type="button"
-              role="tab"
-              aria-selected={s.id === scenarioId}
+              aria-pressed={s.id === scenarioId}
               className={`scenario-btn ${s.id === scenarioId ? 'is-active' : ''}`}
               onClick={() => setScenarioId(s.id)}
             >
@@ -113,7 +112,7 @@ export function Simulator({ simulatorId }: { simulatorId: SimulatorId }) {
           ) : null}
 
           <div className={`sim-outcome ${outcomeClass(result.outcome.tone)}`}>
-            <div className="sim-outcome__label">Final action</div>
+            <div className="sim-outcome__label">Illustrated outcome</div>
             <div className="sim-outcome__title">{result.outcome.label}</div>
             <div className="sim-outcome__detail">{result.outcome.detail}</div>
           </div>

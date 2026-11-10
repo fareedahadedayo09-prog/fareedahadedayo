@@ -5,6 +5,7 @@ import { PROJECT_CATEGORY_LABELS, SECTION_STATUS_LABEL, getProject, relatedProje
 import { StatusBadge } from '../components/StatusBadge'
 import { ArrowRight, CheckIcon, AlertIcon } from '../components/Icons'
 import { ProjectCard } from '../components/ProjectCard'
+import { SIMULATORS } from '../data/simulators'
 
 function TechnicalExpander({ project }: { project: Project }) {
   const [open, setOpen] = useState(false)
@@ -130,6 +131,7 @@ export function ProjectCaseStudy() {
   }
 
   const related = relatedProjects(project)
+  const simulator = Object.values(SIMULATORS).find((item) => item.projectSlug === project.slug)
 
   return (
     <article>
@@ -167,6 +169,12 @@ export function ProjectCaseStudy() {
               </div>
             ) : null}
           </div>
+
+          {simulator ? (
+            <Link to={`/simulators#sim-${simulator.id}`} className="link-arrow" style={{ marginTop: '1rem' }}>
+              Explore the interactive walkthrough <ArrowRight width={13} height={13} />
+            </Link>
+          ) : null}
 
           <nav className="cs-nav" aria-label="Case study sections" style={{ marginTop: '1.2rem' }}>
             <a href="#problem">The problem</a>

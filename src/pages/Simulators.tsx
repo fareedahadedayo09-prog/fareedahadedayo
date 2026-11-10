@@ -16,10 +16,9 @@ export function Simulators() {
             <span className="eyebrow">Interactive demonstrations</span>
             <h1 className="cs-hero__title">Walk through the decision logic yourself</h1>
             <p className="lede" style={{ marginTop: '0.4rem' }}>
-              These simulators mirror the decision logic of the built workflows. Select a sample scenario
-              to see how each input is validated, which rules pass or fail, and what the system does next.
-              Nothing here is connected to a live system, no emails are sent, and illustrative scenarios are
-              labelled where they reflect rules that are designed but not yet built.
+              Explore example paths described in each case study. These are illustrative walkthroughs, not
+              live workflows or a complete recreation of their rules. No messages are sent, records changed
+              or real decisions made; planned and prototype paths are labelled.
             </p>
           </div>
         </div>
@@ -29,7 +28,7 @@ export function Simulators() {
         <div className="shell">
           <div className="stack" style={{ gap: '2.5rem' }}>
             {(Object.values(SIMULATORS)).map((sim) => (
-              <div key={sim.id} id={`sim-${sim.id}`}>
+              <section key={sim.id} id={`sim-${sim.id}`}>
                 <div className="cluster cluster--between" style={{ gap: '1rem', marginBottom: '0.8rem', flexWrap: 'wrap' }}>
                   <div className="stack-sm" style={{ gap: '0.25rem' }}>
                     <span className="eyebrow" style={{ position: 'static' }}>{sim.subtitle}</span>
@@ -41,7 +40,7 @@ export function Simulators() {
                   </Link>
                 </div>
                 <Simulator simulatorId={sim.id} />
-              </div>
+              </section>
             ))}
           </div>
         </div>
