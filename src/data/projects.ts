@@ -461,7 +461,7 @@ export const projects: Project[] = [
     timeline: 'Prototype in progress',
     categories: ['ecommerce-ops', 'customer-experience', 'ai-data'],
     heroVisual: { caption: 'Lifecycle automation flow (prototype)' },
-    hasSimulator: false,
+    hasSimulator: true,
     problem: {
       summary:
         'Follow-up after a customer places an order - or nearly places one - was manual. Abandoned-cart reminders went out late or not at all, post-purchase check-ins were skipped during busy weeks, and messages were sometimes sent to customers who had already bought or opted out.',
