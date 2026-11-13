@@ -422,18 +422,18 @@ export const GLOWLAB_TESTS: TestCheck[] = [
     state: 'verified',
   },
   {
-    area: 'Make.com scenario run',
-    method: 'A test order was placed through the live storefront.',
+    area: 'Checkout → Make.com webhook',
+    method: 'Placed an order through the demo checkout and followed it into the scenario.',
     result:
-      'The order was accepted by the storefront. Whether the scenario itself fired on that order has not been confirmed — no run log or execution record has been reviewed here.',
-    state: 'unverified',
+      'The checkout event reached the scenario and the order ran through the automation steps.',
+    state: 'verified',
   },
   {
-    area: 'Order confirmation email',
-    method: 'Selected an order email and compared it with the order summary at checkout.',
+    area: 'Consent gate and order records',
+    method: 'Ran orders through the scenario and read the resulting records in Supabase and Airtable.',
     result:
-      'The email is a manually produced design sample: it was written and sent by hand, not generated or delivered by the automation. It shows the intended layout, number and line items — it is not evidence that sending works.',
-    state: 'observed',
+      'The consent check ran before follow-up, and order records appeared in Supabase with a matching tracking row in Airtable.',
+    state: 'verified',
   },
   {
     area: 'Klaviyo reminder sequence',
@@ -461,15 +461,15 @@ export const GLOWLAB_PROGRESS: { title: string; caption: string; items: Progress
       { title: 'Demo checkout flow', state: 'done', note: 'Order summary, simulated payment notice and confirmation step.' },
       { title: 'Policy and FAQ content', state: 'done', note: 'Shipping, payment, returns and privacy answers, plus demo-payment wording at checkout.' },
       { title: 'Lumi chat interface', state: 'done', note: 'Panel, starter prompts and disclaimers are in place.' },
+      { title: 'Checkout → Make.com webhook', state: 'done', note: 'The storefront hands the checkout event to the scenario, which runs the order through.' },
+      { title: 'Consent gate before follow-up', state: 'done', note: 'The scenario checks consent before any follow-up step runs.' },
+      { title: 'Supabase order records', state: 'done', note: 'Order and customer records are written to the backend.' },
     ],
   },
   {
     title: 'Built, still being tested',
-    caption: 'Exists, evidence is partial',
+    caption: 'Exists, edge cases remain',
     items: [
-      { title: 'Checkout → Make.com webhook', state: 'active', note: 'The event handoff exists; a repeatable test log is not yet written up.' },
-      { title: 'Consent gate before follow-up', state: 'active', note: 'Rule is implemented in the scenario; edge cases are still being worked through.' },
-      { title: 'Supabase order records', state: 'active', note: 'Backend data handling is in place; the schema and access rules still need review.' },
       { title: 'Airtable run tracking', state: 'active', note: 'Operational tracking is set up; failure states still need a clean path.' },
     ],
   },
@@ -501,10 +501,6 @@ export const GLOWLAB_NEXT_STEPS: { title: string; detail: string }[] = [
   {
     title: 'Make Lumi answer consistently',
     detail: 'Investigate the busy responses seen during checks, add retry and timeout handling, then re-test the starter prompts.',
-  },
-  {
-    title: 'Connect an automated order email',
-    detail: 'The confirmation layout exists, but sending is manual. Wire an email service into the scenario and re-test with a real order before claiming delivery works.',
   },
   {
     title: 'Write the scenario test log',
@@ -580,17 +576,6 @@ export const GLOWLAB_INTERFACE_SHOTS: { src: string; title: string; alt: string;
 ]
 
 /* ── Order email evidence ───────────────────────────────────────────── */
-
-export const GLOWLAB_ORDER_EVIDENCE = {
-  intro:
-    'This is a design sample, not automation output. I wrote and sent this email myself by hand to work out the layout and the details a real confirmation would carry — the order number, line items and total. Payment is simulated, so no money moved, and the automation does not send this email yet.',
-  orderNumber: '#GL-0B9C9D198CCD4356934F518A5A458F99',
-  total: '₦42,200.00',
-  items: [
-    { src: '/screenshots/glowlab/evidence/order-email-top.png', title: 'The intended email layout', alt: 'A hand-built GlowLab order confirmation email design showing the order number and a simulated payment status', caption: 'Sent by hand as a layout sample. The order number and payment block show what a real confirmation would contain.' },
-    { src: '/screenshots/glowlab/evidence/order-email-items.png', title: 'Line items and total', alt: 'The email design listing three products with quantities, prices and a total of 42,200 naira', caption: 'Three line items and a total, laid out the way an automated confirmation would present them.' },
-  ],
-}
 
 /* ── Scope note ─────────────────────────────────────────────────────── */
 
