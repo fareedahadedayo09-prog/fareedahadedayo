@@ -2,20 +2,27 @@ import { chromium } from 'playwright'
 import { mkdir } from 'node:fs/promises'
 
 const OUT = 'public/screenshots/glowlab'
+const BASE = 'https://glow-lab-puce.vercel.app'
 await mkdir(OUT, { recursive: true })
 
 const browser = await chromium.launch()
-async function shoot(name, url, { width, height, full = false, dsf = 2 } = {}) {
-  const ctx = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: dsf })
-  const page = await ctx.newPage()
-  await page.goto(url, { waitUntil: 'networkidle', timeout: 90000 })
-  await page.waitForTimeout(2500)
-  await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: full })
-  await ctx.close()
-  console.log('captured', name)
-}
+const ctx = await browser.newContext({ viewport: { width: 1440, height: 940 }, deviceScaleFactor: 2 })
+const page = await ctx.newPage()
 
-await shoot('desktop-home', 'https://glow-lab-puce.vercel.app/', { width: 1440, height: 940 })
-await shoot('desktop-products', 'https://glow-lab-puce.vercel.app/products', { width: 1440, height: 940 })
-await shoot('mobile-home', 'https://glow-lab-puce.vercel.app/', { width: 430, height: 932, dsf: 3 })
+// Discover the store's own pages (evidence only, no modification).
+await page.goto(BASE, { waitUntil: 'networkidle', timeout: 90000 })
+const links = await page.$$eval('a[href]', (as) => Array.from(new Set(as.map((a) => a.getAttribute('href')))))
+console.log('LINKS', JSON.stringify(links))
+
+// Lumi chat panel: open and ask a real question.
+await page.goto(BASE, { waitUntil: 'networkidle' })
+await page.getByRole('button', { name: /chat with lumi/i }).first().click()
+await page.waitForTimeout(1200)
+await page.screenshot({ path: `${OUT}/lumi-chat-open.png` })
+const input = page.locator('textarea, input[type="text"]').last()
+await input.fill('Show me a simple morning routine under 20,000')
+await input.press('Enter')
+await page.waitForTimeout(9000)
+await page.screenshot({ path: `${OUT}/lumi-chat-reply.png` })
 await browser.close()
+console.log('done')
