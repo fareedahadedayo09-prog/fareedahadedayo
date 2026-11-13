@@ -8,7 +8,7 @@
  *
  *    1. What the live demo storefront actually showed when it was checked.
  *    2. What the project is designed to do across Make.com, Supabase,
- *       Airtable, Klaviyo and the Lumi assistant.
+ *       Airtable and the Lumi assistant.
  *    3. What is still being built, tested or reviewed.
  *
  *  Rules followed here:
@@ -27,12 +27,13 @@ export const GLOWLAB_DEMO_URL = 'https://glow-lab-puce.vercel.app/'
 /** Label shown on every status surface for this project. */
 export const GLOWLAB_STATUS_LABEL = 'In Progress'
 
-export type BuildState = 'shipped' | 'in-progress' | 'review'
+export type BuildState = 'shipped' | 'in-progress' | 'review' | 'planned'
 
 export const BUILD_STATE_LABEL: Record<BuildState, string> = {
   shipped: 'Visible in the live demo',
   'in-progress': 'Still being built',
   review: 'Needs review',
+  planned: 'Planned · not connected yet',
 }
 
 /* ── Stack ──────────────────────────────────────────────────────────── */
@@ -66,7 +67,7 @@ export const GLOWLAB_STACK: StackItem[] = [
   },
   {
     name: 'Klaviyo',
-    role: 'Customer follow-up: holds the reminder sequence and the recovery link.',
+    role: 'Planned follow-up layer for reminders. Not integrated yet — kept in the design, not connected.',
     layer: 'messaging',
   },
   {
@@ -146,15 +147,15 @@ export const GLOWLAB_SOLUTION: { title: string; kicker: string; detail: string; 
     ],
   },
   {
-    title: 'The abandoned-cart prototype',
-    kicker: 'Make.com · Supabase · Airtable · Klaviyo',
+    title: 'The checkout automation',
+    kicker: 'Make.com · Supabase · Airtable',
     detail:
-      'A separate automation receives the checkout event, checks consent, writes the operational record and hands the follow-up to Klaviyo. Reminder spacing is shortened so the whole sequence can be watched in a demo session.',
+      'A separate automation receives the checkout event, checks consent and writes the operational record. Outbound email — an order confirmation and the abandoned-cart reminder sequence — is still being built, so nothing is sent to a customer yet.',
     points: [
       'Make.com runs the scenario and holds the branching logic.',
       'Supabase keeps the order and customer data behind the event.',
       'Airtable shows each run and its current stage for the operator.',
-      'Klaviyo holds the reminder sequence and the recovery link.',
+      'Message copy and the order-email layout exist as a design, not as an automated send.',
     ],
   },
 ]
@@ -247,8 +248,8 @@ export const GLOWLAB_ARCHITECTURE: {
           id: 'klaviyo',
           title: 'Klaviyo',
           meta: 'Reminder sequence',
-          detail: 'Holds the follow-up templates and the recovery link back to the cart, triggered by Make.com.',
-          state: 'in-progress',
+          detail: 'Planned home for the abandoned-cart reminder sequence and recovery link. Not integrated yet.',
+          state: 'planned',
         },
       ],
     },
@@ -257,7 +258,7 @@ export const GLOWLAB_ARCHITECTURE: {
     { from: 'Checkout completed', to: 'Make.com webhook', label: 'order event, customer and cart payload' },
     { from: 'Make.com', to: 'Supabase', label: 'read and update the order record' },
     { from: 'Make.com', to: 'Airtable', label: 'write the run and its current stage' },
-    { from: 'Consent passed', to: 'Klaviyo', label: 'trigger the shortened reminder sequence' },
+    { from: 'Abandoned cart', to: 'Klaviyo', label: 'planned reminder sequence — not connected yet' },
     { from: 'Lumi', to: 'Model provider', label: 'prompt with catalogue context' },
   ],
   note:
@@ -310,17 +311,17 @@ export const GLOWLAB_WORKFLOW: WorkflowNode[] = [
   {
     id: 'handoff',
     step: '05',
-    title: 'Hand off to Klaviyo',
+    title: 'Prepare the order message',
     detail:
-      'If consent passed, Make.com triggers the reminder sequence in Klaviyo using shortened demo intervals rather than production timings. If consent did not pass, the run stops here and is recorded as suppressed.',
+      'The scenario assembles the order details — order number, line items, total — that a confirmation email would need. The send step itself is not connected yet.',
     kind: 'message',
   },
   {
     id: 'reminder',
     step: '06',
-    title: 'Reminder with a recovery link',
+    title: 'Reminder sequence (planned)',
     detail:
-      'The follow-up points back to the cart so the shopper can continue where they stopped. The link and the message copy live in Klaviyo.',
+      'The abandoned-cart reminder with a recovery link back to the cart is designed but not connected. Klaviyo is the intended home for it; that integration has not been built.',
     kind: 'message',
   },
   {
@@ -362,10 +363,10 @@ export const GLOWLAB_DECISIONS: Decision[] = [
     tradeoff: 'The same fact is written twice, so the Airtable view can drift from Supabase if a run fails between the two writes.',
   },
   {
-    service: 'Klaviyo',
-    choice: 'Follow-up handled by an email platform',
-    why: 'Sending, templates, unsubscribe handling and delivery reporting belong to a tool built for them. The automation decides whether to send; Klaviyo owns how.',
-    tradeoff: 'The sequence can only be as good as the handoff, and the demo storefront cannot verify what Klaviyo actually delivered.',
+    service: 'Klaviyo (planned)',
+    choice: 'Reminder sequences to an email platform, once integrated',
+    why: 'Sequenced follow-up, templates and unsubscribe handling belong to a tool built for them. The automation should decide whether to send; Klaviyo should own how.',
+    tradeoff: 'Not integrated yet. Until it is, there is no reminder sequence in place and no delivered-message reporting for follow-up.',
   },
   {
     service: 'LLM for Lumi',
@@ -387,7 +388,7 @@ export type TestCheck = {
   area: string
   method: string
   result: string
-  state: 'verified' | 'observed' | 'unverified'
+  state: 'verified' | 'observed' | 'unverified' | 'planned'
 }
 
 export const GLOWLAB_VERIFIED_ON = '13 November 2026'
@@ -421,16 +422,25 @@ export const GLOWLAB_TESTS: TestCheck[] = [
     state: 'verified',
   },
   {
-    area: 'Make.com scenario run',
-    method: 'Would require access to the scenario and its run history.',
-    result: 'Not reproduced on this page. The automation is documented from the build, not re-executed here.',
-    state: 'unverified',
+    area: 'Checkout → Make.com webhook',
+    method: 'Placed an order through the demo checkout and followed it into the scenario.',
+    result:
+      'The checkout event reached the scenario and the order ran through the automation steps.',
+    state: 'verified',
   },
   {
-    area: 'Klaviyo delivery',
-    method: 'Would require a real recipient and a production sending domain.',
-    result: 'Not tested. No message has been sent to a real customer.',
-    state: 'unverified',
+    area: 'Consent gate and order records',
+    method: 'Ran orders through the scenario and read the resulting records in Supabase and Airtable.',
+    result:
+      'The consent check ran before follow-up, and order records appeared in Supabase with a matching tracking row in Airtable.',
+    state: 'verified',
+  },
+  {
+    area: 'Klaviyo reminder sequence',
+    method: 'Klaviyo has not been integrated with the scenario yet.',
+    result:
+      'Not built, so there is nothing to test. The abandoned-cart reminder and recovery link remain planned work.',
+    state: 'planned',
   },
 ]
 
@@ -449,17 +459,17 @@ export const GLOWLAB_PROGRESS: { title: string; caption: string; items: Progress
     items: [
       { title: 'React storefront', state: 'done', note: 'Catalogue, product views, cart and demo checkout are live on Vercel.' },
       { title: 'Demo checkout flow', state: 'done', note: 'Order summary, simulated payment notice and confirmation step.' },
-      { title: 'Policy and FAQ content', state: 'done', note: 'Shipping, payment, returns and privacy answers written for a demonstration store.' },
+      { title: 'Policy and FAQ content', state: 'done', note: 'Shipping, payment, returns and privacy answers, plus demo-payment wording at checkout.' },
       { title: 'Lumi chat interface', state: 'done', note: 'Panel, starter prompts and disclaimers are in place.' },
+      { title: 'Checkout → Make.com webhook', state: 'done', note: 'The storefront hands the checkout event to the scenario, which runs the order through.' },
+      { title: 'Consent gate before follow-up', state: 'done', note: 'The scenario checks consent before any follow-up step runs.' },
+      { title: 'Supabase order records', state: 'done', note: 'Order and customer records are written to the backend.' },
     ],
   },
   {
     title: 'Built, still being tested',
-    caption: 'Exists, evidence is partial',
+    caption: 'Exists, edge cases remain',
     items: [
-      { title: 'Checkout → Make.com webhook', state: 'active', note: 'The event handoff exists; a repeatable test log is not yet written up.' },
-      { title: 'Consent gate before follow-up', state: 'active', note: 'Rule is implemented in the scenario; edge cases are still being worked through.' },
-      { title: 'Supabase order records', state: 'active', note: 'Backend data handling is in place; the schema and access rules still need review.' },
       { title: 'Airtable run tracking', state: 'active', note: 'Operational tracking is set up; failure states still need a clean path.' },
     ],
   },
@@ -468,7 +478,7 @@ export const GLOWLAB_PROGRESS: { title: string; caption: string; items: Progress
     caption: 'Actively being built',
     items: [
       { title: 'Lumi answer reliability', state: 'active', note: 'Returned a busy state during checks; reliability and retry handling still need work before answers can be relied on.' },
-      { title: 'Klaviyo reminder sequence', state: 'active', note: 'Sequence and recovery link are being set up; delivery is untested.' },
+      { title: 'Order confirmation email send', state: 'active', note: 'Designed, not connected — nothing is sent to a customer yet.' },
       { title: 'Send-time exit checks', state: 'active', note: 'Purchase and opt-out should stop a scheduled reminder; this re-check is unfinished.' },
     ],
   },
@@ -478,6 +488,7 @@ export const GLOWLAB_PROGRESS: { title: string; caption: string; items: Progress
     items: [
       { title: 'Data handling review', state: 'review', note: 'Two stores of customer data need a written retention and access policy.' },
       { title: 'Lumi answer quality', state: 'review', note: 'Responses need reviewing against catalogue facts and the medical disclaimer.' },
+      { title: 'Klaviyo integration', state: 'review', note: 'Not started. The reminder sequence and recovery link are designed but not connected.' },
       { title: 'Failure handling', state: 'review', note: 'What happens when a service call fails mid-run is not yet defined.' },
       { title: 'Mobile pass on the storefront', state: 'review', note: 'Layout holds, but the checkout and chat need a deliberate small-screen review.' },
     ],

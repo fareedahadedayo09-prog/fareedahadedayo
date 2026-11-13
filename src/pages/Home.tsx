@@ -13,7 +13,15 @@ import { problemCategories } from '../data/problems'
 import { services } from '../data/services'
 import { allTools } from '../data/tools'
 
-const featured = projects.filter((p) => p.status !== 'planned').slice(0, 3)
+// GlowLab is the flagship build: it is the only project with a live demo, so it
+// leads. The rest keep their existing order after it.
+const FEATURED_SLUGS = ['glowlab-lifecycle', 'order-confirmation-risk-check', 'returns-refunds-handler']
+
+const featured = [
+  ...FEATURED_SLUGS.map((slug) => projects.find((p) => p.slug === slug)).filter(
+    (p): p is (typeof projects)[number] => Boolean(p) && p!.status !== 'planned',
+  ),
+]
 
 const bookingChecks = [
   'Understand your current process',
@@ -68,8 +76,8 @@ export function Home() {
                 <span className="eyebrow"><span className="eyebrow__num">01</span>Projects</span>
                 <h2>Projects you can inspect in detail</h2>
                 <p className="lede">
-                  Explore how the workflows handle orders, returns and leads. Each case study includes the process,
-                  human handoffs, testing and limitations.
+                  Explore how the workflows handle orders, returns, leads and storefront automation. Each case
+                  study includes the process, human handoffs, testing and limitations.
                 </p>
               </div>
               <Link to="/projects" className="btn btn--secondary">

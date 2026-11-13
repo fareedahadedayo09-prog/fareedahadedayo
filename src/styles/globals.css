@@ -4538,3 +4538,7 @@ a.contact-row:hover .contact-row__value {
   .gl-status__dot,
   .gl-demo__pulse { animation: none; }
 }
+
+/* GlowLab: order email evidence metadata row */
+.gl-node--planned { border-left: 2px dashed var(--border-strong); }
+.gl-node__state--planned { color: var(--text-faint); font-style: italic; }
