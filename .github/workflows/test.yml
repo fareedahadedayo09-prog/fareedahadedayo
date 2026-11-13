@@ -1,7 +1,7 @@
-name: test
-on: workflow_dispatch
+name: smoke
+on: push
 jobs:
   t:
     runs-on: ubuntu-latest
     steps:
-      - run: echo hi
+      - run: echo hello-from-actions
