@@ -20,6 +20,7 @@ async function ready(url) {
 }
 
 ;(async () => {
+  try {
   await ready('http://127.0.0.1:4173/')
   const browser = await chromium.launch()
   const pages = [
@@ -43,8 +44,9 @@ async function ready(url) {
   await browser.close()
   server.kill('SIGTERM')
   console.log('captured')
-})().catch(async (e) => {
-  console.error(e)
-  server.kill('SIGTERM')
-  process.exit(1)
-})
+  } catch (e) {
+    fs.writeFileSync(`${OUT}/error.txt`, String(e && e.stack || e))
+    server.kill('SIGTERM')
+    process.exit(1)
+  }
+})()
