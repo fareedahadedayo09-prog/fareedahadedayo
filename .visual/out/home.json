@@ -1,0 +1,22 @@
+{
+  "titles": [
+    "GlowLab — AI-Assisted E-commerce Platform",
+    "COD Order Confirmation & Risk Assessment",
+    "Returns & Refunds Policy Handler"
+  ],
+  "imgs": [
+    {
+      "src": "/screenshots/glowlab/glowlab-home-desktop.jpg",
+      "ok": true
+    },
+    {
+      "src": "/screenshots/cod-order-confirmation-workflow.png",
+      "ok": true
+    },
+    {
+      "src": "/screenshots/returns-refund-handler-workflow.png",
+      "ok": true
+    }
+  ],
+  "errs": []
+}
