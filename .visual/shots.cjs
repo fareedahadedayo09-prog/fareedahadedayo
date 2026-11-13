@@ -41,7 +41,11 @@ async function ready(url) {
     await page.goto(`http://127.0.0.1:4173${path}`, { waitUntil: 'networkidle' })
     await wait(1200)
     await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: full })
-    fs.writeFileSync(`${OUT}/${name}.json`, JSON.stringify({ errors, h1: await page.locator('h1').first().innerText().catch(() => '') }, null, 2))
+    const links = await page.$$eval('a[href]', (as) => as.map((a) => a.getAttribute('href')))
+    const gl = name.startsWith('glowlab')
+    const imgs = gl ? await page.$$eval('img', (is) => is.map((i) => ({ src: i.getAttribute('src'), ok: i.naturalWidth > 0 }))) : []
+    const anchors = gl ? await page.$$eval('[id]', (els) => els.map((e) => e.id)) : []
+    fs.writeFileSync(`${OUT}/${name}.json`, JSON.stringify({ errors, h1: await page.locator('h1').first().innerText().catch(() => ''), external: [...new Set(links.filter((l) => l && l.startsWith('http')))], hash: [...new Set(links.filter((l) => l && l.startsWith('#')))], imgs, anchors }, null, 2))
     await ctx.close()
   }
   await browser.close()
