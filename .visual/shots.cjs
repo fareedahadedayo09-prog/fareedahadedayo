@@ -27,6 +27,9 @@ async function ready(url) {
     ['glowlab-desktop', '/projects/glowlab-lifecycle', 1440, 1000, true],
     ['glowlab-mobile', '/projects/glowlab-lifecycle', 390, 844, true],
     ['projects-index', '/projects', 1440, 1000, false],
+    ['glowlab-section-arch', '/projects/glowlab-lifecycle#architecture', 1440, 1000, false],
+    ['glowlab-section-progress', '/projects/glowlab-lifecycle#progress', 1440, 1000, false],
+    ['glowlab-mobile-preview', '/projects/glowlab-lifecycle#preview', 390, 844, false],
     ['cod-study', '/projects/order-confirmation-risk-check', 1440, 1000, false],
   ]
   for (const [name, path, w, h, full] of pages) {

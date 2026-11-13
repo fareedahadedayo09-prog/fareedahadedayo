@@ -4029,22 +4029,26 @@ a.contact-row:hover .contact-row__value {
 }
 
 .gl-arch__layers {
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+  align-items: stretch;
 }
 
 .gl-arch__layer {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+  padding: 0.7rem 0.7rem 0.85rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
 }
 
 .gl-arch__layer-head {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.6rem;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
 .gl-arch__layer-title {
@@ -4061,21 +4065,21 @@ a.contact-row:hover .contact-row__value {
 }
 
 .gl-arch__nodes {
-  display: grid;
-  gap: 0.7rem;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  flex: 1;
 }
-
-.gl-arch__nodes--1 { grid-template-columns: minmax(0, 1fr); }
 
 .gl-node {
   border: 1px solid var(--border-strong);
   border-radius: var(--radius);
   background: var(--surface);
-  padding: 0.8rem 0.9rem;
+  padding: 0.75rem 0.8rem;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.3rem;
+  flex: 1;
 }
 
 .gl-node--in-progress { border-left: 2px solid var(--status-progress); }
@@ -4084,10 +4088,8 @@ a.contact-row:hover .contact-row__value {
 
 .gl-node__head {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.3rem 0.6rem;
+  flex-direction: column;
+  gap: 0.1rem;
 }
 
 .gl-node__title { margin: 0; font-size: 0.92rem; }
@@ -4374,8 +4376,8 @@ a.contact-row:hover .contact-row__value {
 .gl-progress {
   margin-top: 1.4rem;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
 }
 
 .gl-progress__col {
@@ -4413,9 +4415,10 @@ a.contact-row:hover .contact-row__value {
 }
 
 .gl-progress__list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 0.75rem;
+  align-content: start;
 }
 
 .gl-progress__item {
@@ -4506,8 +4509,13 @@ a.contact-row:hover .contact-row__value {
 
 /* ── Responsive ────────────────────────────────────────────────── */
 
-@media (max-width: 1100px) {
-  .gl-progress { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 900px) {
+  .gl-arch__layers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .gl-arch__layers { grid-template-columns: minmax(0, 1fr); }
+  .gl-progress { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 640px) {
