@@ -451,16 +451,20 @@ export const projects: Project[] = [
   // ─────────────────── 4. GLOWLAB LIFECYCLE ───────────────────
   {
     slug: 'glowlab-lifecycle',
-    name: 'GlowLab E-commerce Lifecycle Prototype',
+    name: 'GlowLab — AI-Assisted E-commerce Platform',
     tagline:
-      'A working prototype of event-driven lifecycle messaging for a fictional skincare brand.',
+      'A fictional skincare storefront with an AI shopping assistant, connected to an abandoned-cart automation prototype. Ongoing work.',
     status: 'progress',
-    statusLabel: STATUS_LABELS.progress,
-    statusDetail: 'An ongoing prototype in progress. The documented walkthrough uses simulated events and stages messages in Airtable rather than sending them.',
-    tools: ['n8n', 'tally', 'airtable', 'gmail', 'shopify'],
-    timeline: 'Prototype in progress',
+    statusLabel: 'In Progress',
+    statusDetail:
+      'Ongoing project. The storefront and Lumi assistant are live as a demo; the Make.com, Supabase, Airtable and Klaviyo automation is a prototype still being tested and reviewed. No recovered orders, conversion gains or customer results are claimed.',
+    tools: ['React', 'Make.com', 'Supabase', 'Airtable', 'Klaviyo', 'LLM integration', 'APIs & webhooks'],
+    timeline: 'Ongoing project',
     categories: ['ecommerce-ops', 'customer-experience', 'ai-data'],
-    heroVisual: { caption: 'Lifecycle automation flow (prototype)' },
+    heroVisual: {
+      image: '/screenshots/glowlab/glowlab-home-desktop.jpg',
+      caption: 'The live GlowLab demo storefront',
+    },
     hasSimulator: true,
     problem: {
       summary:
