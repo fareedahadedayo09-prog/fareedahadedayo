@@ -1,5 +1,7 @@
-name: screenshot
-on: workflow_dispatch
+name: capture
+on:
+  push:
+    paths: ['capture-trigger.txt']
 permissions:
   contents: write
 jobs:
