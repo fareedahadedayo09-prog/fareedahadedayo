@@ -439,7 +439,7 @@ export const GLOWLAB_TESTS: TestCheck[] = [
     area: 'Klaviyo reminder sequence',
     method: 'Klaviyo has not been integrated with the scenario yet.',
     result:
-      'Not built, so there is nothing to test. The abandoned-cart reminder and recovery link remain planned work — the order confirmation above is a separate, earlier step.',
+      'Not built, so there is nothing to test. The abandoned-cart reminder and recovery link remain planned work.',
     state: 'planned',
   },
 ]
@@ -478,7 +478,7 @@ export const GLOWLAB_PROGRESS: { title: string; caption: string; items: Progress
     caption: 'Actively being built',
     items: [
       { title: 'Lumi answer reliability', state: 'active', note: 'Returned a busy state during checks; reliability and retry handling still need work before answers can be relied on.' },
-      { title: 'Order confirmation email send', state: 'active', note: 'Layout exists as a manual sample; connecting an automated send is unfinished.' },
+      { title: 'Order confirmation email send', state: 'active', note: 'Designed, not connected — nothing is sent to a customer yet.' },
       { title: 'Send-time exit checks', state: 'active', note: 'Purchase and opt-out should stop a scheduled reminder; this re-check is unfinished.' },
     ],
   },
@@ -574,8 +574,6 @@ export const GLOWLAB_INTERFACE_SHOTS: { src: string; title: string; alt: string;
       'The assistant panel during a check on 13 November 2026. The busy state is shown rather than a successful answer.',
   },
 ]
-
-/* ── Order email evidence ───────────────────────────────────────────── */
 
 /* ── Scope note ─────────────────────────────────────────────────────── */
 

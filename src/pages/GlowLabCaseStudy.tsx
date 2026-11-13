@@ -342,9 +342,9 @@ export function GlowLabCaseStudy() {
               </h2>
             </div>
             <p>
-              The board below is the honest version of a status panel. Items move right to left only when there is
-              evidence, and the project stays <strong style={{ color: 'var(--text)' }}>In Progress</strong> while
-              anything remains in the last two columns.
+              The board below is the honest version of a status panel. Items only move left when the work actually
+              runs, and the project stays <strong style={{ color: 'var(--text)' }}>In Progress</strong> while anything
+              remains in the last two columns.
             </p>
             <GlowLabProgress />
           </section>
