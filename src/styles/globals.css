@@ -4068,7 +4068,6 @@ a.contact-row:hover .contact-row__value {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
-  flex: 1;
 }
 
 .gl-node {
@@ -4114,7 +4113,8 @@ a.contact-row:hover .contact-row__value {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-faint);
-  margin-top: 0.15rem;
+  margin-top: auto;
+  padding-top: 0.35rem;
 }
 
 .gl-node__state--in-progress { color: var(--status-progress); }
