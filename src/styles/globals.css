@@ -4538,3 +4538,31 @@ a.contact-row:hover .contact-row__value {
   .gl-status__dot,
   .gl-demo__pulse { animation: none; }
 }
+
+/* GlowLab: order email evidence metadata row */
+.gl-evidence-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  margin: 0.9rem 0 0;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.gl-evidence-meta .mono {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-left: 0.4rem;
+}
+
+.gl-evidence-meta .mono:first-child { margin-left: 0; }
+
+.gl-node--planned { border-left: 2px dashed var(--border-strong); }
+.gl-node__state--planned { color: var(--text-faint); font-style: italic; }

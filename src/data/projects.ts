@@ -458,7 +458,7 @@ export const projects: Project[] = [
     statusLabel: 'In Progress',
     statusDetail:
       'Ongoing project. The storefront and Lumi assistant are live as a demo; the Make.com, Supabase, Airtable and Klaviyo automation is a prototype still being tested and reviewed. No recovered orders, conversion gains or customer results are claimed.',
-    tools: ['react', 'make', 'supabase', 'airtable', 'klaviyo', 'llm', 'webhooks'],
+    tools: ['react', 'make', 'supabase', 'airtable', 'fmail', 'klaviyo', 'llm', 'webhooks'],
     timeline: 'Ongoing project',
     categories: ['ecommerce-ops', 'customer-experience', 'ai-data'],
     heroVisual: {

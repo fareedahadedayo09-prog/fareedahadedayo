@@ -12,6 +12,7 @@ import {
   GLOWLAB_DECISIONS,
   GLOWLAB_DEMO_URL,
   GLOWLAB_NEXT_STEPS,
+  GLOWLAB_ORDER_EVIDENCE,
   GLOWLAB_OVERVIEW,
   GLOWLAB_PROBLEM,
   GLOWLAB_SCOPE_NOTE,
@@ -39,6 +40,7 @@ const TEST_STATE_COPY: Record<string, { label: string; className: string }> = {
   verified: { label: 'Checked', className: 'badge--done' },
   observed: { label: 'Observed issue', className: 'badge--progress' },
   unverified: { label: 'Not reproduced here', className: 'badge--planned' },
+  planned: { label: 'Not built yet', className: 'badge--planned' },
 }
 
 /**
@@ -326,6 +328,41 @@ export function GlowLabCaseStudy() {
                 )
               })}
             </div>
+            <section id="evidence" className="evidence-section" style={{ marginTop: '1.5rem' }}>
+              <details className="evidence-details">
+                <summary className="evidence-summary">
+                  <span>
+                    <span className="mono evidence-label">Evidence</span>
+                    <strong>See the order confirmation email</strong>
+                  </span>
+                  <span className="evidence-toggle" aria-hidden="true">+</span>
+                </summary>
+                <div className="evidence-body">
+                  <p className="muted">{GLOWLAB_ORDER_EVIDENCE.intro}</p>
+                  <p className="gl-evidence-meta">
+                    <span className="mono">Order</span> {GLOWLAB_ORDER_EVIDENCE.orderNumber}
+                    <span className="mono">Total</span> {GLOWLAB_ORDER_EVIDENCE.total}
+                  </p>
+                  {GLOWLAB_ORDER_EVIDENCE.items.map((item) => (
+                    <figure className="evidence-figure" key={item.src}>
+                      <figcaption>
+                        <h3>{item.title}</h3>
+                        <p className="muted">{item.caption}</p>
+                      </figcaption>
+                      <a href={item.src} target="_blank" rel="noreferrer" aria-label={`Open ${item.title} at full size`}>
+                        <img src={item.src} alt={item.alt} loading="lazy" decoding="async" />
+                      </a>
+                    </figure>
+                  ))}
+                  <p className="faint" style={{ fontSize: '0.78rem', marginTop: '1rem' }}>
+                    What this proves: the checkout event reached the automation and produced a correct order email.
+                    What it does not prove: delivery reporting, bounce handling, or the abandoned-cart reminder
+                    sequence, which is still planned.
+                  </p>
+                </div>
+              </details>
+            </section>
+
             <p className="faint" style={{ fontSize: '0.82rem', marginTop: '1rem' }}>
               Checks carried out on {GLOWLAB_VERIFIED_ON}. A build that loads is not the same as a system that has been
               proven under real load, and this page does not pretend otherwise.
