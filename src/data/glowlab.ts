@@ -459,9 +459,8 @@ export const GLOWLAB_PROGRESS: { title: string; caption: string; items: Progress
     items: [
       { title: 'React storefront', state: 'done', note: 'Catalogue, product views, cart and demo checkout are live on Vercel.' },
       { title: 'Demo checkout flow', state: 'done', note: 'Order summary, simulated payment notice and confirmation step.' },
-      { title: 'Policy and FAQ content', state: 'done', note: 'Shipping, payment, returns and privacy answers written for a demonstration store.' },
+      { title: 'Policy and FAQ content', state: 'done', note: 'Shipping, payment, returns and privacy answers, plus demo-payment wording at checkout.' },
       { title: 'Lumi chat interface', state: 'done', note: 'Panel, starter prompts and disclaimers are in place.' },
-      { title: 'Storefront policies and checkout copy', state: 'done', note: 'Demo-payment wording, delivery and returns answers are in place.' },
     ],
   },
   {
