@@ -3861,6 +3861,22 @@ a.contact-row:hover .contact-row__value {
   transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
+.gl-shots__fallback {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 1rem;
+  height: 100%;
+  border: 1px dashed var(--border-strong);
+  border-radius: 12px;
+  font-size: 0.78rem;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.gl-shots__fallback .mono { font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
 .gl-shots__item a:hover img { transform: scale(1.02); }
 
 .gl-shots__item figcaption {
@@ -4490,7 +4506,7 @@ a.contact-row:hover .contact-row__value {
 
 /* ── Responsive ────────────────────────────────────────────────── */
 
-@media (max-width: 1000px) {
+@media (max-width: 1100px) {
   .gl-progress { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
@@ -4503,7 +4519,9 @@ a.contact-row:hover .contact-row__value {
   .gl-demo__frame--desktop { aspect-ratio: 4 / 3; }
   .gl-demo__foot { flex-direction: column; align-items: stretch; }
   .gl-demo__foot .btn { width: 100%; }
-  .gl-shots { grid-template-columns: minmax(0, 1fr); }
+  .gl-shots { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; }
+  .gl-shots__item a { aspect-ratio: auto; display: flex; align-items: flex-start; justify-content: center; }
+  .gl-shots__item img { object-fit: contain; height: auto; max-height: 420px; }
   .gl-tests__method .mono,
   .gl-tests__result .mono { min-width: 0; display: block; margin-bottom: 0.1rem; }
 }

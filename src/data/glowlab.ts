@@ -417,7 +417,7 @@ export const GLOWLAB_TESTS: TestCheck[] = [
     area: 'Embedding the demo',
     method: 'Read the storefront’s response headers.',
     result:
-      'The storefront sends a Content-Security-Policy that restricts framing to its own origin and the preview host, so it is shown here as a screenshot rather than an iframe.',
+      'The storefront sends a Content-Security-Policy (frame-ancestors) that restricts framing to its own origin, so it is shown here as a screenshot with a direct link rather than an iframe.',
     state: 'verified',
   },
   {

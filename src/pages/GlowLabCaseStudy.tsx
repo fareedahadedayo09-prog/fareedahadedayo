@@ -6,11 +6,11 @@ import { LiveDemoPreview } from '../components/GlowLabLiveDemo'
 import { GlowLabArchitecture } from '../components/GlowLabArchitecture'
 import { GlowLabWorkflow } from '../components/GlowLabWorkflow'
 import { GlowLabProgress, ProgressIcon } from '../components/GlowLabProgress'
+import { GlowLabShots } from '../components/GlowLabShots'
 import { getProject, relatedProjects } from '../data/projects'
 import {
   GLOWLAB_DECISIONS,
   GLOWLAB_DEMO_URL,
-  GLOWLAB_INTERFACE_SHOTS,
   GLOWLAB_NEXT_STEPS,
   GLOWLAB_OVERVIEW,
   GLOWLAB_PROBLEM,
@@ -173,24 +173,7 @@ export function GlowLabCaseStudy() {
             </p>
             <LiveDemoPreview />
 
-            <div className="gl-shots">
-              {GLOWLAB_INTERFACE_SHOTS.map((shot) => (
-                <figure key={shot.src} className="gl-shots__item">
-                  <a
-                    href={shot.src}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`Open the ${shot.title} screenshot at full size`}
-                  >
-                    <img src={shot.src} alt={shot.alt} loading="lazy" decoding="async" />
-                  </a>
-                  <figcaption>
-                    <strong>{shot.title}</strong>
-                    <span>{shot.caption}</span>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
+            <GlowLabShots />
           </section>
 
           {/* ───── Problem ───── */}
