@@ -333,7 +333,7 @@ export function GlowLabCaseStudy() {
                 <summary className="evidence-summary">
                   <span>
                     <span className="mono evidence-label">Evidence</span>
-                    <strong>See the order confirmation email</strong>
+                    <strong>View the order email design sample</strong>
                   </span>
                   <span className="evidence-toggle" aria-hidden="true">+</span>
                 </summary>
@@ -355,9 +355,10 @@ export function GlowLabCaseStudy() {
                     </figure>
                   ))}
                   <p className="faint" style={{ fontSize: '0.78rem', marginTop: '1rem' }}>
-                    What this proves: the checkout event reached the automation and produced a correct order email.
-                    What it does not prove: delivery reporting, bounce handling, or the abandoned-cart reminder
-                    sequence, which is still planned.
+                    <strong style={{ color: 'var(--text)' }}>Read this carefully.</strong> This shows the email design I
+                    want the system to send. It was produced by hand, not by the automation, so it is not evidence that
+                    sending works. What is still unbuilt: an automated send, delivery reporting, and the abandoned-cart
+                    reminder sequence.
                   </p>
                 </div>
               </details>

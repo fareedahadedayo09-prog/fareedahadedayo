@@ -66,13 +66,8 @@ export const GLOWLAB_STACK: StackItem[] = [
     layer: 'data',
   },
   {
-    name: 'Fmail',
-    role: 'Sending: delivers the order confirmation email to the customer’s inbox.',
-    layer: 'messaging',
-  },
-  {
     name: 'Klaviyo',
-    role: 'Planned follow-up layer. Not integrated yet — kept in the design, not connected.',
+    role: 'Planned follow-up layer for reminders. Not integrated yet — kept in the design, not connected.',
     layer: 'messaging',
   },
   {
@@ -153,14 +148,14 @@ export const GLOWLAB_SOLUTION: { title: string; kicker: string; detail: string; 
   },
   {
     title: 'The checkout automation',
-    kicker: 'Make.com · Supabase · Airtable · Fmail',
+    kicker: 'Make.com · Supabase · Airtable',
     detail:
-      'A separate automation receives the checkout event, writes the operational record and sends the order confirmation through Fmail. An abandoned-cart reminder sequence with Klaviyo is still planned, not yet connected.',
+      'A separate automation receives the checkout event, checks consent and writes the operational record. Outbound email — an order confirmation and the abandoned-cart reminder sequence — is still being built, so nothing is sent to a customer yet.',
     points: [
       'Make.com runs the scenario and holds the branching logic.',
       'Supabase keeps the order and customer data behind the event.',
       'Airtable shows each run and its current stage for the operator.',
-      'Fmail delivers the order confirmation email, including the order number and line items.',
+      'Message copy and the order-email layout exist as a design, not as an automated send.',
     ],
   },
 ]
@@ -250,13 +245,6 @@ export const GLOWLAB_ARCHITECTURE: {
       caption: 'How the customer hears back',
       nodes: [
         {
-          id: 'fmail',
-          title: 'Fmail',
-          meta: 'Order email',
-          detail: 'Sends the order confirmation email — order number, line items and total — once the checkout event has been processed.',
-          state: 'shipped',
-        },
-        {
           id: 'klaviyo',
           title: 'Klaviyo',
           meta: 'Reminder sequence',
@@ -270,7 +258,6 @@ export const GLOWLAB_ARCHITECTURE: {
     { from: 'Checkout completed', to: 'Make.com webhook', label: 'order event, customer and cart payload' },
     { from: 'Make.com', to: 'Supabase', label: 'read and update the order record' },
     { from: 'Make.com', to: 'Airtable', label: 'write the run and its current stage' },
-    { from: 'Make.com', to: 'Fmail', label: 'send the order confirmation email' },
     { from: 'Abandoned cart', to: 'Klaviyo', label: 'planned reminder sequence — not connected yet' },
     { from: 'Lumi', to: 'Model provider', label: 'prompt with catalogue context' },
   ],
@@ -324,9 +311,9 @@ export const GLOWLAB_WORKFLOW: WorkflowNode[] = [
   {
     id: 'handoff',
     step: '05',
-    title: 'Send the order confirmation',
+    title: 'Prepare the order message',
     detail:
-      'Make.com builds the order email — order number, line items, total — and sends it through Fmail. A copy of the message is what the customer receives in their inbox.',
+      'The scenario assembles the order details — order number, line items, total — that a confirmation email would need. The send step itself is not connected yet.',
     kind: 'message',
   },
   {
@@ -374,12 +361,6 @@ export const GLOWLAB_DECISIONS: Decision[] = [
     choice: 'A separate operational view instead of reading raw database rows',
     why: 'Whoever runs the store should be able to see what happened to a customer without querying a database. One row per run with a stage column is enough for that.',
     tradeoff: 'The same fact is written twice, so the Airtable view can drift from Supabase if a run fails between the two writes.',
-  },
-  {
-    service: 'Fmail',
-    choice: 'Transactional order email sent from the automation',
-    why: 'Order confirmation is a single, deterministic message with no marketing logic. Sending it directly from the scenario keeps one order event in one place.',
-    tradeoff: 'Delivery reports, bounce handling and unsubscribe management are not part of this setup, so the sender has limited visibility if an email fails.',
   },
   {
     service: 'Klaviyo (planned)',
@@ -442,17 +423,17 @@ export const GLOWLAB_TESTS: TestCheck[] = [
   },
   {
     area: 'Make.com scenario run',
-    method: 'Placed a test order through the live storefront myself to check whether the scenario fired.',
+    method: 'A test order was placed through the live storefront.',
     result:
-      'The order was accepted and processed, and a formatted order confirmation email arrived in the inbox shortly afterwards. The email carried the order number and the correct line items, which shows the scenario ran end to end for this path.',
-    state: 'verified',
+      'The order was accepted by the storefront. Whether the scenario itself fired on that order has not been confirmed — no run log or execution record has been reviewed here.',
+    state: 'unverified',
   },
   {
-    area: 'Order confirmation email (Fmail)',
-    method: 'Read the delivered email and compared it with the order summary at checkout.',
+    area: 'Order confirmation email',
+    method: 'Selected an order email and compared it with the order summary at checkout.',
     result:
-      'Order number, three line items and the ₦42,200 total in the email matched the order placed. Sending is handled by Fmail; no delivery or bounce reporting was reviewed.',
-    state: 'verified',
+      'The email is a manually produced design sample: it was written and sent by hand, not generated or delivered by the automation. It shows the intended layout, number and line items — it is not evidence that sending works.',
+    state: 'observed',
   },
   {
     area: 'Klaviyo reminder sequence',
@@ -480,7 +461,7 @@ export const GLOWLAB_PROGRESS: { title: string; caption: string; items: Progress
       { title: 'Demo checkout flow', state: 'done', note: 'Order summary, simulated payment notice and confirmation step.' },
       { title: 'Policy and FAQ content', state: 'done', note: 'Shipping, payment, returns and privacy answers written for a demonstration store.' },
       { title: 'Lumi chat interface', state: 'done', note: 'Panel, starter prompts and disclaimers are in place.' },
-      { title: 'Order confirmation email', state: 'done', note: 'A test order reached the inbox with matching order number, items and total.' },
+      { title: 'Storefront policies and checkout copy', state: 'done', note: 'Demo-payment wording, delivery and returns answers are in place.' },
     ],
   },
   {
@@ -498,7 +479,7 @@ export const GLOWLAB_PROGRESS: { title: string; caption: string; items: Progress
     caption: 'Actively being built',
     items: [
       { title: 'Lumi answer reliability', state: 'active', note: 'Returned a busy state during checks; reliability and retry handling still need work before answers can be relied on.' },
-      { title: 'Fmail sending setup', state: 'active', note: 'Sending works for the order email; bounce and failure reporting not reviewed.' },
+      { title: 'Order confirmation email send', state: 'active', note: 'Layout exists as a manual sample; connecting an automated send is unfinished.' },
       { title: 'Send-time exit checks', state: 'active', note: 'Purchase and opt-out should stop a scheduled reminder; this re-check is unfinished.' },
     ],
   },
@@ -521,6 +502,10 @@ export const GLOWLAB_NEXT_STEPS: { title: string; detail: string }[] = [
   {
     title: 'Make Lumi answer consistently',
     detail: 'Investigate the busy responses seen during checks, add retry and timeout handling, then re-test the starter prompts.',
+  },
+  {
+    title: 'Connect an automated order email',
+    detail: 'The confirmation layout exists, but sending is manual. Wire an email service into the scenario and re-test with a real order before claiming delivery works.',
   },
   {
     title: 'Write the scenario test log',
@@ -599,12 +584,12 @@ export const GLOWLAB_INTERFACE_SHOTS: { src: string; title: string; alt: string;
 
 export const GLOWLAB_ORDER_EVIDENCE = {
   intro:
-    'I placed this order myself through the live demo to check that the automation worked end to end. The email arrived in my inbox; the order number, line items and total match what was submitted. Payment is simulated, so no money moved.',
+    'This is a design sample, not automation output. I wrote and sent this email myself by hand to work out the layout and the details a real confirmation would carry — the order number, line items and total. Payment is simulated, so no money moved, and the automation does not send this email yet.',
   orderNumber: '#GL-0B9C9D198CCD4356934F518A5A458F99',
   total: '₦42,200.00',
   items: [
-    { src: '/screenshots/glowlab/evidence/order-email-top.png', title: 'Confirmation email received', alt: 'GlowLab order confirmation email showing the order number and a simulated payment status', caption: 'The email that arrived after checkout, with its order number and payment status block.' },
-    { src: '/screenshots/glowlab/evidence/order-email-items.png', title: 'Line items and total', alt: 'Order confirmation email listing three products with quantities, prices and a total of 42,200 naira', caption: 'Three line items and the total, matching the order summary at checkout.' },
+    { src: '/screenshots/glowlab/evidence/order-email-top.png', title: 'The intended email layout', alt: 'A hand-built GlowLab order confirmation email design showing the order number and a simulated payment status', caption: 'Sent by hand as a layout sample. The order number and payment block show what a real confirmation would contain.' },
+    { src: '/screenshots/glowlab/evidence/order-email-items.png', title: 'Line items and total', alt: 'The email design listing three products with quantities, prices and a total of 42,200 naira', caption: 'Three line items and a total, laid out the way an automated confirmation would present them.' },
   ],
 }
 
