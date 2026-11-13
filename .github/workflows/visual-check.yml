@@ -16,7 +16,7 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm run build
       - run: npm i playwright@1.48.2 --no-save && npx playwright install --with-deps chromium
-      - run: node .visual/shots.js > .visual/out/log.txt 2>&1 || true
+      - run: mkdir -p .visual/out && node .visual/shots.js > .visual/out/log.txt 2>&1 || true
       - run: ls -la .visual/out && cat .visual/out/log.txt | tail -40
       - run: |
           git config user.name "visual-bot"
