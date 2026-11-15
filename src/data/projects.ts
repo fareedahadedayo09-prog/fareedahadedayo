@@ -136,7 +136,7 @@ export const projects: Project[] = [
     tagline:
       'Routine cash-on-delivery confirmations by email, with staff follow-up for high-value orders and exceptions.',
     status: 'progress',
-    statusLabel: STATUS_LABELS.progress,
+    statusLabel: 'Built · partial verification',
     statusDetail: 'Working build, not currently running. Duplicate detection has been tested; reminder, confirmation and staff-escalation paths still need documented end-to-end test coverage.',
     tools: ['n8n', 'tally', 'airtable', 'gmail'],
     timeline: 'Personal build',
