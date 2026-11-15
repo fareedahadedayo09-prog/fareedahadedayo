@@ -14,9 +14,9 @@ export function ToolsEcosystem() {
               Home
             </Link>
             <span className="eyebrow">Tools &amp; Technologies</span>
-            <h1 className="cs-hero__title">The stack I build with</h1>
+            <h1 className="cs-hero__title">Tools across my builds and learning</h1>
             <p className="lede" style={{ marginTop: '0.4rem', maxWidth: '72ch' }}>
-              The technologies I use to design, build and connect automation systems.
+              A working inventory of platforms and technologies across my projects and development. This is not a claim of equal proficiency: individual case studies identify the tools used in each build, while some items are still being explored or learned.
             </p>
           </div>
         </div>
