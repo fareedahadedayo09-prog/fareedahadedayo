@@ -360,7 +360,7 @@ export const projects: Project[] = [
       'An AI-assisted lead workflow using Claude alongside n8n and Airtable to support enquiry qualification and sales follow-up.',
     status: 'progress',
     statusLabel: STATUS_LABELS.progress,
-    statusDetail: 'Working prototype connected to Airtable, with an Airtable form embedded on the company website. Claude was used as the language model in the AI-assisted step. The exact input/output contract, decision boundaries and path-by-path test coverage still need to be documented before this is presented as a fully verified build.',
+    statusDetail: 'Working prototype connected to Airtable, with an Airtable form embedded on the company website. The workflow uses n8n’s built-in Anthropic node with Claude as the language model in the AI-assisted step. The exact input/output contract, decision boundaries and path-by-path test coverage still need to be documented before this is presented as a fully verified build.',
     tools: ['n8n', 'airtable', 'anthropic'],
     timeline: 'Personal build · prototype',
     categories: ['lead-management', 'ai-data'],
@@ -407,7 +407,7 @@ export const projects: Project[] = [
     },
     solution: {
       summary:
-        'An Airtable form embedded on the company website captures enquiries in a connected Airtable base. An n8n workflow uses Claude in an AI-assisted step to support lead qualification and follow-up routing.',
+        'An Airtable form embedded on the company website captures enquiries in a connected Airtable base. An n8n workflow uses its built-in Anthropic node, with Claude as the language model, to support enquiry qualification and follow-up routing.',
       automated: [
         'Enquiry intake through the embedded Airtable form.',
         'Lead information captured in the connected Airtable base.',
@@ -420,7 +420,7 @@ export const projects: Project[] = [
     workflow: [
       { id: 'trigger', label: 'Trigger', title: 'Enquiry arrives', detail: 'Airtable form embedded on the company website.', tone: 'trigger' },
       { id: 'record', label: 'Record', title: 'Capture the lead', detail: 'The form is connected to an Airtable base.', tone: 'record' },
-      { id: 'qualify', label: 'Decision', title: 'Qualify and route', detail: 'The n8n workflow passes the relevant enquiry into a Claude-assisted step and continues through the qualification and follow-up path.', tone: 'decision' },
+      { id: 'qualify', label: 'Decision', title: 'Qualify and route', detail: 'The n8n workflow sends the relevant enquiry through its built-in Anthropic node using Claude, then continues through the qualification and follow-up path.', tone: 'decision' },
       { id: 'followup', label: 'Handoff', title: 'Follow up', detail: 'The team can use the recorded lead information.', tone: 'escalation' },
     ],
     result: {
@@ -432,11 +432,11 @@ export const projects: Project[] = [
     },
     technical: {
       summary:
-        'The lead system combines an embedded Airtable form, an Airtable base, n8n orchestration and Claude as the language model in its AI-assisted qualification step.',
+        'The lead system combines an embedded Airtable form, an Airtable base, n8n orchestration and its built-in Anthropic node using Claude for AI-assisted qualification.',
       dataFlow: [
         'A visitor submits the embedded Airtable form.',
         'Lead information is captured in the connected Airtable base.',
-        'The n8n workflow supports qualification and routing.',
+        'n8n orchestrates the lead flow and invokes the built-in Anthropic node with Claude for AI-assisted processing.',
       ],
       testing: [
         'Path-by-path tests for Claude responses, incomplete enquiries, unexpected model output and downstream routing still need to be documented.',
