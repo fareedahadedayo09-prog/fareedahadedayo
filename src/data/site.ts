@@ -15,9 +15,9 @@ export const site = {
   location: 'Abuja, Nigeria · Remote',
   availability: 'Available for remote projects.',
 
-  headline: 'Automation for better\u2011run e\u2011commerce operations.',
+  headline: 'AI-powered workflows, integrations and practical automation systems.',
   heroLead:
-    'I build workflows that handle order checks, customer replies and returns, so your team can focus on growing the business.',
+    'I design and build automation systems that connect business tools, APIs and AI models — with clear data flows, decision logic and human review where it matters.',
 
   // Portrait shown only if public/portrait.jpg exists.
   portrait: {
@@ -63,7 +63,7 @@ export const site = {
   og: {
     title: 'Fareedah Adedayo, AI Workflow Automation Builder',
     description:
-      'Automation for better-run e-commerce operations. Order checks, customer replies and returns handled by reliable workflows.',
+      'AI workflow automation, API integrations and practical systems built around real operational problems.',
     image: 'https://fareedahadedayo.vercel.app/og-preview-cream-v1.png',
   },
 
