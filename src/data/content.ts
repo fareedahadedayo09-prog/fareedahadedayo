@@ -33,9 +33,18 @@ export const methodology: MethodStep[] = [
 ]
 
 export const capabilities = [
-  { title: 'Practical AI, not gimmicks', body: 'Use AI for tasks such as extraction and classification where it adds value, with checks suited to the workflow.' },
-  { title: 'Clear handoffs', body: 'Design a clear route for cases that need a person, with the context they need to make a decision.' },
-  { title: 'Connected tools', body: 'Assess how existing tools can connect so information can move between them without repeated entry.' },
+  {
+    title: 'Workflow orchestration & decision logic',
+    body: 'Build n8n and Make workflows that connect triggers, data capture, branching logic and clear human handoffs.',
+  },
+  {
+    title: 'AI & LLM integration',
+    body: 'Use language models for tasks such as enquiry understanding, extraction and classification, while keeping business rules and human review explicit.',
+  },
+  {
+    title: 'APIs, webhooks & data flows',
+    body: 'Connect forms, databases and business tools so structured information can move between systems with a clear record of what happens next.',
+  },
 ]
 
 /** About section */
