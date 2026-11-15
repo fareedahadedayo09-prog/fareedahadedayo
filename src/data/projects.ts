@@ -355,16 +355,16 @@ export const projects: Project[] = [
     slug: 'lead-qualification',
     workflowScreenshot: '/screenshots/brightsun-lead-system.png',
     workflowScreenshotAlt: 'n8n canvas for the BrightSun Solar lead system, showing lead intake, duplicate checks, scoring, routing, and follow-up',
-    name: 'BrightSun Solar: AI-Assisted Lead Qualification & Routing',
+    name: 'BrightSun Solar: Claude-Assisted Lead Qualification & Routing',
     tagline:
-      'Structuring and classifying incoming enquiries so follow-up decisions are consistent and auditable.',
-    status: 'done',
-    statusLabel: STATUS_LABELS.done,
-    statusDetail: 'Connected to an Airtable base, with an Airtable form embedded on the company website. Detailed path-by-path test coverage is being confirmed.',
-    tools: ['n8n', 'airtable'],
-    timeline: 'Completed build',
+      'An AI-assisted lead workflow using Claude alongside n8n and Airtable to support enquiry qualification and sales follow-up.',
+    status: 'progress',
+    statusLabel: STATUS_LABELS.progress,
+    statusDetail: 'Working prototype connected to Airtable, with an Airtable form embedded on the company website. Claude was used as the language model in the AI-assisted step. The exact input/output contract, decision boundaries and path-by-path test coverage still need to be documented before this is presented as a fully verified build.',
+    tools: ['n8n', 'airtable', 'anthropic'],
+    timeline: 'Personal build · prototype',
     categories: ['lead-management', 'ai-data'],
-    heroVisual: { image: '/screenshots/ai-lead-qualification-workflow.png', caption: 'BrightSun Solar AI lead qualification workflow overview' },
+    heroVisual: { image: '/screenshots/ai-lead-qualification-workflow.png', caption: 'BrightSun Solar lead qualification workflow overview' },
     hasSimulator: true,
     evidenceIntro: 'These screenshots show a test lead, not a real customer enquiry. Select an image to view it at full size.',
     evidence: [
@@ -407,11 +407,11 @@ export const projects: Project[] = [
     },
     solution: {
       summary:
-        'An Airtable form embedded on the company website captures enquiries in a connected Airtable base. The n8n workflow supports lead qualification and routing.',
+        'An Airtable form embedded on the company website captures enquiries in a connected Airtable base. An n8n workflow uses Claude in an AI-assisted step to support lead qualification and follow-up routing.',
       automated: [
         'Enquiry intake through the embedded Airtable form.',
         'Lead information captured in the connected Airtable base.',
-        'Workflow support for qualification and routing.',
+        'Claude-assisted processing supports lead qualification before the workflow hands the enquiry to the follow-up path.',
       ],
       humanControl: [
         'Team members can use the lead information in Airtable for follow-up.',
@@ -420,7 +420,7 @@ export const projects: Project[] = [
     workflow: [
       { id: 'trigger', label: 'Trigger', title: 'Enquiry arrives', detail: 'Airtable form embedded on the company website.', tone: 'trigger' },
       { id: 'record', label: 'Record', title: 'Capture the lead', detail: 'The form is connected to an Airtable base.', tone: 'record' },
-      { id: 'qualify', label: 'Decision', title: 'Qualify and route', detail: 'The n8n workflow supports lead qualification and routing.', tone: 'decision' },
+      { id: 'qualify', label: 'Decision', title: 'Qualify and route', detail: 'The n8n workflow passes the relevant enquiry into a Claude-assisted step and continues through the qualification and follow-up path.', tone: 'decision' },
       { id: 'followup', label: 'Handoff', title: 'Follow up', detail: 'The team can use the recorded lead information.', tone: 'escalation' },
     ],
     result: {
@@ -432,17 +432,17 @@ export const projects: Project[] = [
     },
     technical: {
       summary:
-        'The lead system uses n8n and an Airtable base, with an Airtable form embedded on the company website.',
+        'The lead system combines an embedded Airtable form, an Airtable base, n8n orchestration and Claude as the language model in its AI-assisted qualification step.',
       dataFlow: [
         'A visitor submits the embedded Airtable form.',
         'Lead information is captured in the connected Airtable base.',
         'The n8n workflow supports qualification and routing.',
       ],
       testing: [
-        'Detailed path-by-path test coverage is being confirmed.',
+        'Path-by-path tests for Claude responses, incomplete enquiries, unexpected model output and downstream routing still need to be documented.',
       ],
       limitations: [
-        'The details of any direct-message or Claude extraction path are being confirmed.',
+        'The exact Claude input/output schema, prompt behaviour and boundary between model-generated assessment and deterministic routing still need to be documented.',
         'Measured business results are not yet available.',
       ],
     },
