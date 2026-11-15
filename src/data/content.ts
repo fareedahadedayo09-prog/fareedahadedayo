@@ -42,16 +42,16 @@ export const capabilities = [
 export const about = {
   eyebrow: 'About',
   lead:
-    'I am Fareedah Adedayo, a self-taught AI workflow automation builder and law student based in Abuja, Nigeria.',
+    'I am Fareedah Adedayo, an AI workflow automation builder based in Nigeria.',
   paragraphs: [
-    'I build practical systems that help small e-commerce and service businesses handle repetitive work more reliably.',
-    'My legal training, and my time mentoring in STEM and working with robotics, shaped how I think: clear rules, and clear points where a human steps in.',
+    'I build practical automation systems that connect business tools, APIs, structured data and AI models to handle repetitive operational work.',
+    'My approach is to understand the process first, make the data flow explicit, define what should be automated, and keep human review in the loop when a decision needs judgement.',
   ],
   facts: [
     { label: 'Role', value: 'AI Workflow Automation Builder' },
-    { label: 'Approach', value: 'Understand, diagnose, design, build, validate' },
-    { label: 'Focus', value: 'E-commerce operations, customer workflows, lead management' },
-    { label: 'Location', value: 'Abuja, Nigeria · Remote work' },
+    { label: 'Technical focus', value: 'Workflow orchestration, API integrations, LLM-powered systems' },
+    { label: 'Build approach', value: 'Map, implement, test, inspect, improve' },
+    { label: 'Location', value: 'Nigeria · Remote' },
   ],
 }
 
