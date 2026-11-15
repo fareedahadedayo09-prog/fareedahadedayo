@@ -135,9 +135,9 @@ export const projects: Project[] = [
     name: 'COD Order Confirmation & Risk Assessment',
     tagline:
       'Routine cash-on-delivery confirmations by email, with staff follow-up for high-value orders and exceptions.',
-    status: 'done',
-    statusLabel: STATUS_LABELS.done,
-    statusDetail: 'Built and tested, but not currently running. Duplicate detection has been tested; detailed test coverage for individual paths is not yet documented here.',
+    status: 'progress',
+    statusLabel: STATUS_LABELS.progress,
+    statusDetail: 'Working build, not currently running. Duplicate detection has been tested; reminder, confirmation and staff-escalation paths still need documented end-to-end test coverage.',
     tools: ['n8n', 'tally', 'airtable', 'gmail'],
     timeline: 'Personal build',
     categories: ['ecommerce-ops', 'customer-experience'],
@@ -210,33 +210,36 @@ export const projects: Project[] = [
         'The workflow is designed to help the business manage more orders without a manual call for every one. Customers can confirm or cancel by email, reminders follow up on unanswered orders, and staff can focus on high-value orders and exceptions.',
       points: [
         { text: 'Duplicate detection has been tested and works.', state: 'verified' },
-        { text: 'Reminders are sent after a set period when customers have not responded. Detailed test coverage is not documented here.', state: 'partial' },
-        { text: 'High-value orders are flagged for staff follow-up. Detailed test coverage is not documented here.', state: 'partial' },
+        { text: 'Reminder path is implemented; end-to-end test coverage is not yet documented.', state: 'partial' },
+        { text: 'High-value orders are routed to staff follow-up; end-to-end test coverage is not yet documented.', state: 'partial' },
       ],
       disclaimer:
         'The system has been built and tested but is not currently running. No measured business results are available yet, and individual test scenarios are not fully documented here.',
     },
     technical: {
       summary:
-        'The n8n workflow connects order intake, duplicate checking, customer email, staff alerts and Airtable records. The workflow canvas also shows confirmation, cancellation, reminder and availability paths.',
+        'The n8n workflow connects order intake, duplicate checking, customer confirmation by email, availability capture, reminders and staff follow-up, with Airtable used to store order records. The build is not currently running, and only duplicate detection is explicitly documented as tested.',
       dataFlow: [
-        'An online cash-on-delivery order enters the workflow.',
-        'Orders are checked for duplicates and order information is recorded in Airtable.',
-        'Routine orders below the set amount receive a customer email with confirm or cancel options.',
-        'Customers who confirm select availability in an n8n form; their response is recorded immediately in Airtable.',
-        'Customers who have not responded receive a reminder after a set period.',
-        'High-value orders trigger a staff email prompting a call; situations beyond the system are escalated for human review.',
+        'A cash-on-delivery order enters the workflow.',
+        'The workflow checks for an existing order before continuing and records order information in Airtable.',
+        'Routine orders below the configured amount receive an email with confirm and cancel options.',
+        'A customer who confirms is directed to an n8n form to submit delivery availability, which is recorded in Airtable.',
+        'A reminder is configured for customers who have not responded.',
+        'High-value orders trigger a staff email requesting a follow-up call; other exceptional cases are intended for human review.',
       ],
       decisionLogic: [
-        'The configured amount helps route routine and high-value orders.',
-        'Staff handle high-value orders and situations that need escalation.',
+        'Duplicate detection checks whether the incoming order has already been recorded.',
+        'A configured order-value threshold separates routine orders from orders requiring staff follow-up.',
+        'Staff remain responsible for high-value orders and cases that require judgement.',
       ],
       testing: [
         'Duplicate detection has been tested and works.',
-        'Detailed path-by-path test coverage has not yet been documented here.',
+        'The workflow contains confirmation, cancellation, availability, reminder and staff-alert paths; individual end-to-end test results for these paths are not yet documented.',
       ],
       limitations: [
-        'No measured business outcomes are available yet.',
+        'The workflow is not currently running.',
+        'No measured business outcomes are available.',
+        'Path-by-path test coverage and failure-handling behaviour still need to be documented.',
       ],
     },
   },
@@ -249,9 +252,9 @@ export const projects: Project[] = [
     name: 'Returns & Refunds Policy Handler',
     tagline:
       'Consistent policy evaluation for return requests, with explicit human escalation.',
-    status: 'done',
-    statusLabel: STATUS_LABELS.done,
-    statusDetail: STATUS_DETAIL_DEFAULT.done,
+    status: 'progress',
+    statusLabel: STATUS_LABELS.progress,
+    statusDetail: 'Core validation and policy-evaluation paths are implemented and walkthrough-verified. Out-of-policy escalation is implemented but not yet end-to-end verified; order lookup, conflict detection and live queue notification remain incomplete.',
     tools: ['n8n', 'tally', 'airtable'],
     timeline: 'Completed build',
     categories: ['ecommerce-ops', 'customer-experience'],
@@ -306,13 +309,14 @@ export const projects: Project[] = [
     },
     technical: {
       summary:
-        'Staged n8n pipeline with policy evaluation after validation; conflict detection is designed but not yet built. Every stage writes a structured record; the human-escalation branch is a first-class output, not a catch-all.',
+        'The implemented n8n pipeline validates incoming requests before applying explicit policy rules. The build includes a path for recording decisions and an out-of-policy escalation path; order lookup and conflict detection are not implemented, and escalation still needs end-to-end verification.',
       dataFlow: [
-        'Return request captured via Tally webhook.',
-        'Validation node checks required fields (order reference, item, reason).',
-        'Policy-rules node applies rules in a fixed sequence (window, item type, condition, reason).',
-        'Conflict-detection node flags contradictory selections (designed, not built).',
-        'Branch: accept / deny / escalate; each writes to Airtable with rule id.',
+        'A return request is captured through a Tally webhook.',
+        'The validation step checks required fields such as order reference, item and reason.',
+        'The policy evaluation applies explicit rules in a fixed sequence, including return window, item type, condition and reason.',
+        'Implemented decision paths record the outcome and reason in Airtable.',
+        'Out-of-policy requests are directed to an escalation path; the complete handoff has not yet been verified end to end.',
+        'Conflict detection is a documented design, not an implemented workflow step.',
       ],
       decisionLogic: [
         'Rules evaluated in fixed order so the outcome is deterministic.',
@@ -329,8 +333,10 @@ export const projects: Project[] = [
         'Disputed payments are designated human-only.',
       ],
       testing: [
-        'Well-formed and missing-field requests were walkthrough-verified; out-of-policy escalation still needs end-to-end verification.',
-        'Conflict detection and escalation notification not yet built.',
+        'A complete request passed validation and reached policy evaluation in a walkthrough.',
+        'A request with a missing required field was rejected and recorded in a walkthrough.',
+        'Out-of-policy escalation is implemented but still needs end-to-end verification.',
+        'Conflict detection and queue-owner notification are not yet built.',
       ],
       limitations: [
         'Conflict detection between contradictory instructions is designed but not implemented.',
@@ -426,23 +432,31 @@ export const projects: Project[] = [
     result: {
       summary:
         'The system is connected to an Airtable base and the company website uses an embedded Airtable form. Detailed test coverage for individual paths is being confirmed.',
-      points: [],
+      points: [
+        { text: 'A test enquiry produced an acknowledgement email with a response tailored to the information submitted.', state: 'partial' },
+        { text: 'A warm test lead produced a staff notification with qualification and follow-up details.', state: 'partial' },
+        { text: 'Systematic coverage of incomplete inputs, unexpected Claude output and all routing branches is not yet documented.', state: 'planned' },
+      ],
       disclaimer:
-        'No measured business results are available yet.',
+        'These are examples from test enquiries, not measured business results or production outcomes.',
     },
     technical: {
       summary:
-        'The lead system combines an embedded Airtable form, an Airtable base, n8n orchestration and its built-in Anthropic node using Claude for AI-assisted qualification.',
+        'The lead workflow connects an Airtable form embedded on the website to an Airtable base and an n8n workflow. The AI-assisted step uses n8n’s built-in Anthropic node with Claude; the available evidence shows a tailored acknowledgement response and a warm-lead staff notification for test enquiries.',
       dataFlow: [
-        'A visitor submits the embedded Airtable form.',
-        'Lead information is captured in the connected Airtable base.',
-        'n8n orchestrates the lead flow and invokes the built-in Anthropic node with Claude for AI-assisted processing.',
+        'A visitor submits the Airtable form embedded on the website.',
+        'The enquiry is captured in the connected Airtable base.',
+        'n8n orchestrates the enquiry workflow and uses its built-in Anthropic node with Claude in the AI-assisted step.',
+        'The workflow produces follow-up outputs, including a tailored acknowledgement email and a staff notification for a warm test lead.',
       ],
       testing: [
-        'Path-by-path tests for Claude responses, incomplete enquiries, unexpected model output and downstream routing still need to be documented.',
+        'The project includes screenshots of a test enquiry acknowledgement and a tailored clarification response.',
+        'A separate warm test lead is evidenced by a staff notification containing qualification and follow-up details.',
+        'These examples demonstrate selected test outputs; systematic tests for incomplete inputs, unexpected model responses and every routing branch are not yet documented.',
       ],
       limitations: [
-        'The exact Claude input/output schema, prompt behaviour and boundary between model-generated assessment and deterministic routing still need to be documented.',
+        'The exact prompt, Claude input/output schema and structured response format still need to be documented.',
+        'The boundary between Claude’s assessment and any deterministic downstream routing still needs to be confirmed from the workflow.',
         'Measured business results are not yet available.',
       ],
     },
