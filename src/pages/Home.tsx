@@ -13,9 +13,10 @@ import { problemCategories } from '../data/problems'
 import { services } from '../data/services'
 import { allTools } from '../data/tools'
 
-// GlowLab is the flagship build: it is the only project with a live demo, so it
-// leads. The rest keep their existing order after it.
-const FEATURED_SLUGS = ['glowlab-lifecycle', 'order-confirmation-risk-check', 'returns-refunds-handler']
+// Lead qualification makes the Claude + n8n integration visible; GlowLab
+// demonstrates the storefront prototype, with returns handling showing
+// explicit policy logic and human escalation.
+const FEATURED_SLUGS = ['lead-qualification', 'glowlab-lifecycle', 'returns-refunds-handler']
 
 const featured = [
   ...FEATURED_SLUGS.map((slug) => projects.find((p) => p.slug === slug)).filter(
@@ -240,9 +241,9 @@ export function Home() {
             <div className="section-head section-head--row">
               <div className="section-head" style={{ marginBottom: 0, flex: '1 1 360px' }}>
                 <span className="eyebrow"><span className="eyebrow__num">06</span>Tools &amp; Technologies</span>
-                <h2>The stack I build with</h2>
+                <h2>Tools across my builds and prototypes</h2>
                 <p className="lede">
-                  The technologies I use to design, build and connect automation systems.
+                  Selected tools used across completed builds, working prototypes and ongoing development. Each project identifies where its tools are used.
                 </p>
               </div>
               <Link to="/tools" className="btn btn--secondary">
@@ -314,7 +315,7 @@ export function Home() {
               <div className="stack" style={{ gap: '1.3rem' }}>
                 <div>
                   <span className="eyebrow"><span className="eyebrow__num">08</span>{about.eyebrow}</span>
-                  <h2 style={{ marginTop: '0.8rem' }}>Law student, self-taught builder</h2>
+                  <h2 style={{ marginTop: '0.8rem' }}>Problem-solver, self-taught builder</h2>
                 </div>
 
                 <p className="lede">{about.lead}</p>
