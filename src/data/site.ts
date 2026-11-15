@@ -13,7 +13,7 @@ export const site = {
   wordmarkShort: 'FA',
   roleLabel: 'AI Workflow Automation Builder',
   location: 'Abuja, Nigeria · Remote',
-  availability: 'Available for remote projects.',
+  availability: 'Open to remote internships, junior roles and project work.',
 
   headline: 'AI-powered workflows, integrations and practical automation systems.',
   heroLead:
