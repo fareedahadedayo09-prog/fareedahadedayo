@@ -448,7 +448,139 @@ export const projects: Project[] = [
     },
   },
 
-  // ─────────────────── 4. GLOWLAB LIFECYCLE ───────────────────
+  // ─────────────────── 4. SKINCARE RETAILER LEAD GENERATION ───────────────────
+  {
+    slug: 'skincare-retailer-lead-generation',
+    name: 'Skincare Retailer Lead Generation Pipeline',
+    tagline:
+      'A discovery-to-qualification workflow for independent multi-brand skincare retailers across four markets.',
+    status: 'progress',
+    statusLabel: 'Working prototype',
+    statusDetail:
+      'A technical-assessment prototype with Serper discovery, website enrichment, source-checked Gemini extraction, deterministic qualification and Airtable write-back. A qualified-lead outcome has not yet been confirmed for publication; no production or business results are claimed.',
+    tools: ['n8n', 'airtable', 'google-gemini', 'javascript'],
+    timeline: 'Independent technical assessment',
+    categories: ['lead-management', 'ai-data'],
+    problem: {
+      summary:
+        'Finding independent multi-brand skincare retailers across several markets requires repeated searches, manual website reviews and copying business details into a structured prospect list.',
+      whyItMatters:
+        'A search result or snippet does not prove that a business fits the target profile. Qualification needs evidence from the retailer’s own website, consistent rules and a record of why a prospect was accepted, rejected or sent for review.',
+      bullets: [
+        'Search results can include directories, marketplaces and businesses outside the target profile.',
+        'Business models and product ranges need to be checked on the retailer’s own website.',
+        'Contact details may be missing, outdated or incorrectly inferred.',
+        'Repeated searches can surface the same domain more than once.',
+      ],
+    },
+    solution: {
+      summary:
+        'An n8n pipeline that discovers candidate retailers through Serper, normalises and deduplicates domains, fetches relevant website pages, uses Gemini to structure evidence, validates the extracted fields and applies deterministic qualification rules before writing records to Airtable.',
+      automated: [
+        'Run configurable Serper searches for the United Kingdom, United States, Canada and Australia.',
+        'Parse organic results and normalise website URLs into canonical domains.',
+        'Merge same-run duplicates and retain discovery evidence.',
+        'Check existing Airtable records and create or update prospects.',
+        'Fetch the homepage and up to four same-site About, Contact or Brands pages where available.',
+        'Ask Gemini to extract structured business, product, brand, e-commerce and contact fields from fetched page text only.',
+        'Validate the extraction schema, source URLs and literal evidence for found contact details and third-party brands; retry once when validation fails.',
+        'Apply deterministic eligibility rules and write qualification status, reasons and contact fields back to Airtable.',
+        'Record processing errors and calculate a run summary from records touched by the execution.',
+      ],
+      humanControl: [
+        'Prospects with missing or insufficient evidence are routed to Needs Review rather than being automatically accepted.',
+        'The LLM supplies structured evidence; JavaScript rules make the final qualification decision and hard exclusions cannot be overridden by the model.',
+        'Email validation checks syntax only. An address is not represented as deliverable or verified.',
+        'The scheduled trigger remains disabled while the workflow is being tested; runs are initiated manually.',
+      ],
+    },
+    workflow: [
+      { id: 'input', label: 'Input', title: 'Build search queries', detail: 'Configurable skincare-retailer queries are prepared for four target markets.', tone: 'trigger' },
+      { id: 'discover', label: 'Discovery', title: 'Search with Serper', detail: 'Google organic results become candidate business records with source URLs.', tone: 'default' },
+      { id: 'normalise', label: 'Step 1', title: 'Normalise and deduplicate', detail: 'Website URLs are reduced to canonical domains and same-run duplicates are merged.', tone: 'record' },
+      { id: 'persist', label: 'Step 2', title: 'Check Airtable', detail: 'Existing domains are matched so records can be updated or created.', tone: 'record' },
+      { id: 'enrich', label: 'Enrichment', title: 'Fetch website evidence', detail: 'The homepage and up to four relevant same-site pages are retrieved where accessible.', tone: 'default' },
+      { id: 'extract', label: 'AI extraction', title: 'Structure business data', detail: 'Gemini extracts fields from the supplied page text and attaches source URLs.', tone: 'default' },
+      { id: 'validate', label: 'Validation', title: 'Check evidence', detail: 'JavaScript checks the output schema, allowed sources and literal evidence, with one retry.', tone: 'decision' },
+      { id: 'qualify', label: 'Decision', title: 'Apply qualification rules', detail: 'Deterministic rules classify each candidate as Qualified, Rejected or Needs Review.', tone: 'decision' },
+      { id: 'output', label: 'Output', title: 'Update Airtable and summarise', detail: 'Lead records, processing errors and execution counts are written or calculated.', tone: 'record' },
+    ],
+    result: {
+      summary:
+        'The submitted workflow export contains the discovery, enrichment, evidence-validation, deterministic qualification, Airtable persistence and execution-summary stages. A successful qualified-lead outcome and reliable run metrics have not yet been verified for publication.',
+      points: [
+        { text: 'Serper discovery is configured for four target markets: implemented in the workflow export; end-to-end result counts not published.', state: 'partial' },
+        { text: 'Canonical-domain normalisation and same-run duplicate merging are implemented in JavaScript; repeat-run behaviour still needs a documented test.', state: 'partial' },
+        { text: 'Airtable create/update paths and execution logging are present in the export; large-dataset performance is not measured.', state: 'partial' },
+        { text: 'Gemini extraction is constrained to fetched website text and validated against source URLs and evidence; extraction accuracy still requires review.', state: 'partial' },
+        { text: 'Qualification uses deterministic criteria and three outcomes; no qualified lead has yet been confirmed from the recorded test work.', state: 'partial' },
+      ],
+      disclaimer:
+        'This is an independent prototype built with demonstration research criteria. It is not a production prospecting service, has not processed client data and has no measured sales or conversion outcomes.',
+    },
+    technical: {
+      summary:
+        'The workflow separates search discovery, domain handling, website evidence collection, AI-assisted extraction, deterministic qualification and Airtable persistence. Gemini does not make the final eligibility decision.',
+      dataFlow: [
+        'A manual trigger starts four configurable Serper queries, one each for the United Kingdom, United States, Canada and Australia.',
+        'Organic results are parsed into provisional company names, URLs, snippets, market labels and discovery sources.',
+        'JavaScript normalises URLs, derives canonical domains and merges same-batch duplicates while retaining source URLs and snippets.',
+        'Airtable is searched for existing canonical domains; the workflow creates new records or updates existing ones.',
+        'The workflow fetches each homepage and up to four relevant same-site About, Contact or Brands pages. Bot-protection pages are detected and skipped rather than bypassed.',
+        'Page text is assembled with per-page and total character limits, then passed to Gemini as the only permitted evidence source.',
+        'Gemini returns structured fields with a status and source URL. A validator checks required fields, allowed URLs, literal evidence for contact details and brands, allowed business models and email syntax; invalid output can be retried once.',
+        'Deterministic JavaScript rules apply hard exclusions and require multi-brand retailer evidence, at least two third-party brands, e-commerce evidence, skincare/beauty categories and a target-market country for qualification.',
+        'Airtable is updated with the result, contact status and evidence. Separate error records and an execution summary are produced.',
+      ],
+      decisionLogic: [
+        'The target markets are the United Kingdom, United States, Canada and Australia.',
+        'Large chains and marketplaces on a starter exclusion list are rejected.',
+        'Manufacturers selling their own brand, marketplaces, service providers, businesses outside the target markets and non-skincare categories are rejected when the website evidence supports that classification.',
+        'A Qualified result requires a multi-brand retailer model, at least two third-party brands, e-commerce evidence, skincare/beauty product categories and a target-market country.',
+        'Missing evidence or invalid extraction produces Needs Review rather than an assumed positive result.',
+        'The LLM extracts evidence; deterministic code owns the final decision.',
+      ],
+      validation: [
+        'Website URLs are normalised and malformed or non-registrable domains are routed to an error path.',
+        'Found fields must cite one of the pages actually fetched.',
+        'Found contact names, email addresses, phone numbers and third-party brands are checked against the supplied page text.',
+        'Email addresses receive a syntax check only; there is no SMTP, DNS or MX deliverability verification.',
+        'Invalid structured extraction can be retried once with the validation errors included.',
+      ],
+      exceptions: [
+        'Serper request failures and empty organic-result sets become explicit error items.',
+        'Invalid website URLs are logged rather than silently discarded.',
+        'Homepage failures, empty pages and detected bot-protection pages prevent unsupported enrichment.',
+        'Insufficient evidence is routed to Needs Review.',
+        'Enrichment and processing failures are written to an Airtable error log.',
+      ],
+      testing: [
+        'The workflow export and node configuration were reviewed as part of the assignment handover.',
+        'A confirmed qualified-lead result and final run-level counts are not yet available for public reporting.',
+        'A repeat-run test against an existing Airtable dataset should be documented before claiming idempotent persistence at scale.',
+      ],
+      limitations: [
+        'Search queries and target criteria are configured for independent multi-brand skincare retailers, not arbitrary industries.',
+        'The current qualification test has not yet produced a confirmed qualified lead.',
+        'Airtable existing-record lookup and large-dataset performance have not been benchmarked.',
+        'Contact email validation is syntactic only and does not prove deliverability.',
+        'Website fetching is limited to the homepage and up to four candidate pages; some sites may block automated requests or expose content through JavaScript.',
+        'The scheduled trigger is disabled; the workflow is run manually.',
+        'No outreach messages are sent and no CRM campaign is created.',
+        'No production deployment, client results or business-performance metrics are claimed.',
+      ],
+      examplePayload: `{
+  "company_name": "Example Skincare Retailer",
+  "website": "https://example.com",
+  "canonical_domain": "example.com",
+  "country": "United Kingdom",
+  "qualification_status": "Needs Review",
+  "qualification_reason": "Direct evidence for the multi-brand retailer criteria is incomplete."
+}`,
+    },
+  },
+
+  // ─────────────────── 5. GLOWLAB LIFECYCLE ───────────────────
   {
     slug: 'glowlab-lifecycle',
     name: 'GlowLab — AI-Assisted E-commerce Platform',
