@@ -1,6 +1,6 @@
-# AI Automation Engineering Portfolio
+# AI Workflow Automation Builder Portfolio
 
-A complete, responsive personal portfolio for an aspiring AI Automation Engineer and workflow builder.
+A responsive portfolio for an AI Workflow Automation Builder, focused on practical workflow systems, clear evidence and honest project status.
 Static, no backend, no paid services, deployable on Vercel's free tier.
 
 Built with React 18, React Router 6, TypeScript and Vite. The production bundle is one JS file
