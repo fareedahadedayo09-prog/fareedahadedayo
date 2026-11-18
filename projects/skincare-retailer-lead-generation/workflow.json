@@ -1,0 +1,1958 @@
+{
+  "name": "Skincare Retailer Lead Generation Pipeline (Portfolio Demo)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b3de6db3-2884-423b-9e17-2ecb91c7d1b4",
+      "name": "Manual Trigger — Test Run",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        128,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Node: Build Search Queries (runOnceForAllItems)\n// Edit this list to change what is searched. One item = one Serper request.\n// No API keys here. The Serper key lives in an n8n credential.\nconst SEARCHES = [\n  { country: 'United Kingdom', gl: 'uk', query: 'independent skincare online store CeraVe La Roche-Posay The Ordinary UK' },\n  { country: 'United States', gl: 'us', query: 'independent skincare online store CeraVe La Roche-Posay COSRX The Ordinary US' },\n  { country: 'Canada', gl: 'ca', query: 'independent skincare online store CeraVe La Roche-Posay Anua COSRX Canada' },\n  { country: 'Australia', gl: 'au', query: 'independent skincare online store CeraVe La Roche-Posay The Ordinary Australia' },\n];\n\nreturn SEARCHES.map((s) => ({ json: { ...s } }));\n"
+      },
+      "id": "4e5a90b9-0070-4ae9-b784-b2c449ee1647",
+      "name": "Build Search Queries",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://google.serper.dev/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ q: $json.query, gl: $json.gl, num: 10 }) }}",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "28ac0838-43da-4c21-a57c-dea7d437f974",
+      "name": "Search Businesses — Serper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        848,
+        336
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Node: Parse Search Results (runOnceForAllItems)\n// Input: one item per Serper HTTP response, in the same order as the query items.\n// Output: one item per organic result. Failed requests become error items (not dropped).\nconst queries = $('Build Search Queries').all();\nconst responses = $input.all();\nconst today = new Date().toISOString().slice(0, 10);\nconst out = [];\n\nresponses.forEach((resp, i) => {\n  const meta = queries[i] ? queries[i].json : {};\n  const body = resp.json || {};\n\n  if (body.error) {\n    out.push({ json: {\n      parse_error: true,\n      error_type: 'serper_request_failed',\n      error_message: String(body.error.message || body.error),\n      country: meta.country,\n      search_query: meta.query,\n    } });\n    return;\n  }\n\n  const organic = Array.isArray(body.organic) ? body.organic : [];\n  if (organic.length === 0) {\n    out.push({ json: {\n      parse_error: true,\n      error_type: 'serper_no_organic_results',\n      error_message: 'Serper returned no organic results for this query',\n      country: meta.country,\n      search_query: meta.query,\n    } });\n    return;\n  }\n\n  organic.forEach((r, pos) => {\n    out.push({ json: {\n      parse_error: false,\n      // The search title is only a provisional name. Enrichment may replace it.\n      company_name: String(r.title || '').trim(),\n      website: String(r.link || '').trim(),\n      snippet: String(r.snippet || '').trim(),\n      country: meta.country,\n      search_query: meta.query,\n      source_url: String(r.link || '').trim(),\n      discovery_source: 'serper_organic',\n      discovery_position: r.position ?? pos + 1,\n      discovery_date: today,\n    } });\n  });\n});\n\nreturn out;\n"
+      },
+      "id": "d068671b-72bd-437a-a266-201134740016",
+      "name": "Parse Search Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Node: Normalise Website and Domain (runOnceForEachItem)\n// Version 3: no built-in URL class. A regular expression splits the URL instead.\nconst MULTI_PART_SUFFIXES = new Set([\n  'co.uk', 'org.uk', 'ac.uk', 'gov.uk', 'me.uk', 'net.uk',\n  'com.au', 'net.au', 'org.au', 'edu.au', 'gov.au',\n  'co.nz', 'co.za', 'com.ng',\n]);\n\nconst lead = $input.item.json;\n\nconst fail = (errorType, message, status = 'invalid_url') => ({ json: {\n  ...lead,\n  is_valid_domain: false,\n  error_type: errorType,\n  error_message: message,\n  processing_status: status,\n} });\n\n// A search result that never produced a link is not a URL problem.\nif (lead.parse_error) {\n  return fail(\n    lead.error_type,\n    'Search result problem: ' + (lead.error_message || lead.error_type),\n    'search_error'\n  );\n}\n\n// Remove invisible characters, then trim.\nconst raw = String(lead.website ?? '')\n  .replace(/[\\u0000-\\u001F\\u007F-\\u009F\\u00A0\\u200B-\\u200D\\uFEFF]/g, '')\n  .trim();\n\nif (!raw) {\n  return fail('malformed_url', 'Website normalisation failed: malformed_url (empty URL)');\n}\n\n// Pattern: scheme://host[:port][/path][?query][#fragment]\nconst match = raw.match(/^(https?):\\/\\/([^\\/?#\\s]+)/i);\nif (!match) {\n  return fail(\n    'malformed_url',\n    'Website normalisation failed: malformed_url (raw value: ' + raw.slice(0, 200) + ')'\n  );\n}\n\n// Remove any user:password@ part and any :port, lowercase, strip \"www.\" and a trailing dot.\nconst host = match[2]\n  .replace(/^.*@/, '')\n  .replace(/:\\d+$/, '')\n  .toLowerCase()\n  .replace(/\\.$/, '')\n  .replace(/^www\\./, '');\n\nif (/^\\d+(\\.\\d+)*$/.test(host)) {\n  return fail('ip_address_not_allowed', 'Website normalisation failed: ip_address_not_allowed');\n}\nif (!/^[a-z0-9-]+(\\.[a-z0-9-]+)+$/.test(host)) {\n  return fail('no_registrable_domain', 'Website normalisation failed: no_registrable_domain (host: ' + host.slice(0, 100) + ')');\n}\n\nconst labels = host.split('.');\n\n// Registrable domain: last 2 labels, or last 3 for known multi-part suffixes (glow.co.uk).\nconst last2 = labels.slice(-2).join('.');\nlet canonical = last2;\nif (MULTI_PART_SUFFIXES.has(last2)) {\n  if (labels.length < 3) {\n    return fail('no_registrable_domain', 'Website normalisation failed: no_registrable_domain');\n  }\n  canonical = labels.slice(-3).join('.');\n}\n\nreturn { json: {\n  ...lead,\n  is_valid_domain: true,\n  website: 'https://' + host,\n  canonical_domain: canonical,\n  source_url: lead.source_url || raw,\n  normalise_status: 'ok',\n} };"
+      },
+      "id": "f9bfeca1-6753-411b-a825-0f03d1e5badd",
+      "name": "Normalise Website and Domain",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Node: Remove Same-Batch Duplicates (runOnceForAllItems)\n// Merges search results that point to the same canonical_domain within one run.\n// Keeps the first record's fields and merges the evidence URLs and snippets.\n// Invalid items pass through unchanged so the IF node can route them to the log.\nconst items = $input.all().map((i) => i.json);\nconst groups = new Map();\nconst out = [];\n\nfor (const lead of items) {\n  if (!lead.is_valid_domain) {\n    out.push({ json: lead });\n    continue;\n  }\n\n  const key = lead.canonical_domain;\n\n  if (groups.has(key)) {\n    const g = groups.get(key);\n    g.duplicates_merged += 1;\n    if (lead.source_url && !g.discovery_urls.includes(lead.source_url)) g.discovery_urls.push(lead.source_url);\n    if (lead.snippet && !g.snippets.includes(lead.snippet)) g.snippets.push(lead.snippet);\n    if (lead.country && !g.countries.includes(lead.country)) g.countries.push(lead.country);\n    continue;\n  }\n\n  groups.set(key, {\n    ...lead,\n    discovery_urls: lead.source_url ? [lead.source_url] : [],\n    snippets: lead.snippet ? [lead.snippet] : [],\n    countries: lead.country ? [lead.country] : [],\n    duplicates_merged: 0,\n    processing_status: 'discovered',\n  });\n}\n\nfor (const g of groups.values()) {\n  out.push({ json: {\n    ...g,\n    evidence_urls: g.discovery_urls.join('\\n'),\n    snippet: g.snippets.join(' | '),\n    country: g.countries.join(', '),\n  } });\n}\n\nreturn out;\n"
+      },
+      "id": "2c75c78f-d6f7-4160-87cd-be3ea3f20e9c",
+      "name": "Remove Same-Batch Duplicates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.is_valid_domain }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "dfaa19f2-f863-4271-9291-5838bdf9be90",
+      "name": "Valid Domain?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1808,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "list",
+          "cachedResultName": "Skincare Lead Generation"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Leads"
+        },
+        "filterByFormula": "=",
+        "options": {}
+      },
+      "id": "81d2c436-3977-42ce-9aeb-e8fce90d1a3f",
+      "name": "Search Airtable — Existing Lead?",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2048,
+        256
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Node: Match Existing Record (runOnceForAllItems)\n// Input 1: valid leads from \"Remove Same-Batch Duplicates\".\n// Input 2: all Leads records from \"Search Airtable — Existing Lead?\" (one run, no filter).\nconst validLeads = $('Remove Same-Batch Duplicates').all()\n  .map((i) => i.json)\n  .filter((l) => l.is_valid_domain);\n\n// Only real Airtable records count. An empty search result has no id.\nconst existing = $input.all()\n  .map((i) => i.json)\n  .filter((r) => typeof r.id === 'string' && r.id.startsWith('rec'));\n\n// Map canonical_domain to record id. If duplicates exist, the first one wins.\nconst idByDomain = new Map();\nfor (const rec of existing) {\n  const domain = (rec.fields || {}).canonical_domain;\n  if (domain && !idByDomain.has(domain)) idByDomain.set(domain, rec.id);\n}\n\nreturn validLeads.map((lead) => {\n  const id = idByDomain.get(lead.canonical_domain) || '';\n  return { json: { ...lead, airtable_record_id: id, existing_record: id !== '' } };\n});"
+      },
+      "id": "b27f9f33-e634-4771-a563-e49c68291dbd",
+      "name": "Match Existing Record",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2288,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c2",
+              "leftValue": "={{ $json.existing_record }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "afb4c749-cbb2-4a44-9406-cd61c86bd68f",
+      "name": "Existing Lead?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2528,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "list",
+          "cachedResultName": "Skincare Lead Generation"
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.airtable_record_id }}",
+            "website": "={{ $json.website }}",
+            "last_execution_id": "={{ $execution.id }}",
+            "run_action": "updated"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "company_name",
+              "displayName": "company_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "canonical_domain",
+              "displayName": "canonical_domain",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "processing_status",
+              "displayName": "processing_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Discovered",
+                  "value": "Discovered"
+                },
+                {
+                  "name": "Enriching",
+                  "value": "Enriching"
+                },
+                {
+                  "name": "Qualified",
+                  "value": "Qualified"
+                },
+                {
+                  "name": "Needs Review",
+                  "value": "Needs Review"
+                },
+                {
+                  "name": "Rejected",
+                  "value": "Rejected"
+                },
+                {
+                  "name": "Error",
+                  "value": "Error"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "last_execution_id",
+              "displayName": "last_execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "run_action",
+              "displayName": "run_action",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "51527294-460b-46fd-8d9f-fade6759683c",
+      "name": "Update Existing Lead",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2768,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Node: Attach Record ID (runOnceForEachItem)\n// Both the \"Create New Lead\" and \"Update Existing Lead\" branches feed this node.\n// Each Airtable node returns the record id, so we take it from there and\n// keep the lead fields from \"Match Existing Record\".\nconst lead = $('Match Existing Record').item.json;\nconst airtableResult = $input.item.json || {};\n\nconst id = airtableResult.id || lead.airtable_record_id;\nif (!id) {\n  throw new Error('No Airtable record id after create/update for ' + lead.canonical_domain);\n}\n\nreturn { json: { ...lead, airtable_record_id: id } };\n"
+      },
+      "id": "c955b24b-36c9-4389-a1d7-50c2e8058e8b",
+      "name": "Attach Record ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3008,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "list",
+          "cachedResultName": "Skincare Lead Generation"
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "filterByFormula": "={last_execution_id}='{{ $execution.id }}'",
+        "options": {}
+      },
+      "id": "6a729308-2f03-4d96-847b-d3aff5802e6e",
+      "name": "Search Run Leads",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        3248,
+        528
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Node: Build Execution Summary (runOnceForAllItems)\n// Runs after the lead loop finishes. Counts come from the Airtable records touched\n// by this execution (last_execution_id), not from guesses. Field names are read\n// with a fallback because the Airtable node may return fields flat or under \"fields\".\nconst leads = $input.all().map((i) => i.json).map((r) => r.fields || r);\nconst search = $('Parse Search Results').all().map((i) => i.json);\nconst dedupe = $('Remove Same-Batch Duplicates').all().map((i) => i.json);\nconst cfg = $('Config').first().json;\n\nconst count = (fn) => leads.filter(fn).length;\n\nconst summary = {\n  execution_id: cfg.execution_id,\n  organic_results_received: search.filter((x) => !x.parse_error).length,\n  search_error_items: search.filter((x) => x.parse_error).length,\n  unique_candidates: dedupe.filter((x) => x.is_valid_domain).length,\n  duplicates_removed_in_batch: dedupe.reduce((s, x) => s + (x.is_valid_domain ? (x.duplicates_merged || 0) : 0), 0),\n  invalid_urls_logged: dedupe.filter((x) => !x.is_valid_domain).length,\n  new_airtable_records: count((l) => l.run_action === 'created'),\n  existing_records_updated: count((l) => l.run_action === 'updated'),\n  qualified: count((l) => l.qualification_status === 'Qualified'),\n  needs_review: count((l) => l.qualification_status === 'Needs Review'),\n  rejected: count((l) => l.qualification_status === 'Rejected'),\n  missing_contact_emails: count((l) => !l.business_email),\n  enrichment_failures: count((l) => l.enrichment_status === 'failed'),\n};\n\nreturn [{ json: summary }];\n"
+      },
+      "id": "f9fda07c-9dda-4088-bb61-bd84c6f5964c",
+      "name": "Build Execution Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3488,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.website }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "PortfolioLeadResearch/1.0"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {
+              "maxRedirects": 3
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "e82371f8-edc0-4b6d-a91b-c9a140919cb1",
+      "name": "Fetch Homepage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3488,
+        256
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Node: Find Contact and About Pages (runOnceForAllItems)\n// Input: the homepage response for the current lead (batch size 1).\n// Output: one item per candidate page (max 4), or one item with a skip_reason.\n// Does not use the built-in URL class, so it works in every n8n environment.\nconst lead = $('Loop Over Leads').first().json;\nconst home = $input.first().json || {};\nconst MAX_PAGES = 4;\nconst leadId = lead.airtable_record_id || lead.canonical_domain;\n\nconst skip = (reason) => [{ json: { lead_id: leadId, page_url: '', skip_reason: reason } }];\n\nif (home.error) return skip('homepage_unavailable');\n\nconst html = typeof home.data === 'string' ? home.data : (typeof home.body === 'string' ? home.body : '');\nif (!html) return skip('homepage_empty');\n\n// Bot-protection pages are not the real homepage. Record it and do not try to get around it.\nif (/aws-waf|awswaf|challenge\\.js|captcha|cf-chl|just a moment/i.test(html)) {\n  return skip('bot_protection_detected');\n}\n\n// Turn an href into a full URL. lead.website looks like \"https://glowshop.co.uk\".\nfunction toAbsolute(href) {\n  if (/^https?:\\/\\//i.test(href)) return href;\n  if (href.startsWith('//')) return 'https:' + href;\n  if (href.startsWith('/')) return lead.website + href;\n  return lead.website + '/' + href;\n}\n\n// Get the host from a full URL, without \"www.\" and without a port.\nfunction hostOf(absUrl) {\n  const mm = absUrl.match(/^https?:\\/\\/([^\\/?#]+)/i);\n  return mm ? mm[1].toLowerCase().replace(/^www\\./, '').replace(/:\\d+$/, '') : '';\n}\n\nconst candidates = [];\nconst linkRe = /<a\\b[^>]*href\\s*=\\s*[\"']([^\"'#]+)[\"'][^>]*>([\\s\\S]*?)<\\/a>/gi;\nlet m;\nwhile ((m = linkRe.exec(html)) !== null) {\n  const href = m[1].trim();\n  if (/^(mailto|tel|javascript):/i.test(href)) continue;\n\n  const abs = toAbsolute(href);\n  const host = hostOf(abs);\n\n  // Same site only. Subdomains count, for example shop.glowshop.co.uk.\n  const sameSite = host === lead.canonical_domain || host.endsWith('.' + lead.canonical_domain);\n  if (!sameSite) continue;\n\n  // Remove query strings and fragments (tracking parameters), keeping the path.\n  const clean = abs.split(/[?#]/)[0];\n  const path = clean.replace(/^https?:\\/\\/[^\\/]+/i, '').toLowerCase();\n  const linkText = m[2].replace(/<[^>]+>/g, ' ').toLowerCase();\n\n  const relevant = /about|contact|brand|stockist|who-we-are|our-story|get-in-touch/.test(path + ' ' + linkText);\n  if (relevant && !candidates.includes(clean)) candidates.push(clean);\n}\n\nconst chosen = candidates.slice(0, MAX_PAGES);\nif (chosen.length === 0) return skip('no_candidate_pages_found');\n\nreturn chosen.map((url) => ({ json: { lead_id: leadId, page_url: url, skip_reason: '' } }));"
+      },
+      "id": "d7d65a6b-4c8c-433d-af2f-fa3f6760996d",
+      "name": "Find Contact and About Pages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3728,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c3",
+              "leftValue": "={{ $json.page_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "9407527a-15fc-44e3-8f2d-c6439296e2d5",
+      "name": "Has Candidate Pages?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3968,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.page_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "310d0f4a-047e-4768-8db6-e19594f99a8e",
+      "name": "Fetch Candidate Pages",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4208,
+        176
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Node: Attach Page Body (runOnceForEachItem)\n// The HTTP Request node replaces the item with the response, so we re-attach\n// the page URL from \"Find Contact and About Pages\" (paired item).\nconst meta = $('Find Contact and About Pages').item.json;\nconst resp = $input.item.json || {};\n\nconst html = typeof resp.data === 'string' ? resp.data : (typeof resp.body === 'string' ? resp.body : '');\nconst fetchError = resp.error ? String(resp.error.message || resp.error) : '';\n\nreturn { json: {\n  page_url: meta.page_url,\n  html,\n  fetch_error: fetchError,\n} };\n"
+      },
+      "id": "0426fb2e-abd2-465d-941f-e97a56994203",
+      "name": "Attach Page Body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4448,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Node: Assemble Website Evidence (runOnceForAllItems)\n// Runs once per lead (the loop uses batch size 1).\n// Builds the only text the LLM is allowed to see: the homepage plus the candidate pages.\n// Keeps the URL of each page, so every LLM claim can be checked against a real source.\nconst lead = $('Loop Over Leads').first().json;\nconst homeRaw = $('Fetch Homepage').first().json || {};\n\nconst MAX_PAGE_CHARS = 8000;\nconst MAX_TOTAL_CHARS = 24000;\n\nconst bodyOf = (r) => (typeof r.data === 'string' ? r.data : (typeof r.body === 'string' ? r.body : ''));\n\n// Pull visible text out of HTML. Mailto and tel links are kept because the\n// address is inside the href attribute, which tag stripping would otherwise remove.\nfunction pageText(html) {\n  const mailtos = [...html.matchAll(/mailto:([^\"'?\\s>]+)/gi)].map((x) => x[1]);\n  const tels = [...html.matchAll(/tel:([^\"'\\s>]+)/gi)].map((x) => x[1]);\n  const visible = html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n    .replace(/<!--[\\s\\S]*?-->/g, ' ')\n    .replace(/<[^>]+>/g, ' ')\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&amp;/g, '&')\n    .replace(/\\s+/g, ' ')\n    .trim();\n  const extra = [\n    mailtos.length ? 'Mailto links found: ' + mailtos.join(', ') : '',\n    tels.length ? 'Tel links found: ' + tels.join(', ') : '',\n  ].filter(Boolean).join(' . ');\n  return (visible + ' ' + extra).trim().slice(0, MAX_PAGE_CHARS);\n}\n\nconst pages = [];\nconst fetchLog = [];\n\nfunction addPage(url, html, err) {\n  if (err) {\n    fetchLog.push({ url, error: err });\n    pages.push({ url, text: '', status: 'error' });\n    return;\n  }\n  const text = pageText(html);\n  pages.push({ url, text, status: text.length > 0 ? 'ok' : 'empty' });\n}\n\naddPage(lead.website, bodyOf(homeRaw), homeRaw.error ? String(homeRaw.error.message || homeRaw.error) : '');\n\nfor (const it of $input.all()) {\n  const j = it.json || {};\n  if (!j.page_url) continue; // skipped items from the IF \"Has Candidate Pages?\" false branch\n  addPage(j.page_url, j.html || '', j.fetch_error || '');\n}\n\n// Enforce a total size limit so the prompt stays small and predictable.\nlet total = 0;\nconst kept = [];\nfor (const p of pages.filter((p) => p.status === 'ok')) {\n  const room = MAX_TOTAL_CHARS - total;\n  if (room <= 0) break;\n  const text = p.text.slice(0, room);\n  total += text.length;\n  kept.push({ ...p, text });\n}\n\nconst evidenceText = kept.map((p) => `[PAGE ${p.url}]\\n${p.text}`).join('\\n\\n');\n\nreturn [{ json: {\n  ...lead,\n  pages: kept,\n  fetch_log: fetchLog,\n  evidence_text: evidenceText,\n  allowed_urls: kept.map((p) => p.url),\n  has_evidence: kept.some((p) => p.text.length >= 200),\n} }];\n"
+      },
+      "id": "99d5df6a-703d-492a-a485-33d0179ae4df",
+      "name": "Assemble Website Evidence",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4688,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c4",
+              "leftValue": "={{ $json.has_evidence }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2f80604a-7a1f-451d-b3a7-56589840f6a8",
+      "name": "Has Evidence?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4928,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Node: Build LLM Prompt (runOnceForAllItems)\n// Builds two prompts for the AI Agent:\n// system_prompt = rules and output schema (fixed for every lead)\n// user_prompt   = this lead's page text, plus retry notes if the last attempt failed\nconst j = $input.first().json;\nconst attempt = (j.attempt || 0) + 1;\nconst priorErrors = Array.isArray(j.validation_errors) ? j.validation_errors : [];\n\nconst system_prompt = `You are a precise data extractor for B2B lead research. You cannot browse the web. You only use the text you are given.\n\nRules:\n- Use only information written in the PAGES. Never use outside knowledge.\n- Each field has a status: \"found\" (stated on a page), \"inferred\" (follows from page content; explain in note), or \"not_found\" (value null or []).\n- For found or inferred, source_url must be one of the PAGE URLs.\n- Copy names, emails, phone numbers and brands exactly as written.\n- Never invent a value. If it is missing, use not_found.\n- Return one JSON object and nothing else. No markdown.\n\nFields:\n- business_description (string)\n- business_model: multi_brand_retailer | single_brand_retailer | manufacturer_own_brand | marketplace | service_provider | other | unknown\n- product_categories (array of strings)\n- third_party_brands (array of brand names it stocks, not its own)\n- ecommerce_evidence (string: shopping features shown, such as basket or checkout)\n- contact_person (a named individual only; team names do not count)\n- business_email\n- business_phone\n- country: United Kingdom | United States | Canada | Australia | Other\n\nEach field is: {\"value\": ..., \"status\": \"found|inferred|not_found\", \"source_url\": \"...\", \"note\": \"...\"}`;\n\nconst retryNote = attempt > 1\n  ? '\\nYour previous answer failed these checks. Fix them without adding new facts:\\n- ' + priorErrors.join('\\n- ') + '\\n\\n'\n  : '';\n\nconst pagesBlock = (j.pages || [])\n  .map((p) => '=== PAGE: ' + p.url + ' ===\\n' + p.text)\n  .join('\\n\\n');\n\nconst user_prompt = `${retryNote}PAGES:\\n${pagesBlock}`;\n\nreturn [{ json: { ...j, attempt, system_prompt, user_prompt } }];"
+      },
+      "id": "6b29e905-33ee-4a55-8c31-2b69d5d555b5",
+      "name": "Build LLM Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5168,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.user_prompt }}",
+        "options": {
+          "systemMessage": "={{ $json.system_prompt }}"
+        }
+      },
+      "id": "847978e9-581e-4e37-ba20-9cadce39012b",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        5392,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "id": "30ae12c3-ef7e-4966-a012-13a8b53fb27f",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        5392,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Node: Validate Enrichment Output (runOnceForEachItem)\n// Input: the AI Agent output. The model's text is in $json.output.\n// Context: the lead data and page text from Build LLM Prompt.\nconst ctx = $('Build LLM Prompt').item.json;\nconst resp = $input.item.json || {};\n\nlet maxAttempts = 2;\ntry {\n  maxAttempts = Number($('Config').first().json.max_llm_attempts) || 2;\n} catch (e) {\n  maxAttempts = 2;\n}\n\nconst errors = [];\nlet data = null;\n\nif (resp.error) errors.push('llm_request_failed: ' + String(resp.error.message || resp.error));\n\nconst text = String(resp.output || '').trim();\nif (!resp.error && !text) errors.push('llm_empty_output');\n\nif (text) {\n  // Remove a markdown code fence if the model adds one.\n  const cleaned = text.replace(/^```(json)?\\s*/i, '').replace(/```\\s*$/, '');\n  try {\n    data = JSON.parse(cleaned);\n  } catch (e) {\n    errors.push('invalid_json');\n  }\n}\n\nconst FIELDS = [\n  'business_description', 'business_model', 'product_categories', 'third_party_brands',\n  'ecommerce_evidence', 'contact_person', 'business_email', 'business_phone', 'country',\n];\nconst STATUSES = ['found', 'inferred', 'not_found'];\nconst MODELS = ['multi_brand_retailer', 'single_brand_retailer', 'manufacturer_own_brand', 'marketplace', 'service_provider', 'other', 'unknown'];\nconst COUNTRIES = ['United Kingdom', 'United States', 'Canada', 'Australia', 'Other'];\n// These values must appear word-for-word in the page text when marked \"found\".\nconst LITERAL_CHECK_FIELDS = ['contact_person', 'business_email', 'business_phone', 'third_party_brands'];\n\nconst normUrl = (u) => String(u || '').trim().replace(/\\/+$/, '').toLowerCase();\nconst allowed = new Set((ctx.allowed_urls || []).map(normUrl));\nconst evidence = String(ctx.evidence_text || '').toLowerCase();\nconst evidenceDigits = evidence.replace(/\\D/g, '');\n\nif (data && typeof data === 'object') {\n  for (const field of FIELDS) {\n    const f = data[field];\n    if (!f || typeof f !== 'object') {\n      errors.push(`${field}: missing or not an object`);\n      continue;\n    }\n    if (!STATUSES.includes(f.status)) {\n      errors.push(`${field}: invalid status \"${f.status}\"`);\n      continue;\n    }\n\n    const v = f.value;\n    const empty = v === null || v === undefined || v === '' || (Array.isArray(v) && v.length === 0);\n\n    if (f.status === 'not_found') {\n      if (!empty) errors.push(`${field}: status not_found but a value is present`);\n      continue;\n    }\n    if (empty) {\n      errors.push(`${field}: status ${f.status} but value is empty`);\n      continue;\n    }\n\n    if (!f.source_url || !allowed.has(normUrl(f.source_url))) {\n      errors.push(`${field}: source_url is missing or is not one of the fetched pages`);\n    }\n\n    if (f.status === 'found' && LITERAL_CHECK_FIELDS.includes(field)) {\n      const values = Array.isArray(v) ? v : [v];\n      for (const item of values) {\n        const s = String(item).toLowerCase();\n        if (field === 'business_phone') {\n          const digits = s.replace(/\\D/g, '');\n          if (digits.length < 6 || !evidenceDigits.includes(digits)) {\n            errors.push(`${field}: \"${item}\" marked found but its digits do not appear in the page text`);\n          }\n        } else if (!evidence.includes(s)) {\n          errors.push(`${field}: \"${item}\" marked found but does not appear in the page text`);\n        }\n      }\n    }\n  }\n\n  const model = data.business_model && data.business_model.value;\n  if (data.business_model && model !== null && model !== undefined && !MODELS.includes(model)) {\n    errors.push(`business_model: \"${model}\" is not an allowed value`);\n  }\n\n  const country = data.country && data.country.value;\n  if (data.country && country !== null && country !== undefined && !COUNTRIES.includes(country)) {\n    errors.push(`country: \"${country}\" is not an allowed value`);\n  }\n\n  const email = data.business_email && data.business_email.value;\n  if (email && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(email)) {\n    errors.push(`business_email: \"${email}\" has invalid format`);\n  }\n\n  // Contradiction check: a multi-brand retailer must list at least two third-party brands.\n  const brands = data.third_party_brands && Array.isArray(data.third_party_brands.value) ? data.third_party_brands.value : [];\n  if (model === 'multi_brand_retailer' && brands.length < 2) {\n    errors.push('contradiction: business_model is multi_brand_retailer but fewer than 2 third-party brands are listed');\n  }\n}\n\nconst valid = errors.length === 0;\n\nreturn { json: {\n  ...ctx,\n  enrichment: data,\n  validation_errors: errors,\n  is_valid: valid,\n  llm_request_ok: !resp.error,\n  retry_allowed: !valid && ctx.attempt < maxAttempts,\n} };"
+      },
+      "id": "35b764bb-f480-4c46-9556-06c31d00916d",
+      "name": "Validate Enrichment Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5984,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c5",
+              "leftValue": "={{ $json.retry_allowed }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "b15fbf3c-fe8f-4b1e-91f9-15c5f13b3071",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ef26e896-5895-4750-a1cf-f5f09799e257",
+      "name": "Retry Allowed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        6272,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Node: Qualify Retailer (runOnceForEachItem)\n// Deterministic rules decide the outcome. The LLM only supplies evidence.\n// Hard exclusions come first and cannot be overridden by the LLM.\n// Qualified requires directly found evidence for every key criterion.\nconst j = $input.item.json;\nconst e = j.enrichment || null;\nconst usable = Boolean(e) && j.is_valid === true && j.has_evidence !== false;\n\nconst TARGET = ['United Kingdom', 'United States', 'Canada', 'Australia'];\n// Starter list of large chains and marketplaces, matched on the first domain label.\nconst LARGE_CHAIN_OR_MARKETPLACE = new Set([\n  'amazon', 'ebay', 'walmart', 'target', 'sephora', 'ulta', 'boots', 'superdrug',\n  'asos', 'lookfantastic', 'notino', 'iherb', 'tesco', 'costco', 'macys', 'nordstrom',\n  'shopee', 'etsy',\n]);\n\nconst get = (k) => (e && e[k] ? e[k] : { status: 'not_found', value: null, source_url: null });\nconst found = (k) => get(k).status === 'found';\nconst brands = found('third_party_brands') && Array.isArray(get('third_party_brands').value) ? get('third_party_brands').value : [];\n\nconst firstLabel = (j.canonical_domain || '').split('.')[0];\nconst hardExclusions = [];\nconst missing = [];\n\nif (LARGE_CHAIN_OR_MARKETPLACE.has(firstLabel)) {\n  hardExclusions.push('Domain matches the starter list of large chains or marketplaces.');\n}\nif (usable) {\n  const model = get('business_model').value;\n  if (found('business_model') && ['manufacturer_own_brand', 'marketplace', 'service_provider'].includes(model)) {\n    hardExclusions.push(`The site identifies its business model as ${model}.`);\n  }\n  if (found('country') && !TARGET.includes(get('country').value)) {\n    hardExclusions.push(`The country shown on the site is outside the target market (${get('country').value}).`);\n  }\n  if (found('product_categories')) {\n    const cats = (get('product_categories').value || []).join(' ').toLowerCase();\n    if (!/skin|beauty|cosmetic|serum|cleanser|moistur|sunscreen|makeup|toner|mask/.test(cats)) {\n      hardExclusions.push('The product categories found are not skincare or beauty.');\n    }\n  }\n}\n\nlet qualificationStatus;\nlet reason;\n\nif (hardExclusions.length > 0) {\n  qualificationStatus = 'Rejected';\n  reason = hardExclusions.join(' ');\n} else if (!j.has_evidence) {\n  qualificationStatus = 'Needs Review';\n  reason = 'No usable public website text was retrieved, so the lead cannot be assessed.';\n} else if (!usable) {\n  qualificationStatus = 'Needs Review';\n  reason = 'The LLM output failed validation: ' + (j.validation_errors || []).join('; ');\n} else {\n  if (!(found('business_model') && get('business_model').value === 'multi_brand_retailer')) missing.push('multi-brand retailer model');\n  if (brands.length < 2) missing.push('at least two third-party brands');\n  if (!found('ecommerce_evidence')) missing.push('e-commerce evidence');\n  if (!(found('country') && TARGET.includes(get('country').value))) missing.push('target country');\n  if (!found('product_categories')) missing.push('product categories');\n\n  if (missing.length > 0) {\n    qualificationStatus = 'Needs Review';\n    reason = 'Directly found evidence is missing for: ' + missing.join(', ') + '.';\n  } else {\n    qualificationStatus = 'Qualified';\n    reason = `Multi-brand skincare retailer with ${brands.length} third-party brands (${brands.join(', ')}), e-commerce evidence and a target-market country, all found on the site.`;\n  }\n}\n\nconst enrichmentStatus = !j.has_evidence ? 'no_content' : (!usable ? 'failed' : 'ok');\nconst sourceUrls = new Set(j.discovery_urls || []);\nif (e) {\n  for (const k of Object.keys(e)) {\n    if (e[k] && e[k].source_url) sourceUrls.add(e[k].source_url);\n  }\n}\n\nreturn { json: {\n  ...j,\n  qualification_status: qualificationStatus,\n  qualification_reason: reason,\n  enrichment_status: enrichmentStatus,\n  validation_errors_text: (j.validation_errors || []).join('; '),\n  processing_status: qualificationStatus === 'Qualified' ? 'qualified' : (qualificationStatus === 'Rejected' ? 'rejected' : 'needs_review'),\n  category: found('product_categories') ? (get('product_categories').value || []).join(', ') : '',\n  business_model: found('business_model') ? get('business_model').value : 'unknown',\n  contact_person: found('contact_person') ? get('contact_person').value : '',\n  business_email: found('business_email') ? get('business_email').value : '',\n  phone: found('business_phone') ? get('business_phone').value : '',\n  ecommerce_evidence: found('ecommerce_evidence') ? get('ecommerce_evidence').value : '',\n  multi_brand_evidence: brands.join(', '),\n  country: found('country') ? get('country').value : (j.country || 'unknown'),\n  evidence_urls: [...sourceUrls].join('\\n'),\n  enrichment_json: JSON.stringify(e || { error: 'no enrichment output' }, null, 2),\n} };\n"
+      },
+      "id": "61f0f227-6a45-4d3e-868b-7939ea7e0f03",
+      "name": "Qualify Retailer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6512,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Node: Validate Email Syntax (runOnceForEachItem)\n// Syntax check only. There is no SMTP probing and no DNS/MX check in v1.\n// Finding an address on a website never makes it \"verified\".\nconst j = $input.item.json;\nconst email = String(j.business_email || '').trim();\n\nlet emailStatus;\nif (!email) {\n  emailStatus = 'missing';\n} else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(email)) {\n  emailStatus = 'invalid_format';\n} else {\n  emailStatus = 'found_unchecked';\n}\n\n// Informational only: does the email's domain match the lead's domain?\nconst emailDomain = email.includes('@') ? email.split('@')[1].toLowerCase() : '';\nconst emailDomainMatchesSite = Boolean(emailDomain) && (emailDomain === j.canonical_domain || emailDomain.endsWith('.' + j.canonical_domain));\n\nreturn { json: {\n  ...j,\n  email_status: emailStatus,\n  email_domain_matches_site: emailDomainMatchesSite,\n} };\n"
+      },
+      "id": "9e255038-1dbd-42ee-904f-c3bb1b570b16",
+      "name": "Validate Email Syntax",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6752,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c6",
+              "leftValue": "={{ $json.enrichment_status }}",
+              "rightValue": "failed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5b0f7ea3-8b40-4141-bfe5-ce6f5fa12ece",
+      "name": "Enrichment Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        6992,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "list",
+          "cachedResultName": "Skincare Lead Generation"
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "Execution & Error Logs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "execution_id": "={{ $execution.id }}.",
+            "business_domain": "={{ $json.website }}",
+            "resolution_status": "open",
+            "timestamp": "="
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "business_domain",
+              "displayName": "business_domain",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "workflow_stage",
+              "displayName": "workflow_stage",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "error_type",
+              "displayName": "error_type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "error_message",
+              "displayName": "error_message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "attempt_count",
+              "displayName": "attempt_count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "resolution_status",
+              "displayName": "resolution_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "open",
+                  "value": "open"
+                },
+                {
+                  "name": "resolved",
+                  "value": "resolved"
+                },
+                {
+                  "name": "ignored",
+                  "value": "ignored"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "a966e0d8-5b05-4526-bc9a-a0cf3dce4b57",
+      "name": "Log Enrichment Error",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        7232,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "list",
+          "cachedResultName": "Skincare Lead Generation"
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "company_name": "={{ $json.company_name }}",
+            "website": "={{ $json.website }}",
+            "canonical_domain": "={{ $json.canonical_domain }}",
+            "processing_status": "={{ $json.qualification_status }}",
+            "description": "={{ Array.isArray($json.snippets) ? $json.snippets.join(\" | \") : ($json.snippets || \"\") }}",
+            "id": "={{ $json.airtable_record_id }}",
+            "country": "={{ $json.country }}",
+            "last_execution_id": "={{ $execution.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "company_name",
+              "displayName": "company_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "canonical_domain",
+              "displayName": "canonical_domain",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "processing_status",
+              "displayName": "processing_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Discovered",
+                  "value": "Discovered"
+                },
+                {
+                  "name": "Enriching",
+                  "value": "Enriching"
+                },
+                {
+                  "name": "Qualified",
+                  "value": "Qualified"
+                },
+                {
+                  "name": "Needs Review",
+                  "value": "Needs Review"
+                },
+                {
+                  "name": "Rejected",
+                  "value": "Rejected"
+                },
+                {
+                  "name": "Error",
+                  "value": "Error"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "last_execution_id",
+              "displayName": "last_execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "run_action",
+              "displayName": "run_action",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "f1181713-0006-4044-99e1-6621ff4ac8d2",
+      "name": "Update Lead Record",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        7472,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "6c758f8c-d83e-4283-b897-73c4dea21a06",
+      "name": "Wait Between Leads",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        7712,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ba7ff425-97fc-4503-8611-4d406011badf",
+      "name": "Loop Over Leads",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3248,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "list",
+          "cachedResultName": "Skincare Lead Generation"
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "company_name": "={{ $json.company_name }}",
+            "website": "={{ $json.website }}",
+            "canonical_domain": "={{ $json.canonical_domain }}",
+            "description": "={{ $json.snippet }}\n",
+            "processing_status": "Discovered",
+            "last_execution_id": "={{ $execution.id }}",
+            "run_action": "created",
+            "country": "={{ $json.country }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "company_name",
+              "displayName": "company_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "canonical_domain",
+              "displayName": "canonical_domain",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "processing_status",
+              "displayName": "processing_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Discovered",
+                  "value": "Discovered"
+                },
+                {
+                  "name": "Enriching",
+                  "value": "Enriching"
+                },
+                {
+                  "name": "Qualified",
+                  "value": "Qualified"
+                },
+                {
+                  "name": "Needs Review",
+                  "value": "Needs Review"
+                },
+                {
+                  "name": "Rejected",
+                  "value": "Rejected"
+                },
+                {
+                  "name": "Error",
+                  "value": "Error"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "last_execution_id",
+              "displayName": "last_execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "run_action",
+              "displayName": "run_action",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "d3178597-b741-43f7-81ce-807f72c67092",
+      "name": "Create New Lead",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2768,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "list",
+          "cachedResultName": "Skincare Lead Generation"
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "Execution & Error Logs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "error_type": "={{ $json.error_type }}",
+            "execution_id": "={{ $execution.id }}.",
+            "business_domain": "={{ $json.website }}",
+            "error_message": "={{ $json.error_message }}",
+            "workflow_stage": "=Website normalisation ",
+            "timestamp": "=2026-11-18T08:46:24.138+01:00",
+            "attempt_count": 1,
+            "resolution_status": "open"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "business_domain",
+              "displayName": "business_domain",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "workflow_stage",
+              "displayName": "workflow_stage",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "error_type",
+              "displayName": "error_type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "error_message",
+              "displayName": "error_message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "attempt_count",
+              "displayName": "attempt_count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "resolution_status",
+              "displayName": "resolution_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "open",
+                  "value": "open"
+                },
+                {
+                  "name": "resolved",
+                  "value": "resolved"
+                },
+                {
+                  "name": "ignored",
+                  "value": "ignored"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": false
+        }
+      },
+      "id": "9ab34754-79de-4d2d-bf91-f5c58ac49ba8",
+      "name": "Log Processing Error",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2048,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "id": "aad225f6-166e-4ae3-ace3-6f47656eec32",
+      "name": "Schedule Trigger — Disabled until testing is complete",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Stage A — Discovery\nManual Trigger, Serper search per country and category (edit the list in \"Build Search Queries\"). Serper errors become error items and are logged, not dropped.",
+        "height": 220,
+        "width": 520,
+        "color": 4
+      },
+      "id": "a12e9145-ef86-4704-b02b-7ae3d72fb2ff",
+      "name": "Note 37",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Stage B–C — Normalise and de-duplicate\nCanonical registrable domain (handles .co.uk and .com.au). Same-batch duplicates are merged and counted. Invalid URLs go to the log.",
+        "height": 220,
+        "width": 520,
+        "color": 4
+      },
+      "id": "97bb9466-f290-4adb-8007-940708bc3da3",
+      "name": "Note 38",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Stage D — Airtable persistence\nSearch by canonical_domain. Update if found, create if not. Record id is carried forward so reruns do not create duplicates.",
+        "height": 220,
+        "width": 520,
+        "color": 4
+      },
+      "id": "f3274237-1c2f-4249-9024-0cb937f1af59",
+      "name": "Note 39",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Stage E–F — Enrichment and qualification\nFetch homepage and About/Contact/Brands pages. Gemini extracts structured JSON from that text only. Deterministic code validates it (quotes must exist in the page text, sources must be fetched URLs), retries once, then qualifies by rules. LLM cannot override hard exclusions.",
+        "height": 260,
+        "width": 720,
+        "color": 4
+      },
+      "id": "58ee8a75-5c46-4b63-adde-20436ab74d17",
+      "name": "Note 40",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3696,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Stage G–I — Contact status, write-back and summary\nEmail syntax only, no SMTP probing. Each lead is written back to Airtable. After the loop, the summary counts are computed from records touched by this execution.",
+        "height": 220,
+        "width": 520,
+        "color": 4
+      },
+      "id": "15b10f56-fc1f-4bc1-80a5-de405089fd4c",
+      "name": "Note 41",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        6704,
+        80
+      ]
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger — Disabled until testing is complete": [
+      {
+        "json": {
+          "timestamp": "2026-11-18T14:38:16.837+01:00",
+          "Readable date": "November 18th 2026, 2:38:16 pm",
+          "Readable time": "2:38:16 pm",
+          "Day of week": "Wednesday",
+          "Year": "2026",
+          "Month": "November",
+          "Day of month": "18",
+          "Hour": "14",
+          "Minute": "38",
+          "Second": "16",
+          "Timezone": "Africa/Lagos (UTC+01:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Manual Trigger — Test Run": {
+      "main": [
+        [
+          {
+            "node": "Build Search Queries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Search Queries": {
+      "main": [
+        [
+          {
+            "node": "Search Businesses — Serper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Businesses — Serper": {
+      "main": [
+        [
+          {
+            "node": "Parse Search Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Search Results": {
+      "main": [
+        [
+          {
+            "node": "Normalise Website and Domain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalise Website and Domain": {
+      "main": [
+        [
+          {
+            "node": "Remove Same-Batch Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Same-Batch Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Valid Domain?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid Domain?": {
+      "main": [
+        [
+          {
+            "node": "Search Airtable — Existing Lead?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Processing Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Airtable — Existing Lead?": {
+      "main": [
+        [
+          {
+            "node": "Match Existing Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match Existing Record": {
+      "main": [
+        [
+          {
+            "node": "Existing Lead?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Existing Lead?": {
+      "main": [
+        [
+          {
+            "node": "Update Existing Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create New Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Existing Lead": {
+      "main": [
+        [
+          {
+            "node": "Attach Record ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach Record ID": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Run Leads": {
+      "main": [
+        [
+          {
+            "node": "Build Execution Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Homepage": {
+      "main": [
+        [
+          {
+            "node": "Find Contact and About Pages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Contact and About Pages": {
+      "main": [
+        [
+          {
+            "node": "Has Candidate Pages?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Candidate Pages?": {
+      "main": [
+        [
+          {
+            "node": "Fetch Candidate Pages",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Assemble Website Evidence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Candidate Pages": {
+      "main": [
+        [
+          {
+            "node": "Attach Page Body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach Page Body": {
+      "main": [
+        [
+          {
+            "node": "Assemble Website Evidence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assemble Website Evidence": {
+      "main": [
+        [
+          {
+            "node": "Has Evidence?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Evidence?": {
+      "main": [
+        [
+          {
+            "node": "Build LLM Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Qualify Retailer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build LLM Prompt": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Validate Enrichment Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Enrichment Output": {
+      "main": [
+        [
+          {
+            "node": "Retry Allowed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry Allowed?": {
+      "main": [
+        [
+          {
+            "node": "Build LLM Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Qualify Retailer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qualify Retailer": {
+      "main": [
+        [
+          {
+            "node": "Validate Email Syntax",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Email Syntax": {
+      "main": [
+        [
+          {
+            "node": "Enrichment Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrichment Failed?": {
+      "main": [
+        [
+          {
+            "node": "Log Enrichment Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Lead Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Enrichment Error": {
+      "main": [
+        [
+          {
+            "node": "Update Lead Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Lead Record": {
+      "main": [
+        [
+          {
+            "node": "Wait Between Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Between Leads": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Leads": {
+      "main": [
+        [
+          {
+            "node": "Search Run Leads",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Homepage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create New Lead": {
+      "main": [
+        [
+          {
+            "node": "Attach Record ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger — Disabled until testing is complete": {
+      "main": [
+        [
+          {
+            "node": "Build Search Queries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}
