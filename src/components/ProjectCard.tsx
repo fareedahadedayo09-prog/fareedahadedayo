@@ -54,7 +54,7 @@ export function ProjectCard({ project }: { project: Project }) {
         </div>
 
         <h3 className="project-card__title">
-          <Link to={`/projects/${project.slug}`}>{project.name}</Link>
+          <Link to={`/projects/${project.slug}`}>{project.cardTitle ?? project.name}</Link>
         </h3>
 
         <p className="project-card__desc" style={{ margin: 0 }}>
