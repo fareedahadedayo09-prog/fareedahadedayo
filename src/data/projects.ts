@@ -74,6 +74,8 @@ export type Project = {
   /** Original n8n canvas screenshot, when available. */
   workflowScreenshot?: string
   workflowScreenshotAlt?: string
+  /** Shown when evidence exists but is not yet cleared for publication. */
+  evidencePlaceholder?: { title: string; body: string; items: string[] }
   /** Optional supporting evidence, shown separately from workflow diagrams. */
   evidenceIntro?: string
   evidence?: { image: string; title: string; description: string; alt: string }[]
@@ -458,9 +460,19 @@ export const projects: Project[] = [
     statusLabel: 'Working prototype',
     statusDetail:
       'A technical-assessment prototype with Serper discovery, website enrichment, source-checked Gemini extraction, deterministic qualification and Airtable write-back. A qualified-lead outcome has not yet been confirmed for publication; no production or business results are claimed.',
-    tools: ['n8n', 'airtable', 'google-gemini', 'javascript'],
+    tools: ['n8n', 'serper', 'gemini', 'javascript', 'airtable'],
     timeline: 'Independent technical assessment',
     categories: ['lead-management', 'ai-data'],
+    evidencePlaceholder: {
+      title: 'Evidence — pending publication',
+      body:
+        'Screenshots of the n8n canvas and a redacted Airtable output belong here. They are not shown yet because the workflow canvas exposes internal instance details and the Airtable export contains real businesses and contact details, so both need a privacy review and redaction before they are published. Nothing on this page is illustrated with a mock-up in the meantime.',
+      items: [
+        'n8n canvas — node names and instance metadata need checking before publication.',
+        'Airtable output — company names, domains and contact details need redacting or replacing with synthetic rows.',
+        'Run summary — not published, because a completed run has not been verified for reporting.',
+      ],
+    },
     problem: {
       summary:
         'Finding independent multi-brand skincare retailers across several markets requires repeated searches, manual website reviews and copying business details into a structured prospect list.',
