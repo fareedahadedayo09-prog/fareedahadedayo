@@ -24,6 +24,9 @@ const wait = (ms) => new Promise(r => setTimeout(r, ms))
       sections: [...document.querySelectorAll('.cs-section__num')].map(e => e.textContent.trim()),
       body: document.body.innerText.length,
       has24: /\b24 leads\b|\b13 qualified\b/i.test(document.body.innerText),
+      tags: [...document.querySelectorAll('.chip-row .tag')].map(e => e.textContent),
+      evidence: document.querySelector('#evidence .cs-section__num')?.textContent || null,
+      evidenceBadges: [...document.querySelectorAll('#evidence .badge')].map(e => e.textContent),
       scrollW: document.documentElement.scrollWidth, winW: window.innerWidth,
     }))
     await page.screenshot({ path: `${OUT}/detail-desktop.png`, fullPage: false })

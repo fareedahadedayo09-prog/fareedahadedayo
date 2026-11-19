@@ -302,6 +302,26 @@ export function ProjectCaseStudy() {
             ) : null}
           </section>
 
+          {project.evidencePlaceholder && !project.evidence?.length ? (
+            <section id="evidence" className="cs-section">
+              <div className="cs-section__head">
+                <span className="cs-section__num">Evidence</span>
+                <h2 style={{ fontSize: 'clamp(1.4rem, 1.05rem + 1.5vw, 2rem)' }}>
+                  {project.evidencePlaceholder.title}
+                </h2>
+              </div>
+              <p style={{ fontSize: '1rem' }}>{project.evidencePlaceholder.body}</p>
+              <ul className="results-list" style={{ marginTop: '1.1rem' }}>
+                {project.evidencePlaceholder.items.map((item) => (
+                  <li key={item}>
+                    <span className="badge badge--planned">Pending</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
           {project.evidence?.length ? (
             <section id="evidence" className="evidence-section">
               <details className="evidence-details">
