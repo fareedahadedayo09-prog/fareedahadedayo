@@ -55,6 +55,8 @@ export type TechDetail = {
 export type Project = {
   slug: string
   name: string
+  /** Short label for cards and listings; falls back to name when absent. */
+  cardTitle?: string
   /** One-line business description (card + case-study intro). */
   tagline: string
   status: StatusKey
@@ -97,6 +99,10 @@ export type Project = {
     disclaimer?: string
   }
   technical: TechDetail
+  /** Public repository URL, when one is available. */
+  repoUrl?: string
+  /** Closing engineering lessons, rendered as a standalone section. */
+  takeaways?: { title: string; body: string }[]
 }
 
 export const PROJECT_CATEGORY_LABELS: Record<ProjectCategory | 'all', string> = {
@@ -453,65 +459,18 @@ export const projects: Project[] = [
   // ─────────────────── 4. SKINCARE RETAILER LEAD GENERATION ───────────────────
   {
     slug: 'skincare-retailer-lead-generation',
-    name: 'Skincare Retailer Lead Generation Pipeline',
+    name: 'AI-Powered Lead Generation and Qualification Automation for Skincare Retailers',
+    cardTitle: 'AI-Powered Lead Generation & Qualification',
     tagline:
-      'A discovery-to-qualification workflow for independent multi-brand skincare retailers across four markets.',
+      'An AI-assisted prospect research pipeline that discovers potential skincare retailers, extracts structured business information and applies deterministic qualification rules.',
     status: 'progress',
     statusLabel: 'Working prototype',
     statusDetail:
       'A technical-assessment prototype with Serper discovery, website enrichment, source-checked Gemini extraction, deterministic qualification and Airtable write-back. A qualified-lead outcome has not yet been confirmed for publication; no production or business results are claimed.',
     tools: ['n8n', 'serper', 'gemini', 'javascript', 'airtable'],
+    repoUrl: 'https://github.com/fareedahadedayo09-prog/fareedahadedayo/tree/main/projects/skincare-retailer-lead-generation',
     timeline: 'Independent technical assessment',
     categories: ['lead-management', 'ai-data'],
-    workflowScreenshot: '/screenshots/skincare-leadgen/n8n-canvas.png',
-    workflowScreenshotAlt:
-      'The n8n canvas for the skincare lead generation workflow, showing the discovery, deduplication, enrichment, AI extraction, qualification and Airtable stages laid out left to right',
-    evidenceIntro:
-      'Screenshots from the demo run: the n8n canvas, and the Airtable Leads table showing qualification status, evidence and scores. These show the workflow ran and wrote records. They do not constitute a verified qualified-lead result.',
-    evidence: [
-      {
-        image: '/screenshots/skincare-leadgen/n8n-canvas.png',
-        title: 'The n8n workflow canvas',
-        description:
-          'The full pipeline laid out left to right, from search discovery through to qualification and Airtable write-back. Each branch — invalid domain, robots check, candidate pages, retry and error logging — is a separate path rather than one straight line.',
-        alt: 'n8n workflow canvas showing the skincare lead generation pipeline stages',
-      },
-      {
-        image: '/screenshots/skincare-leadgen/airtable-status.png',
-        title: 'Airtable records with processing status',
-        description:
-          'The Leads table after a run: company name, canonical domain, qualification status and the evidence that produced it. Yellow chips are Qualified, and the row count shows 24 records were written by the run.',
-        alt: 'Airtable Leads table showing company names with Qualified, Needs Review and Rejected status labels',
-      },
-      {
-        image: '/screenshots/skincare-leadgen/airtable-scores.png',
-        title: 'Scores and qualification reasons',
-        description:
-          'The same records with the rule-based score out of 10 and a plain-language reason for each outcome. Scores vary by evidence — a lower score reflects missing multi-brand or e-commerce evidence, not a failed run.',
-        alt: 'Airtable view showing qualification_reason and numeric score fields for each lead',
-      },
-      {
-        image: '/screenshots/skincare-leadgen/airtable-qualification.png',
-        title: 'Business model and brands found',
-        description:
-          'Extracted business model, third-party brands and product category. Where evidence was incomplete the status is Needs Review rather than an assumed positive, which is the intended behaviour of the qualification rules.',
-        alt: 'Airtable view showing business_model, brands_found and product_category fields',
-      },
-      {
-        image: '/screenshots/skincare-leadgen/airtable-leads-a.png',
-        title: 'Extracted contact fields',
-        description:
-          'Contact person, business email and email_status. Most rows read “missing”, which is expected: independent retailers rarely publish a named person. Emails are marked found_unchecked because only syntax is validated.',
-        alt: 'Airtable view showing contact_person, business_email and email_status columns',
-      },
-      {
-        image: '/screenshots/skincare-leadgen/airtable-leads-b.png',
-        title: 'Website evidence and e-commerce signals',
-        description:
-          'Product category, e-commerce evidence and the source URLs captured per lead. Each record retains the pages the extraction was drawn from, so a result can be traced back to its evidence.',
-        alt: 'Airtable view showing product_category, ecommerce_evidence and evidence_urls columns',
-      },
-    ],
     problem: {
       summary:
         'Finding independent multi-brand skincare retailers across several markets requires repeated searches, manual website reviews and copying business details into a structured prospect list.',
@@ -629,6 +588,28 @@ export const projects: Project[] = [
   "qualification_reason": "Direct evidence for the multi-brand retailer criteria is incomplete."
 }`,
     },
+    takeaways: [
+      {
+        title: 'Separate extraction from judgement',
+        body: 'The most consequential decision was refusing to let the model decide eligibility. Gemini is confined to reading fetched page text and returning structured fields with a source URL. A JavaScript scoring function owns the verdict. That split means a result can be re-run, argued with and audited — none of which is possible when a model simply returns a yes or no.',
+      },
+      {
+        title: 'Validate the evidence, not just the shape',
+        body: 'Schema validation alone would accept a well-formed hallucination. The validator additionally checks that every “found” value appears literally in the page text actually fetched, and that cited URLs are pages the workflow retrieved. Values that fail are dropped rather than stored.',
+      },
+      {
+        title: 'Missing evidence must not become a rejection',
+        body: 'Treating absent evidence as a negative signal quietly discards real prospects whose sites are thin or rendered with JavaScript. Routing unknown cases to Needs Review keeps the decision honest and hands the ambiguity to a person instead of guessing.',
+      },
+      {
+        title: 'Design for the quota you actually have',
+        body: 'Built on free tiers, the workflow had to survive rate limits rather than assume them away: a batch size of one, a wait between leads, a single retry with validation errors fed back, and a fallback model. Those constraints shaped the architecture more than any feature request did.',
+      },
+      {
+        title: 'Log the failure, not only the success',
+        body: 'A workflow that silently drops a lead looks identical to one that found nothing. Writing every stage outcome and error to a log table is the difference between a system you can operate and one you can only hope works.',
+      },
+    ],
   },
 
   // ─────────────────── 5. GLOWLAB LIFECYCLE ───────────────────

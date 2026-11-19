@@ -168,6 +168,18 @@ export function ProjectCaseStudy() {
                 <strong>Status.</strong> {project.statusDetail}
               </div>
             ) : null}
+
+            {project.repoUrl ? (
+              <a
+                href={project.repoUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="link-arrow"
+                style={{ marginTop: '1rem', display: 'inline-flex' }}
+              >
+                Workflow export and notes on GitHub <ArrowRight width={13} height={13} />
+              </a>
+            ) : null}
           </div>
 
           {simulator ? (
@@ -183,6 +195,7 @@ export function ProjectCaseStudy() {
             <a href="#result">Testing &amp; results</a>
             {project.evidence?.length ? <a href="#evidence">Evidence</a> : null}
             <a href="#technical">Technical detail</a>
+            {project.takeaways?.length ? <a href="#takeaways">Takeaways</a> : null}
           </nav>
         </div>
       </section>
@@ -351,6 +364,25 @@ export function ProjectCaseStudy() {
           <section id="technical">
             <TechnicalExpander project={project} />
           </section>
+
+          {project.takeaways && project.takeaways.length > 0 ? (
+            <section className="cs-section" id="takeaways">
+              <div className="cs-section__head">
+                <span className="cs-section__num">Engineering takeaways</span>
+                <h2 style={{ fontSize: 'clamp(1.4rem, 1.05rem + 1.5vw, 2rem)' }}>
+                  What this project changed in how I build
+                </h2>
+              </div>
+              <div className="takeaway-grid">
+                {project.takeaways.map((t) => (
+                  <article className="takeaway" key={t.title}>
+                    <h3>{t.title}</h3>
+                    <p>{t.body}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           {/* ─────── Related projects ─────── */}
           {related.length > 0 ? (
