@@ -485,7 +485,7 @@ export const projects: Project[] = [
     },
     solution: {
       summary:
-        'An n8n pipeline that discovers candidate retailers through Serper, normalises and deduplicates domains, fetches relevant website pages, uses Gemini to structure evidence, validates the extracted fields and applies deterministic qualification rules before writing records to Airtable.',
+        'An n8n pipeline that discovers candidate retailers through Serper, normalises and deduplicates domains, fetches relevant website pages, uses Gemini 2.5 Flash to structure evidence, validates the extracted fields and applies deterministic qualification rules before writing records to Airtable.',
       automated: [
         'Run configurable Serper searches for the United Kingdom, United States, Canada and Australia.',
         'Parse organic results and normalise website URLs into canonical domains.',
@@ -530,7 +530,7 @@ export const projects: Project[] = [
     },
     technical: {
       summary:
-        'The workflow separates search discovery, domain handling, website evidence collection, AI-assisted extraction, deterministic qualification and Airtable persistence. Gemini does not make the final eligibility decision.',
+        'The workflow separates search discovery, domain handling, website evidence collection, AI-assisted extraction, deterministic qualification and Airtable persistence. Gemini 2.5 Flash is called at temperature 0.1 for structured extraction, with Groq running Llama 3.3 70B as a fallback model when Gemini errors or is rate-limited. Gemini does not make the final eligibility decision.',
       dataFlow: [
         'A manual trigger starts four configurable Serper queries, one each for the United Kingdom, United States, Canada and Australia.',
         'Organic results are parsed into provisional company names, URLs, snippets, market labels and discovery sources.',
@@ -549,6 +549,7 @@ export const projects: Project[] = [
         'A Qualified result requires a multi-brand retailer model, at least two third-party brands, e-commerce evidence, skincare/beauty product categories and a target-market country.',
         'Missing evidence or invalid extraction produces Needs Review rather than an assumed positive result.',
         'The LLM extracts evidence; deterministic code owns the final decision.',
+        'Gemini 2.5 Flash runs at temperature 0.1 to keep extraction close to the source text. Groq (Llama 3.3 70B) is configured as a fallback so a rate limit or model error does not abandon the lead.',
       ],
       validation: [
         'Website URLs are normalised and malformed or non-registrable domains are routed to an error path.',

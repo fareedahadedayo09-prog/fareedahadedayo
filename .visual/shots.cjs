@@ -19,7 +19,15 @@ const wait = ms => new Promise(r => setTimeout(r, ms))
     R.h1 = (await page.locator('h1').first().textContent()).trim()
     R.imgs = await page.$$eval('img', els => els.map(e => ({
       src: e.getAttribute('src'), w: e.naturalWidth, broken: e.naturalWidth === 0 })))
+    // scroll to bottom so lazy images resolve
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.body.scrollHeight; y += 600) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 60)) }
+    })
+    await wait(2500)
+    R.imgsAfterScroll = await page.$$eval('img', els => els.map(e => ({ src: e.getAttribute('src'), w: e.naturalWidth })))
     R.evidenceSection = await page.locator('#evidence').count()
+    R.hasGroq = (await page.content()).includes('Groq')
+    R.hasFlash = (await page.content()).includes('2.5 Flash')
     R.takeaways = await page.$$eval('#takeaways .takeaway h3', els => els.map(e => e.textContent))
     R.repoLink = await page.$$eval('a[href*="github.com"]', els => els.map(e => e.getAttribute('href')))
     R.navLinks = await page.$$eval('.cs-nav a', els => els.map(e => e.textContent))
