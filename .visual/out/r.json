@@ -12,10 +12,24 @@
       "The problem",
       "The solution",
       "How it works",
-      "Testing & results"
+      "Testing & results",
+      "Evidence"
     ],
-    "body": 6506,
+    "body": 7220,
     "has24": false,
+    "tags": [
+      "n8n",
+      "serper",
+      "gemini",
+      "javascript",
+      "airtable"
+    ],
+    "evidence": "Evidence",
+    "evidenceBadges": [
+      "Pending",
+      "Pending",
+      "Pending"
+    ],
     "scrollW": 1440,
     "winW": 1440
   },
