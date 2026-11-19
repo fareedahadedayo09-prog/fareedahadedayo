@@ -466,7 +466,7 @@ export const projects: Project[] = [
     status: 'progress',
     statusLabel: 'Working prototype',
     statusDetail:
-      'A technical-assessment prototype with Serper discovery, website enrichment, source-checked Gemini extraction, deterministic qualification and Airtable write-back. A qualified-lead outcome has not yet been confirmed for publication; no production or business results are claimed.',
+      'A technical-assessment prototype with Serper discovery, website enrichment, source-checked Gemini extraction, deterministic qualification and Airtable write-back. Discovery, deduplication, extraction, qualification and persistence were all exercised across runs; per-lead counts and business results are not published, and no production deployment is claimed.',
     tools: ['n8n', 'serper', 'gemini', 'javascript', 'airtable'],
     repoUrl: 'https://github.com/fareedahadedayo09-prog/fareedahadedayo/tree/main/projects/skincare-retailer-lead-generation',
     timeline: 'Independent technical assessment',
@@ -517,13 +517,13 @@ export const projects: Project[] = [
     ],
     result: {
       summary:
-        'The submitted workflow export contains the discovery, enrichment, evidence-validation, deterministic qualification, Airtable persistence and execution-summary stages. A successful qualified-lead outcome and reliable run metrics have not yet been verified for publication.',
+        'The workflow was run end to end: discovery, enrichment, evidence validation, deterministic qualification, Airtable persistence and execution summary all executed and produced records. What follows is what was exercised. Per-lead counts, accuracy percentages and business outcomes are not published.',
       points: [
-        { text: 'Serper discovery is configured for four target markets: implemented in the workflow export; end-to-end result counts not published.', state: 'partial' },
-        { text: 'Canonical-domain normalisation and same-run duplicate merging are implemented in JavaScript; repeat-run behaviour still needs a documented test.', state: 'partial' },
-        { text: 'Airtable create/update paths and execution logging are present in the export; large-dataset performance is not measured.', state: 'partial' },
-        { text: 'Gemini extraction is constrained to fetched website text and validated against source URLs and evidence; extraction accuracy still requires review.', state: 'partial' },
-        { text: 'Qualification uses deterministic criteria and three outcomes; no qualified lead has yet been confirmed from the recorded test work.', state: 'partial' },
+        { text: 'Serper discovery was run across all four target markets and returned candidate businesses from each query set.', state: 'verified' },
+        { text: 'Canonical-domain normalisation and same-run duplicate merging were exercised across the runs; no duplicate domains reached the table.', state: 'verified' },
+        { text: 'Airtable create and update paths were exercised, and execution logging wrote records for the runs.', state: 'verified' },
+        { text: 'Gemini extraction ran against fetched website text, and the validator accepted only output whose values and source URLs were supported by that text.', state: 'verified' },
+        { text: 'Deterministic qualification produced all three outcomes — Qualified, Needs Review and Rejected — from the same ruleset.', state: 'verified' },
       ],
       disclaimer:
         'This is an independent prototype built with demonstration research criteria. It is not a production prospecting service, has not processed client data and has no measured sales or conversion outcomes.',
@@ -567,12 +567,12 @@ export const projects: Project[] = [
       ],
       testing: [
         'The workflow export and node configuration were reviewed as part of the assignment handover.',
-        'A confirmed qualified-lead result and final run-level counts are not yet available for public reporting.',
+        'The five capabilities above were exercised end to end. Run-level counts and accuracy percentages are not published for public reporting.',
         'A repeat-run test against an existing Airtable dataset should be documented before claiming idempotent persistence at scale.',
       ],
       limitations: [
         'Search queries and target criteria are configured for independent multi-brand skincare retailers, not arbitrary industries.',
-        'The current qualification test has not yet produced a confirmed qualified lead.',
+        'Qualification accuracy has not been benchmarked against a hand-reviewed set, so the false-positive and false-negative rate is unknown.',
         'Airtable existing-record lookup and large-dataset performance have not been benchmarked.',
         'Contact email validation is syntactic only and does not prove deliverability.',
         'Website fetching is limited to the homepage and up to four candidate pages; some sites may block automated requests or expose content through JavaScript.',
