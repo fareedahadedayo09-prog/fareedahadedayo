@@ -1,0 +1,49 @@
+{
+  "noShotMsg": false,
+  "summaryText": "EvidenceView supporting screenshots+",
+  "figs": [
+    {
+      "title": "The n8n workflow canvas",
+      "img": "/screenshots/skincare-leadgen/n8n-canvas.png",
+      "loaded": true,
+      "w": 2424
+    },
+    {
+      "title": "Airtable records with processing status",
+      "img": "/screenshots/skincare-leadgen/airtable-status.png",
+      "loaded": true,
+      "w": 2424
+    },
+    {
+      "title": "Scores and qualification reasons",
+      "img": "/screenshots/skincare-leadgen/airtable-scores.png",
+      "loaded": true,
+      "w": 2424
+    },
+    {
+      "title": "Business model and brands found",
+      "img": "/screenshots/skincare-leadgen/airtable-qualification.png",
+      "loaded": true,
+      "w": 2424
+    },
+    {
+      "title": "Extracted contact fields",
+      "img": "/screenshots/skincare-leadgen/airtable-leads-a.png",
+      "loaded": true,
+      "w": 2424
+    },
+    {
+      "title": "Website evidence and e-commerce signals",
+      "img": "/screenshots/skincare-leadgen/airtable-leads-b.png",
+      "loaded": true,
+      "w": 2424
+    }
+  ],
+  "count": 6,
+  "mobile": {
+    "scrollW": 390,
+    "winW": 390
+  },
+  "errs": [],
+  "missing": []
+}
