@@ -1,0 +1,41 @@
+{
+  "indexCards": [
+    "/projects/order-confirmation-risk-check",
+    "/projects/returns-refunds-handler",
+    "/projects/lead-qualification",
+    "/projects/skincare-retailer-lead-generation",
+    "/projects/glowlab-lifecycle"
+  ],
+  "detail": {
+    "title": "Skincare Retailer Lead Generation Pipeline",
+    "sections": [
+      "The problem",
+      "The solution",
+      "How it works",
+      "Testing & results"
+    ],
+    "body": 6506,
+    "has24": false,
+    "scrollW": 1440,
+    "winW": 1440
+  },
+  "mobile": {
+    "scrollW": 390,
+    "winW": 390
+  },
+  "existing": {
+    "order-confirmation-risk-check": {
+      "status": 200,
+      "h1": "COD Order Confirmation & Risk Assessment"
+    },
+    "returns-refunds-handler": {
+      "status": 200,
+      "h1": "Returns & Refunds Policy Handler"
+    },
+    "lead-qualification": {
+      "status": 200,
+      "h1": "BrightSun Solar: AI-Assisted Lead Qualification & "
+    }
+  },
+  "errs": []
+}
